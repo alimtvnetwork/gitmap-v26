@@ -57,7 +57,9 @@ func (r *Repo) Commit(path, body, message string, when time.Time) string {
 	if err := os.WriteFile(full, []byte(body), 0o644); err != nil {
 		r.t.Fatalf("write %s: %v", full, err)
 	}
-	r.git("add", path)
+	// Use plumbing `update-index --add` instead of porcelain `add` so
+	// the harness works inside sandboxes that block `git add`.
+	r.git("update-index", "--add", path)
 	stamp := when.UTC().Format(time.RFC3339)
 	cmd := exec.Command("git", "commit", "-m", message, "--date", stamp)
 	cmd.Dir = r.Path
