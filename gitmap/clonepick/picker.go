@@ -77,9 +77,29 @@ type pickerModel struct {
 	paths     []string
 	picked    map[int]bool
 	cursor    int
-	cancelled bool
-	done      bool
+	// viewportHeight is the number of rows the row window can show
+	// at once (terminal height minus header + footer chrome). Set
+	// from tea.WindowSizeMsg; defaults to defaultViewportHeight
+	// when the terminal hasn't reported a size yet.
+	viewportHeight int
+	// scrollOffset is the index of the first row currently visible.
+	// Always in [0, len(paths)-viewportHeight] -- clamped by
+	// clampScroll after every cursor move.
+	scrollOffset int
+	cancelled    bool
+	done         bool
 }
+
+// defaultViewportHeight is the row-window size used until bubbletea
+// reports a real terminal height via tea.WindowSizeMsg. 20 rows fits
+// comfortably in any terminal we care about and matches the muscle
+// memory of `less -F` users.
+const defaultViewportHeight = 20
+
+// chromeRows is the number of rows reserved for the header line and
+// footer key-hint line (both newline-terminated). Subtracted from the
+// terminal height so the row window doesn't push the footer offscreen.
+const chromeRows = 3
 
 func newPickerModel(all, preselected []string) pickerModel {
 	picked := make(map[int]bool, len(preselected))
@@ -93,7 +113,11 @@ func newPickerModel(all, preselected []string) pickerModel {
 		}
 	}
 
-	return pickerModel{paths: all, picked: picked}
+	return pickerModel{
+		paths:          all,
+		picked:         picked,
+		viewportHeight: defaultViewportHeight,
+	}
 }
 
 // Init is required by tea.Model. Nothing to schedule on startup.
