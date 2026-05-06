@@ -23,13 +23,18 @@ import (
 // spec (clone --no-checkout, sparse-checkout init, set, checkout,
 // optionally remove .git). Returns the absolute destination path on
 // success so the cmd layer can call WriteShellHandoff with it.
+//
+// When plan.PreClonedSrc is set, the clone step is skipped and the
+// pre-cloned metadata dir is promoted into dest instead -- this is
+// the "clone-once" path used by --ask so we don't pay the network
+// cost twice.
 func runSparseCheckout(plan Plan, progress io.Writer) (string, error) {
 	dest, err := prepareDest(plan)
 	if err != nil {
 		return "", err
 	}
-	if err := gitClonePartial(plan, dest, progress); err != nil {
-		return dest, fmt.Errorf(constants.ErrClonePickGitClone, err)
+	if err := acquireRepoTree(plan, dest, progress); err != nil {
+		return dest, err
 	}
 	if err := gitSparseInit(plan, dest, progress); err != nil {
 		return dest, fmt.Errorf(constants.ErrClonePickGitSparseInit, err)
@@ -47,6 +52,24 @@ func runSparseCheckout(plan Plan, progress io.Writer) (string, error) {
 	}
 
 	return dest, nil
+}
+
+// acquireRepoTree either promotes a pre-cloned metadata dir into
+// dest (clone-once path) or runs a fresh `git clone --no-checkout`.
+// Split out so runSparseCheckout stays under the function-length cap.
+func acquireRepoTree(plan Plan, dest string, progress io.Writer) error {
+	if len(plan.PreClonedSrc) > 0 {
+		if err := promotePreClonedSrc(plan.PreClonedSrc, dest); err != nil {
+			return fmt.Errorf(constants.ErrClonePickPromoteSrc, err)
+		}
+
+		return nil
+	}
+	if err := gitClonePartial(plan, dest, progress); err != nil {
+		return fmt.Errorf(constants.ErrClonePickGitClone, err)
+	}
+
+	return nil
 }
 
 // prepareDest resolves DestDir to an absolute path and creates it if
