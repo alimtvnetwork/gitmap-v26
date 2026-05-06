@@ -1,10 +1,10 @@
 ---
 name: clone-pick
-description: gitmap clone-pick (cpk) does sparse-checkout of selected paths from a git repo with optional --ask tree picker, auto-saves selection to CloneInteractiveSelection table, supports --replay <id|name>
+description: gitmap clone-pick (cpk) does sparse-checkout of selected paths from a git repo with optional --ask tree picker (clone-once: picker's metadata clone is promoted to final dest), auto-saves selection to CloneInteractiveSelection table, supports --replay <id|name>
 type: feature
 ---
 
-# gitmap clone-pick / cpk (spec 100, --replay v4.19.0, --ask v4.20.0)
+# gitmap clone-pick / cpk (spec 100, --replay v4.19.0, --ask v4.20.0, clone-once v4.21.0)
 
 ## What it does
 Sparse-checkout a subset of a git repo into the current dir (or `--dest`).
