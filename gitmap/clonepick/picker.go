@@ -189,7 +189,9 @@ func (m pickerModel) handleNavKey(k tea.KeyMsg) pickerModel {
 }
 
 // applyCursorMove updates the cursor for navigation keys. Page keys
-// jump by viewportHeight; g / G are vim-style home / end.
+// jump by viewportHeight; g / G are vim-style home / end. Toggle
+// keys (space, a, n) fall through unchanged -- handleNavKey owns
+// the selection mutation.
 func applyCursorMove(m pickerModel, key string) pickerModel {
 	switch key {
 	case "up", "k":
@@ -198,16 +200,12 @@ func applyCursorMove(m pickerModel, key string) pickerModel {
 		m.cursor = minInt(len(m.paths)-1, m.cursor+1)
 	case "pgup", "ctrl+b":
 		m.cursor = maxInt(0, m.cursor-m.viewportHeight)
-	case "pgdown", "ctrl+f", " ":
-		// Note: " " (space) only moves cursor when toggle is the
-		// no-op case below; the toggle in handleNavKey runs first.
+	case "pgdown", "ctrl+f":
+		m.cursor = minInt(len(m.paths)-1, m.cursor+m.viewportHeight)
 	case "g", "home":
 		m.cursor = 0
 	case "G", "end":
 		m.cursor = maxInt(0, len(m.paths)-1)
-	}
-	if key == "pgdown" || key == "ctrl+f" {
-		m.cursor = minInt(len(m.paths)-1, m.cursor+m.viewportHeight)
 	}
 
 	return m
