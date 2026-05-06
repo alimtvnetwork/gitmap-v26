@@ -14,10 +14,10 @@ import (
 	"github.com/alimtvnetwork/gitmap-v16/gitmap/constants"
 )
 
-// LoadClonePickByID resolves a SelectionId to a Plan. Returns
-// sql.ErrNoRows verbatim when the id is unknown so callers can
-// distinguish "not found" from a transport failure.
-func (db *DB) LoadClonePickByID(id int64) (clonepick.Plan, error) {
+// LoadClonePickByID resolves a SelectionId to a Plan + its id.
+// Returns sql.ErrNoRows verbatim when the id is unknown so callers
+// can distinguish "not found" from a transport failure.
+func (db *DB) LoadClonePickByID(id int64) (clonepick.Plan, int64, error) {
 	row := db.conn.QueryRow(constants.SQLSelectClonePickByID, id)
 
 	return scanClonePickRow(row)
@@ -27,9 +27,9 @@ func (db *DB) LoadClonePickByID(id int64) (clonepick.Plan, error) {
 // matching row (the SQL is `ORDER BY SelectionId DESC`). Empty names
 // would match every "auto" row -- guarded explicitly so a typo can't
 // silently pull the wrong selection.
-func (db *DB) LoadClonePickByName(name string) (clonepick.Plan, error) {
+func (db *DB) LoadClonePickByName(name string) (clonepick.Plan, int64, error) {
 	if len(strings.TrimSpace(name)) == 0 {
-		return clonepick.Plan{}, sql.ErrNoRows
+		return clonepick.Plan{}, 0, sql.ErrNoRows
 	}
 	row := db.conn.QueryRow(constants.SQLSelectClonePickByName, name)
 
@@ -50,7 +50,7 @@ func (db *DB) TouchClonePickCreatedAt(id int64) error {
 // scanClonePickRow centralises the column->Plan mapping used by both
 // lookup paths. Column order MUST mirror SQLSelectClonePickByID /
 // SQLSelectClonePickByName -- both share the same prefix on purpose.
-func scanClonePickRow(row *sql.Row) (clonepick.Plan, error) {
+func scanClonePickRow(row *sql.Row) (clonepick.Plan, int64, error) {
 	var (
 		plan          clonepick.Plan
 		id            int64
@@ -76,16 +76,15 @@ func scanClonePickRow(row *sql.Row) (clonepick.Plan, error) {
 		&createdAtStub,
 	)
 	if err != nil {
-		return clonepick.Plan{}, err
+		return clonepick.Plan{}, 0, err
 	}
 	plan.Cone = coneInt != 0
 	plan.KeepGit = keepGitInt != 0
 	plan.UsedAsk = usedAskInt != 0
 	plan.Paths = splitNonEmptyCsv(pathsCsv)
-	_ = id
 	_ = createdAtStub
 
-	return plan, nil
+	return plan, id, nil
 }
 
 // splitNonEmptyCsv guards against the "empty string -> []string{\"\"}"
