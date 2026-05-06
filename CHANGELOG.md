@@ -1,5 +1,23 @@
 # Changelog
 
+## v4.33.0 — (2026-05-06) — Fix: trailing-slash URLs no longer collapse clone target to CWD
+
+- `gitmap/cmd/clone.go` `repoNameFromURL` now strips trailing
+  `/` and `\` (both before and after the `.git` suffix peel) before
+  computing the basename. Previously a URL like
+  `https://github.com/owner/repo/` collapsed to an empty basename,
+  which made the resolved clone target equal to the caller's CWD —
+  triggering the "target exists" replace flow against unrelated work
+  and (in `cfr` / `cfrp` pipelines) running `fix-repo --all` against
+  the wrong directory.
+- New regression test `TestRepoNameFromURL_TrailingSlash` in
+  `gitmap/cmd/clone_test.go` pins the contract for HTTPS, SCP-style
+  `git@host:owner/repo`, and `ssh://` URLs with trailing `/`, `\`,
+  `///`, and `.git/` shapes — and explicitly fails on empty output
+  so this never regresses to the "destructive replace" symptom again.
+- Version bumped to `v4.33.0` across `gitmap/constants/constants.go`
+  and `src/constants/index.ts`.
+
 ## v4.32.0 — (2026-05-06) — Routing-test guard for new docs pages + pinned-version refresh in root README
 
 - New `src/test/new-command-pages.test.ts` (26 tests) regression-guards
