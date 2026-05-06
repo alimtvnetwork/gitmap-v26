@@ -80,7 +80,7 @@ func buildClonePickPlan(parsed clonePickParsed) (clonepick.Plan, int64, error) {
 	if err != nil {
 		return clonepick.Plan{}, 0, err
 	}
-	plan, loadErr := clonepick.LoadFromDB(loader, parsed.Flags.Replay)
+	plan, replayId, loadErr := clonepick.LoadFromDB(loader, parsed.Flags.Replay)
 	if loadErr != nil {
 		return clonepick.Plan{}, 0, loadErr
 	}
@@ -94,7 +94,7 @@ func buildClonePickPlan(parsed clonePickParsed) (clonepick.Plan, int64, error) {
 		plan.DestDir = parsed.Flags.Dest
 	}
 
-	return plan, plan.replaySelectionId(), nil
+	return plan, replayId, nil
 }
 
 // clonePickParsed bundles every output of parseClonePickFlags so a
@@ -146,6 +146,8 @@ func parseClonePickFlags(args []string) clonePickParsed {
 		constants.FlagDescClonePickQuiet)
 	fs.BoolVar(&flags.Force, constants.FlagClonePickForce, defaults.Force,
 		constants.FlagDescClonePickForce)
+	fs.StringVar(&flags.Replay, constants.FlagClonePickReplay, defaults.Replay,
+		constants.FlagDescClonePickReplay)
 	output := fs.String(constants.FlagCloneTermOutput, "",
 		constants.FlagDescCloneTermOutput)
 	verify := fs.Bool(constants.FlagCloneVerifyCmdFaithful, false,
