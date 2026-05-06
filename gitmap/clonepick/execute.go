@@ -20,6 +20,12 @@ func Execute(plan Plan, p Persister, progress io.Writer) Result {
 	dest, err := runSparseCheckout(plan, progress)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		// Promote either consumed PreClonedSrc (rename) or left
+		// it intact (failed before promote). Best-effort cleanup
+		// covers both -- a missing dir is not an error.
+		if len(plan.PreClonedSrc) > 0 {
+			os.RemoveAll(plan.PreClonedSrc)
+		}
 
 		return Result{Status: StatusFailed, Detail: err.Error()}
 	}
