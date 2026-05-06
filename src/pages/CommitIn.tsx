@@ -200,38 +200,7 @@ gitmap cin ./canonical -3 --dry-run --function-intel on --languages Go,TypeScrip
         <CodeBlock
           language="json"
           title=".gitmap/commit-in/profiles/Default.json"
-          code={`{
-  "Name": "Default",
-  "SchemaVersion": 1,
-  "SourceRepoPath": "/abs/path/to/canonical",
-  "IsDefault": true,
-  "ConflictMode": "ForceMerge",
-  "Author": {
-    "Name": "Jane Doe",
-    "Email": "jane@example.com"
-  },
-  "Exclusions": [
-    { "Kind": "PathFolder", "Value": "node_modules" },
-    { "Kind": "PathFolder", "Value": "dist" },
-    { "Kind": "PathFile",   "Value": "secrets.env" }
-  ],
-  "MessageRules": [
-    { "Kind": "StartsWith", "Value": "Signed-off-by:" },
-    { "Kind": "Contains",   "Value": "[skip ci]" },
-    { "Kind": "EndsWith",   "Value": "(cherry picked from commit)" }
-  ],
-  "MessagePrefix":   ["chore:", "feat:", "fix:"],
-  "MessageSuffix":   [],
-  "TitlePrefix":     "",
-  "TitleSuffix":     " — via gitmap",
-  "OverrideMessages": ["Improve module", "Refine implementation"],
-  "OverrideOnlyWeak": true,
-  "WeakWords":        ["change", "update", "updates", "misc"],
-  "FunctionIntel": {
-    "IsEnabled": true,
-    "Languages": ["Go", "TypeScript", "Python"]
-  }
-}`}
+          code={profileJson}
         />
         <p className="text-xs text-muted-foreground mt-3">
           <strong>Tip:</strong> let gitmap write the file for you the first time —
