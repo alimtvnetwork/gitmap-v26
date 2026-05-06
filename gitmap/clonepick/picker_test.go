@@ -73,12 +73,20 @@ func TestSelectNoneClearsEverything(t *testing.T) {
 func TestQuitFlagsCancelled(t *testing.T) {
 	m := newTestModel([]string{"a"}, nil)
 	next, cmd := m.handleKey(keyMsg("q"))
-	if !next.(pickerModel).cancelled { //nolint:misspell // matches pickerModel.cancelled field spelling.
-		t.Fatal("'q' should set cancelled flag") //nolint:misspell // matches pickerModel.cancelled field spelling.
+	out := next.(pickerModel)
+	if !pickerWasCancelled(out) {
+		t.Fatal("'q' should set the cancel flag")
 	}
 	if cmd == nil {
 		t.Fatal("'q' should return tea.Quit cmd (non-nil)")
 	}
+}
+
+// pickerWasCancelled isolates the British-spelled field access so the
+// surrounding test code stays misspell-clean. The field name itself is
+// load-bearing (matches exported ErrPickerCancelled), so we cannot rename it.
+func pickerWasCancelled(m pickerModel) bool { //nolint:misspell // matches pickerModel.cancelled field spelling.
+	return m.cancelled //nolint:misspell // matches pickerModel.cancelled field spelling.
 }
 
 func TestSaveFlagsDoneAndReturnsSelection(t *testing.T) {
