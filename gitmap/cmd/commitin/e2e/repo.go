@@ -30,10 +30,18 @@ type Repo struct {
 // in PATH so CI without git degrades cleanly.
 func NewRepo(t *testing.T, name string) *Repo {
 	t.Helper()
+	return NewRepoIn(t, t.TempDir(), name)
+}
+
+// NewRepoIn is like NewRepo but creates the repo inside an explicit
+// parent directory. Used by sibling-discovery tests that need several
+// repos sharing one parent (so `all` / `-N` keyword scope works).
+func NewRepoIn(t *testing.T, parent, name string) *Repo {
+	t.Helper()
 	if _, err := exec.LookPath("git"); err != nil {
 		t.Skipf("git not available: %v", err)
 	}
-	dir := filepath.Join(t.TempDir(), name)
+	dir := filepath.Join(parent, name)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatalf("mkdir %s: %v", dir, err)
 	}
