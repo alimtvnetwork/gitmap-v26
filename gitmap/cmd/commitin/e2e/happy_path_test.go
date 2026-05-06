@@ -59,12 +59,12 @@ func TestSecondRunDedupesAllInputCommits(t *testing.T) {
 	}
 	// Dedupe means zero new commits — destination is unchanged.
 	src.AssertCommitCount(t, 3)
-	// Summary line must report the dedupes as Skipped, not Created.
-	if !strings.Contains(second.Stderr, "Skipped=3") {
-		t.Errorf("second run summary missing Skipped=3\nstderr=%s", second.Stderr)
+	// Summary line must report the dedupes as skipped, not created.
+	if !strings.Contains(second.Stderr, "skipped=3") {
+		t.Errorf("second run summary missing skipped=3\nstderr=%s", second.Stderr)
 	}
-	if !strings.Contains(second.Stderr, "Created=0") {
-		t.Errorf("second run summary missing Created=0\nstderr=%s", second.Stderr)
+	if !strings.Contains(second.Stderr, "created=0") {
+		t.Errorf("second run summary missing created=0\nstderr=%s", second.Stderr)
 	}
 }
 
