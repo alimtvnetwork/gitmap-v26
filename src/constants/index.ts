@@ -34,5 +34,15 @@ export const STATUS_ICON_CLEAN = "✔";
 export const ROOT_RELATIVE_PATH = ".";
 export const ROOT_RELATIVE_LABEL = "(root)";
 
-/** Application version — single source of truth. */
-export const VERSION = "v4.14.0";
+/**
+ * Application version — single source of truth FOR THE WEB APP.
+ *
+ * MUST be kept in sync with the Go binary version declared in
+ * `gitmap/constants/constants.go` (`const Version = "..."`). The
+ * regression test in `src/test/version-sync.test.ts` reads that file
+ * and fails CI if the two drift, so a forgotten bump here will be
+ * caught loudly instead of shipping a stale "Current version" badge.
+ *
+ * Format: `v` + the Go literal (Go uses bare semver, web uses `v` prefix).
+ */
+export const VERSION = "v4.23.0";
