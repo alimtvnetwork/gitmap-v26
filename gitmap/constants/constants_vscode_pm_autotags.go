@@ -11,6 +11,7 @@ package constants
 
 // Canonical tag identifiers — keep in sync with AutoTagMarkers / AutoTagOrder.
 const (
+	AutoTagGitmap = "gitmap"
 	AutoTagGit    = "git"
 	AutoTagNode   = "node"
 	AutoTagGo     = "go"
