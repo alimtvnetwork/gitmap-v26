@@ -24,19 +24,41 @@ import (
 
 // listRepoPaths returns every tracked path in plan.RepoUrl. The
 // returned slice is the raw `git ls-tree` output (one path per line,
-// repo-relative, no leading slash) -- de-duplication is unnecessary
-// because git emits each blob exactly once.
+// repo-relative, no leading slash). The temp clone is removed before
+// return -- callers that want to reuse it as the final destination
+// should call ListRepoPathsKeep instead.
 func listRepoPaths(plan Plan) ([]string, error) {
-	tmp, err := os.MkdirTemp("", "gitmap-clonepick-ls-")
-	if err != nil {
-		return nil, fmt.Errorf(constants.ErrClonePickPickerLaunch, err)
-	}
-	defer os.RemoveAll(tmp)
-	if err := metaCloneForListing(plan, tmp); err != nil {
-		return nil, err
+	paths, tmp, err := ListRepoPathsKeep(plan)
+	if len(tmp) > 0 {
+		os.RemoveAll(tmp)
 	}
 
-	return runLsTree(tmp)
+	return paths, err
+}
+
+// ListRepoPathsKeep is the keep-clone variant: returns the path
+// list AND the temp dir that holds the metadata clone. The caller
+// owns tmp and must remove it (directly or by promoting it to a
+// final destination via PromotePreClonedSrc). On error tmp is
+// already cleaned up.
+func ListRepoPathsKeep(plan Plan) ([]string, string, error) {
+	tmp, err := os.MkdirTemp("", "gitmap-clonepick-ls-")
+	if err != nil {
+		return nil, "", fmt.Errorf(constants.ErrClonePickPickerLaunch, err)
+	}
+	if err := metaCloneForListing(plan, tmp); err != nil {
+		os.RemoveAll(tmp)
+
+		return nil, "", err
+	}
+	paths, lsErr := runLsTree(tmp)
+	if lsErr != nil {
+		os.RemoveAll(tmp)
+
+		return nil, "", lsErr
+	}
+
+	return paths, tmp, nil
 }
 
 // metaCloneForListing runs the cheapest possible clone (filter=blob,
