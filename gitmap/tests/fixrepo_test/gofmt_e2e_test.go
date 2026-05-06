@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -63,11 +64,18 @@ func requireToolsOrSkip(t *testing.T, tools ...string) {
 
 // buildGitmapBinary compiles the gitmap binary into the test's temp
 // dir and returns its absolute path. Each test gets a fresh build so
-// stale binaries can't leak between runs.
+// stale binaries can't leak between runs. On Windows the produced
+// executable MUST carry the `.exe` suffix or `exec.Command` cannot
+// find it via PATH-style lookup — Go's `go build -o foo` writes the
+// exact name you ask for and won't append the suffix for you.
 func buildGitmapBinary(t *testing.T) string {
 	t.Helper()
 	repoRoot := findRepoRoot(t)
-	bin := filepath.Join(t.TempDir(), "gitmap")
+	binName := "gitmap"
+	if runtime.GOOS == "windows" {
+		binName += ".exe"
+	}
+	bin := filepath.Join(t.TempDir(), binName)
 	cmd := exec.Command("go", "build", "-o", bin, ".")
 	cmd.Dir = filepath.Join(repoRoot, "gitmap")
 	cmd.Stderr = os.Stderr

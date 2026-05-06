@@ -143,7 +143,13 @@ func resolveBuildOutputDir(repoPath, buildOutput string) string {
 	if len(buildOutput) == 0 {
 		buildOutput = constants.DefaultBuildOutput
 	}
-	if filepath.IsAbs(buildOutput) {
+	// Treat both OS-native absolute paths AND POSIX-style leading "/"
+	// as absolute. On Windows filepath.IsAbs("/custom/bin") returns
+	// false (Windows wants a drive letter), but tests + config files
+	// authored on Linux/macOS routinely use "/custom/bin" to mean
+	// "absolute, root of current drive". Honor that intent so a
+	// shared config doesn't silently get re-rooted under repoPath.
+	if filepath.IsAbs(buildOutput) || strings.HasPrefix(buildOutput, "/") {
 		return filepath.Clean(buildOutput)
 	}
 

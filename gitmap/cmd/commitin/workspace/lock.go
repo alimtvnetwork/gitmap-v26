@@ -44,6 +44,13 @@ func (h *LockHandle) Release() {
 // isLockHeldByLive reports whether the lock file exists AND its PID
 // belongs to a running process. Stale lock files (PID dead, or file
 // unreadable) are removed and treated as not-held.
+//
+// Special case: when the recorded PID is the CURRENT process, treat
+// the lock as live without probing — signal(0) trivially succeeds
+// for the caller's own PID, but more importantly: if WE wrote the
+// PID, the lock is by definition held by us. Without this guard a
+// second in-process AcquireLock would never return LockBusy, which
+// is exactly what TestAcquireLockBlocksDoubleAcquire pins down.
 func isLockHeldByLive(lockPath string) bool {
 	data, err := os.ReadFile(lockPath)
 	if err != nil {
@@ -53,6 +60,9 @@ func isLockHeldByLive(lockPath string) bool {
 	if parseErr != nil {
 		_ = os.Remove(lockPath)
 		return false
+	}
+	if pid == os.Getpid() {
+		return true
 	}
 	if isProcessAlive(pid) {
 		return true
