@@ -1,5 +1,60 @@
 # Changelog
 
+## v4.18.0 — (2026-05-06) — `gitmap commit-in` / `cin`: chronological multi-source commit replay into a single destination repo
+
+- New top-level command: `gitmap commit-in <source> [inputs...]`
+  (alias `cin`). Walks each input repo's first-parent chain
+  chronologically and replays every commit into `<source>` while
+  preserving both `AuthorDate` AND `CommitterDate` byte-for-byte.
+  Dedupe via `ShaMap` ensures the same source commit is never
+  replayed twice across runs. Spec: `spec/03-commit-in/`.
+- Source resolution (`<source>`) is purely deterministic per
+  spec §2.3: existing folder → open in place; missing folder with
+  parent that exists → `git init` + initial empty commit; URL →
+  clone-then-init-on-failure; everything else → `BadArgs`. No
+  interactive `--init` flag, no prompts on the source side.
+- Inputs accept any mix of local folders, Git URLs, the keyword
+  `all` (every versioned sibling of `<source>` discovered via
+  `clone-next` semantics), or `-N` (the N most recent siblings).
+- Profiles (`.gitmap/commit-in/profiles/<name>.json`, schema v1,
+  PascalCase keys, strict decode) bind by absolute symlink-resolved
+  source path. `--save-profile <name>` persists the resolved layered
+  config; `--save-profile-overwrite` allows replacement;
+  `--set-default` flips `IsDefault=1` and clears the flag on every
+  sibling profile bound to the same source. Load order:
+  `--profile` flag > `--default` profile > built-in defaults, with
+  CLI overrides on top of all three.
+- Conflict modes: `--conflict ForceMerge` (default, blob clobbers
+  are logged then proceed) or `--conflict Prompt` (any HEAD-vs-source
+  blob mismatch aborts the entire run with exit
+  `CommitInExitConflictAborted`=8). `--dry-run` walks + plans without
+  ever invoking `git commit`; the summary line is followed by an
+  unmistakable `commit-in: DRY RUN — no commits were created` banner.
+- Function-intel block (`--function-intel on`,
+  `--languages Go,TypeScript,...`) appends a per-language
+  new-function summary to the commit body, derived best-effort from
+  `git show <sha>:path` vs `<sha>^:path` diffs. Failures degrade to
+  empty-string per spec §6.3 — never a hard error.
+- Message pipeline order: original → message-rules strip
+  (`StartsWith:`/`EndsWith:`/`Contains:`) → `--override-messages`
+  (gated on first-word weak-word match when `--override-only-weak`)
+  → `--title-prefix`/`--title-suffix` → random pick from
+  `--message-prefix`/`--message-suffix` pools (deterministic per
+  run via per-run RNG seed).
+- Path exclusions: `--exclude` accepts CSV of relative paths;
+  trailing `/` => folder match (prefix + segment-aware), no slash =>
+  exact file match. A commit whose entire file list is excluded is
+  recorded as `Skipped` with reason `ExcludedAllFiles`.
+- All state lives under `<source>/.gitmap/`: `db/gitmap.sqlite`
+  (SQLite v1 schema with `CommitInRun`, `InputRepo`, `SourceCommit`,
+  `RewrittenCommit`, `Profile`, `ShaMap`), `temp/<runId>/` (cleaned
+  on exit unless `--keep-temp`), `commit-in/profiles/`, and
+  `commit-in.lock` (advisory file lock, exit `LockBusy`=9 on
+  contention). Strict zero-swallow logging to stderr, every error
+  path goes through a single `commit-in: <stage>: <message>` format.
+- Helptext: `gitmap/helptext/commit-in.md` (105 lines, under the
+  120-line cap). Discoverable via `gitmap commit-in --help`.
+
 ## v4.15.1 — (2026-05-02) — Installer: stop calling Chocolatey `refreshenv`, kill `'wmic' is not recognized` noise on Windows 11 24H2
 
 - `gitmap/scripts/install.ps1`: removed the opportunistic `refreshenv` call
