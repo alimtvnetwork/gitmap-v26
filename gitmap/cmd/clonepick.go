@@ -36,7 +36,8 @@ func runClonePick(args []string) {
 	setCmdFaithfulVerify(parsed.VerifyCmdFaithful)
 	setCmdFaithfulExitOnMismatch(parsed.VerifyCmdFaithfulExitOnMismatch)
 	setCmdPrintArgv(parsed.PrintCloneArgv)
-	plan, err := clonepick.ParseArgs(parsed.RawURL, parsed.RawPaths, parsed.Flags)
+
+	plan, replayId, err := buildClonePickPlan(parsed)
 	if err != nil {
 		cliexit.Fail(constants.CmdClonePick, "parse-args", parsed.RawURL, err, 2)
 	}
@@ -62,7 +63,38 @@ func runClonePick(args []string) {
 	if parsed.Output == constants.OutputTerminal {
 		printClonePickTermBlock(plan)
 	}
-	runClonePickExecute(plan, parsed.NoVSCodeSync)
+	runClonePickExecute(plan, parsed.NoVSCodeSync, replayId)
+}
+
+// buildClonePickPlan picks between the parse path (positional args)
+// and the replay path (--replay <id|name> hits the DB). Returns the
+// Plan plus the replayed SelectionId (0 for fresh runs) so the
+// executor can bump CreatedAt without re-deriving the id.
+func buildClonePickPlan(parsed clonePickParsed) (clonepick.Plan, int64, error) {
+	if len(parsed.Flags.Replay) == 0 {
+		plan, err := clonepick.ParseArgs(parsed.RawURL, parsed.RawPaths, parsed.Flags)
+
+		return plan, 0, err
+	}
+	loader, err := openDB()
+	if err != nil {
+		return clonepick.Plan{}, 0, err
+	}
+	plan, loadErr := clonepick.LoadFromDB(loader, parsed.Flags.Replay)
+	if loadErr != nil {
+		return clonepick.Plan{}, 0, loadErr
+	}
+	// Runtime-only flags from THIS invocation override the
+	// persisted Plan -- spec rule: replay reproduces the
+	// selection, not the verbosity choice.
+	plan.DryRun = parsed.Flags.DryRun
+	plan.Quiet = parsed.Flags.Quiet
+	plan.Force = parsed.Flags.Force
+	if len(parsed.Flags.Dest) > 0 && parsed.Flags.Dest != "." {
+		plan.DestDir = parsed.Flags.Dest
+	}
+
+	return plan, plan.replaySelectionId(), nil
 }
 
 // clonePickParsed bundles every output of parseClonePickFlags so a
