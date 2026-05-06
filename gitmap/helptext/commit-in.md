@@ -58,30 +58,90 @@ Inputs are walked OLDEST → NEWEST by author date, deduped against
 
 ## Examples
 
-Append every versioned sibling into a fresh canonical repo:
+### 1. Convert a plain folder of files into a git repo + replay history
+
+Folder exists, no `.git/` yet — `commit-in` runs `git init` for you,
+then appends history from the URL on top:
+
+    gitmap commit-in ./my-project https://github.com/me/my-project-archive.git
+
+### 2. Mix a local folder + a remote URL as INPUTS
+
+Target = `./canonical`. Inputs = local checkout + 2 remote forks,
+walked oldest → newest into one canonical timeline:
+
+    gitmap cin ./canonical \
+        ./old-local-checkout,https://github.com/me/old-fork.git,git@github.com:me/new-fork.git
+
+### 3. Brand-new target folder from scratch
+
+Path does not exist → `mkdir -p` + `git init` + replay, in one shot:
+
+    gitmap commit-in ./brand-new-canonical \
+        https://github.com/me/legacy-v1.git,https://github.com/me/legacy-v2.git
+
+### 4. Replay every versioned sibling
+
+`all` = every `<source>-vN`; `-N` = latest N only.
 
     gitmap commit-in ./canonical all --save-profile Default --set-default
+    gitmap cin       ./canonical -3 --dry-run --function-intel on --languages Go,TypeScript
 
-Replay only the last three siblings, dry-run, with function-intel:
-
-    gitmap cin ./canonical -3 --dry-run --function-intel on --languages Go,TypeScript
-
-Pull from two remotes, override author, strip Signed-off-by lines:
+### 5. Override author + scrub commit messages
 
     gitmap cin git@github.com:me/canonical.git \
         https://github.com/me/old-fork.git,https://github.com/me/new-fork.git \
         --author-name "Jane Doe" --author-email jane@example.com \
-        --message-exclude "StartsWith:Signed-off-by:"
+        --message-exclude "StartsWith:Signed-off-by:,Contains:[skip ci]" \
+        --title-suffix " — via gitmap"
 
-Use a saved profile and only override weak commit titles:
+### 6. Reuse a saved profile + only rewrite weak titles
 
     gitmap cin ./canonical all --default \
         --override-messages "Refine implementation,Improve module" \
         --override-only-weak
 
-Stitch in CI without prompts (fail loudly on any unset value):
+### 7. Headless CI run
 
     gitmap cin ./canonical all --profile CI --no-prompt
+
+## Sample profile JSON
+
+Drop this at `.gitmap/commit-in/profiles/Default.json` (workspace
+root = nearest ancestor containing `.gitmap/`). Load with
+`--profile Default` or `--default`. Strict PascalCase decoding —
+unknown keys are an error. Every field maps 1:1 to a CLI flag above.
+
+    {
+      "Name": "Default",
+      "SchemaVersion": 1,
+      "SourceRepoPath": "/abs/path/to/canonical",
+      "IsDefault": true,
+      "ConflictMode": "ForceMerge",
+      "Author": { "Name": "Jane Doe", "Email": "jane@example.com" },
+      "Exclusions": [
+        { "Kind": "PathFolder", "Value": "node_modules" },
+        { "Kind": "PathFile",   "Value": "secrets.env" }
+      ],
+      "MessageRules": [
+        { "Kind": "StartsWith", "Value": "Signed-off-by:" },
+        { "Kind": "Contains",   "Value": "[skip ci]" }
+      ],
+      "MessagePrefix":   ["chore:", "feat:", "fix:"],
+      "MessageSuffix":   [],
+      "TitlePrefix":     "",
+      "TitleSuffix":     " — via gitmap",
+      "OverrideMessages": ["Improve module", "Refine implementation"],
+      "OverrideOnlyWeak": true,
+      "WeakWords":        ["change", "update", "updates"],
+      "FunctionIntel": { "IsEnabled": true, "Languages": ["Go", "TypeScript"] }
+    }
+
+Tip: let gitmap write it for you first —
+`gitmap cin ./canonical all --save-profile Default --set-default` —
+then edit the resulting JSON. Re-saving requires
+`--save-profile-overwrite`. Profiles bind by absolute filesystem
+path, NOT by remote URL.
 
 ## Exit codes
 
