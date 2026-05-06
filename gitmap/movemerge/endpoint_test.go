@@ -1,6 +1,9 @@
 package movemerge
 
-import "testing"
+import (
+	"path/filepath"
+	"testing"
+)
 
 func TestClassifyEndpoint_FolderPaths(t *testing.T) {
 	cases := []string{"./local", "/abs/path", "..\\rel", "plain-folder"}
@@ -42,7 +45,11 @@ func TestClassifyEndpoint_SCPGitAtForm(t *testing.T) {
 
 func TestMapURLToFolder(t *testing.T) {
 	got := MapURLToFolder("/tmp", "https://github.com/owner/my-repo.git")
-	if got != "/tmp/my-repo" {
+	// Compare via filepath.ToSlash so the assertion is stable across
+	// Windows (returns "\\tmp\\my-repo") and POSIX hosts. The
+	// production behavior is correct on each OS — only the literal
+	// separator differs, which is not what this test is checking.
+	if filepath.ToSlash(got) != "/tmp/my-repo" {
 		t.Errorf("MapURLToFolder = %q", got)
 	}
 }
