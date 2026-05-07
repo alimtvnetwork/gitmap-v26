@@ -52,20 +52,69 @@ gitmap cin ./canonical \\
     />
 
     <h3 className="font-semibold text-sm mt-6 mb-2 text-foreground">
-      4 · Replay every versioned sibling automatically
+      4 · Replay every versioned sibling automatically (<code>all</code> / <code>-N</code>)
     </h3>
     <p className="text-sm text-muted-foreground mb-2">
-      The <code>all</code> keyword expands to every <code>&lt;source&gt;-vN</code>{" "}
-      sibling on disk. Use <code>-N</code> for the latest N only. Both work great with
-      <code> --save-profile</code> so the next run is one word.
+      The <code>all</code> keyword expands to every <code>&lt;target&gt;-vN</code>{" "}
+      sibling sitting next to your TARGET on disk, walked oldest&nbsp;→&nbsp;newest.
+      Use <code>-N</code> to take only the most recent N siblings.
+    </p>
+    <p className="text-sm text-muted-foreground mb-2">
+      <strong>Concrete example.</strong> Say your TARGET is{" "}
+      <code>./gitmap</code> and the parent directory looks like this:
+    </p>
+    <CodeBlock
+      language="bash"
+      code={`$ ls ./
+gitmap         <-- TARGET (the one receiving appended commits)
+gitmap-v1
+gitmap-v2
+gitmap-v3
+...
+gitmap-v18
+gitmap-v19     <-- newest sibling`}
+    />
+    <p className="text-sm text-muted-foreground mb-2 mt-3">
+      Then the keywords expand like this — <em>no manual list needed</em>:
+    </p>
+    <div className="overflow-x-auto mb-3">
+      <table className="w-full text-sm border border-border rounded-lg">
+        <thead>
+          <tr className="bg-muted/50">
+            <th className="text-left px-4 py-2 font-medium">You type…</th>
+            <th className="text-left px-4 py-2 font-medium">commit-in walks…</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="border-t border-border">
+            <td className="px-4 py-2 font-mono text-primary">gitmap cin ./gitmap all</td>
+            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v1, gitmap-v2, …, gitmap-v19 (every sibling, oldest first)</td>
+          </tr>
+          <tr className="border-t border-border">
+            <td className="px-4 py-2 font-mono text-primary">gitmap cin ./gitmap -5</td>
+            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v15, gitmap-v16, gitmap-v17, gitmap-v18, gitmap-v19</td>
+          </tr>
+          <tr className="border-t border-border">
+            <td className="px-4 py-2 font-mono text-primary">gitmap cin ./gitmap -1</td>
+            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v19 (just the newest)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p className="text-sm text-muted-foreground mb-2">
+      And remember the TARGET (<code>./gitmap</code>) doesn't have to exist
+      yet — if it's missing, commit-in does <code>mkdir -p ./gitmap && git init</code>{" "}
+      first, then appends every sibling's history into the new repo.
+      One command takes you from <em>"I have 19 versioned snapshots"</em> to{" "}
+      <em>"I have one git repo with 19 versions of history in author order."</em>
     </p>
     <CodeBlock
       language="bash"
       code={`# Every sibling, save the resolved settings as the default profile
-gitmap commit-in ./canonical all --save-profile Default --set-default
+gitmap commit-in ./gitmap all --save-profile Default --set-default
 
 # Just the last 3 siblings, dry-run, with per-language new-function intel
-gitmap cin ./canonical -3 --dry-run --function-intel on --languages Go,TypeScript`}
+gitmap cin ./gitmap -3 --dry-run --function-intel on --languages Go,TypeScript`}
     />
 
     <h3 className="font-semibold text-sm mt-6 mb-2 text-foreground">
