@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.39.0 — (2026-05-07) — CI lint cleanup: misspellings (`centralised`/`materialises`/`honoured`), unused `mergePairs`, gofmt drift, `string(before) != string(after)` → `bytes.Equal`
+
+### Fixed
+
+- Resolved all NEW golangci-lint findings vs baseline from the v4.38.0 batch:
+  `misspell` (`centralised`/`Centralised`/`materialises`/`honoured` → US spelling)
+  across `gitmap/cmd/commitin/runlog/`, `gitmap/cmd/vscodepmsync*.go`, and
+  `constants/constants_commitin_tagreplay.go`.
+- Removed unused `mergePairs` helper from `gitmap/vscodepm/merge.go` (`unused`).
+- Replaced `string(before) != string(after)` byte-slice comparisons with
+  `!bytes.Equal(...)` (`gocritic`/`stringXbytes`).
+- Re-ran `gofmt -w` on `cmd/commitin/runlog/tagreplay.go` to drop the trailing
+  blank line flagged by the gofmt CI gate.
+
 ## v4.38.0 — (2026-05-07) — `commit-in` tag-replay map (spec §09) + strict annotated-only semver gate; `vscode-pm-sync` gains `--path` / `--tag`
 
 ### Added
