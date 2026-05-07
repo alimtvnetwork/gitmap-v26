@@ -158,13 +158,23 @@ func setupVSCodePMSyncMalformedFile(t *testing.T) (string, func()) {
 	return jsonPath, swapHomeEnv(tmp)
 }
 
-// swapHomeEnv points HOME and XDG_CONFIG_HOME at tmp and returns a
-// restore func that puts the original values back. Centralised so
-// every fixture uses the same swap shape.
+// swapHomeEnv points HOME / XDG_CONFIG_HOME / APPDATA at tmp and returns
+// a restore func that puts the original values back. Centralised so every
+// fixture uses the same swap shape across darwin / linux / windows.
 func swapHomeEnv(tmp string) func() {
-	prevHome, prevXDG := os.Getenv("HOME"), os.Getenv("XDG_CONFIG_HOME")
-	os.Setenv("HOME", tmp)
-	os.Setenv("XDG_CONFIG_HOME", filepath.Join(tmp, ".config"))
+	prevHome := os.Getenv(constants.VSCodeEnvHome)
+	prevXDG := os.Getenv(constants.VSCodeEnvXDGConfigHome)
+	prevAppData := os.Getenv(constants.VSCodeEnvAppData)
+	os.Setenv(constants.VSCodeEnvHome, tmp)
+	os.Setenv(constants.VSCodeEnvXDGConfigHome, filepath.Join(tmp, ".config"))
+	os.Setenv(constants.VSCodeEnvAppData, tmp)
+
+	return func() {
+		os.Setenv(constants.VSCodeEnvHome, prevHome)
+		os.Setenv(constants.VSCodeEnvXDGConfigHome, prevXDG)
+		os.Setenv(constants.VSCodeEnvAppData, prevAppData)
+	}
+}
 
 	return func() {
 		os.Setenv("HOME", prevHome)
