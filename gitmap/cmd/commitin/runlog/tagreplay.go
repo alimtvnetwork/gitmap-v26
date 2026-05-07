@@ -167,4 +167,3 @@ func nullIfEmpty(s string) any {
 	}
 	return s
 }
-
