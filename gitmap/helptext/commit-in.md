@@ -55,6 +55,7 @@ Inputs are walked OLDEST → NEWEST by author date, deduped against
 | `--no-prompt` | off | Refuse interactive prompts; exit MissingAnswer if unset |
 | `--dry-run` | off | Plan only; never run `git commit` |
 | `--keep-temp` | off | Keep `.gitmap/temp/<runId>/` after exit |
+| `--no-release-branch` | off | Suppress auto `release/<tag>` branch on version tags |
 
 ## Examples
 
