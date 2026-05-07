@@ -202,7 +202,7 @@ const (
 	FlagVSCodePMSyncMode     = "mode"
 	FlagDescVSCodePMSyncMode = "Tag merge strategy: union (default) | replace | intersection"
 	// VSCodePMSyncMode* are the canonical CLI string values for the
-	// --mode flag. Centralised so the parser, the helptext, and the
+	// --mode flag. Centralized so the parser, the helptext, and the
 	// MergeMode.String() implementation can never drift.
 	VSCodePMSyncModeUnion        = "union"
 	VSCodePMSyncModeReplace      = "replace"

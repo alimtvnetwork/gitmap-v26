@@ -159,7 +159,7 @@ func versionTagRegex() *regexp.Regexp {
 }
 
 // nullIfEmpty maps "" → SQL NULL so spec §9.4's NULL-on-dry-run /
-// NULL-on-failed contract is honoured without the caller juggling
+// NULL-on-failed contract is honored without the caller juggling
 // `any` typed parameters.
 func nullIfEmpty(s string) any {
 	if s == "" {

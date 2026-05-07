@@ -123,7 +123,7 @@ func buildVSCodePMSyncPairs(entries []vscodepm.Entry, opts vscodePMSyncOpts) ([]
 }
 
 // resolveVSCodePMSyncTags returns the override list when --tag was
-// passed, else falls back to the detector. Centralised so the
+// passed, else falls back to the detector. Centralized so the
 // "brand-tag NOT auto-prepended in override mode" contract is in
 // one place.
 func resolveVSCodePMSyncTags(rootPath string, opts vscodePMSyncOpts) []string {

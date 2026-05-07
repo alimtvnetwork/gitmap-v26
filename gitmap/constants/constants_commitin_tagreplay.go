@@ -4,7 +4,7 @@ package constants
 // and spec/03-commit-in/08-tag-mirroring-and-release-branches.md.
 //
 // Per Core memory: no magic strings. The five `TagReplayOutcome`
-// member names are centralised here and referenced from SQL seeds,
+// member names are centralized here and referenced from SQL seeds,
 // store helpers, runlog inserters, and acceptance tests. Adding a
 // new outcome requires touching exactly one Go file and one SQL seed.
 
@@ -42,7 +42,7 @@ var TagReplayOutcomeAll = []string{
 // Examples that match:   v1.2.3, 1.2.3, v1.0.0-rc.1, v2.0.0+build.7
 // Examples that DON'T:   v1.2, nightly, release-1.0, 1, v1.2.3.4
 //
-// Centralised so the detector, the §08 release-branch step, and any
+// Centralized so the detector, the §08 release-branch step, and any
 // future tooling all agree on what a "version tag" is. Compiled lazily
 // by callers via regexp.MustCompile so this stays a pure string const.
 const VersionTagPattern = `^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)` +

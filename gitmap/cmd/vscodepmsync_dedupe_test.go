@@ -20,6 +20,7 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"runtime"
 	"testing"
@@ -149,7 +150,7 @@ func TestVSCodePMSyncMalformedFileIsLeftUntouched(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read malformed file after run: %v", err)
 	}
-	if string(before) != string(after) {
+	if !bytes.Equal(before, after) {
 		t.Errorf("runner mutated malformed projects.json\nbefore: %q\nafter:  %q",
 			before, after)
 	}

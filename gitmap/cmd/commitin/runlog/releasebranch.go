@@ -16,7 +16,7 @@ import "github.com/alimtvnetwork/gitmap-v18/gitmap/constants"
 //     layer — see ClassifyVersionTag and RecordTagReplay).
 //  3. tag name not a SemVer version tag → "" (only version tags get
 //     auto branches; `nightly` etc. mirror the tag only).
-//  4. `isDryRun=true`          → "" (dry-run never materialises a
+//  4. `isDryRun=true`          → "" (dry-run never materializes a
 //     branch; `MirroredReleaseBranch` is NULL per spec §9.4 + R6).
 //  5. otherwise → `constants.ReleaseBranchPrefix + tagName`
 //     (e.g. "release/v1.2.3"). The prefix is reused verbatim so a

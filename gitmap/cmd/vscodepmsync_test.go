@@ -16,6 +16,7 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -128,7 +129,7 @@ func TestVSCodePMSyncDryRunDoesNotMutate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read after: %v", err)
 	}
-	if string(before) != string(after) {
+	if !bytes.Equal(before, after) {
 		t.Errorf("dry-run mutated projects.json")
 	}
 }
