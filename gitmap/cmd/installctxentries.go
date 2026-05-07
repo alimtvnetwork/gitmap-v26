@@ -1,0 +1,83 @@
+package cmd
+
+import "github.com/alimtvnetwork/gitmap-v19/gitmap/constants"
+
+// ctxEntry describes a single right-click menu item (or category).
+// A category is an entry with empty Args and non-nil Children.
+type ctxEntry struct {
+	KeyName  string // numeric prefix preserves menu order, e.g. "10_release_next"
+	MUIVerb  string // visible label
+	Args     []string
+	Mode     constants.CtxMode
+	Children []ctxEntry // non-nil => this is a submenu
+}
+
+// ctxMenu returns the full menu tree. Single source of truth for both
+// install and uninstall — uninstall walks the same tree and deletes
+// each generated key.
+func ctxMenu() []ctxEntry {
+	return []ctxEntry{
+		{KeyName: "10_scan", MUIVerb: "Scan", Children: scanChildren()},
+		{KeyName: "20_clone", MUIVerb: "Clone", Children: cloneChildren()},
+		{KeyName: "30_release", MUIVerb: "Release", Children: releaseChildren()},
+		{KeyName: "40_repos", MUIVerb: "Repos", Children: repoChildren()},
+		{KeyName: "50_visibility", MUIVerb: "Visibility", Children: visibilityChildren()},
+		{KeyName: "60_tools", MUIVerb: "Tools", Children: toolsChildren()},
+		{KeyName: "90_terminal", MUIVerb: constants.MsgCtxOpenTerminalLbl, Mode: constants.CtxModePrefill},
+		{KeyName: "91_docs", MUIVerb: constants.MsgCtxDocsLbl, Args: []string{constants.CmdHelp}, Mode: constants.CtxModeSilent},
+	}
+}
+
+func scanChildren() []ctxEntry {
+	return []ctxEntry{
+		{KeyName: "10_scan_here", MUIVerb: "Scan here", Args: []string{constants.CmdScan}, Mode: constants.CtxModeTerminal},
+		{KeyName: "20_rescan", MUIVerb: "Rescan", Args: []string{constants.CmdRescan}, Mode: constants.CtxModeTerminal},
+		{KeyName: "30_find_next", MUIVerb: "Find next", Args: []string{constants.CmdFindNext}, Mode: constants.CtxModeSilent},
+	}
+}
+
+func cloneChildren() []ctxEntry {
+	return []ctxEntry{
+		{KeyName: "10_clone_next", MUIVerb: "Clone-next here", Args: []string{constants.CmdCloneNext}, Mode: constants.CtxModeTerminal},
+		{KeyName: "20_pull", MUIVerb: "Pull", Args: []string{constants.CmdPull}, Mode: constants.CtxModeTerminal},
+		{KeyName: "30_pull_all", MUIVerb: "Pull all", Args: []string{constants.CmdPullAll}, Mode: constants.CtxModeTerminal},
+	}
+}
+
+func releaseChildren() []ctxEntry {
+	return []ctxEntry{
+		{KeyName: "10_release", MUIVerb: "Release current", Args: []string{constants.CmdRelease}, Mode: constants.CtxModeTerminal},
+		{KeyName: "20_release_next", MUIVerb: "Release next (bump minor)", Args: []string{constants.CmdRelease, "--bump", "minor"}, Mode: constants.CtxModeTerminal},
+		{KeyName: "30_release_pull", MUIVerb: "Release pull", Args: []string{constants.CmdReleasePull}, Mode: constants.CtxModeTerminal},
+		{KeyName: "40_release_pending", MUIVerb: "Release pending", Args: []string{constants.CmdReleasePending}, Mode: constants.CtxModeSilent},
+		{KeyName: "50_list_releases", MUIVerb: "List releases", Args: []string{constants.CmdListReleases}, Mode: constants.CtxModeSilent},
+		{KeyName: "60_list_versions", MUIVerb: "List versions", Args: []string{constants.CmdListVersions}, Mode: constants.CtxModeSilent},
+	}
+}
+
+func repoChildren() []ctxEntry {
+	return []ctxEntry{
+		{KeyName: "10_go", MUIVerb: "Go projects", Args: []string{constants.CmdGoRepos}, Mode: constants.CtxModeSilent},
+		{KeyName: "20_node", MUIVerb: "Node projects", Args: []string{constants.CmdNodeRepos}, Mode: constants.CtxModeSilent},
+		{KeyName: "30_react", MUIVerb: "React projects", Args: []string{constants.CmdReactRepos}, Mode: constants.CtxModeSilent},
+		{KeyName: "40_cpp", MUIVerb: "C++ projects", Args: []string{constants.CmdCppRepos}, Mode: constants.CtxModeSilent},
+		{KeyName: "50_csharp", MUIVerb: "C# projects", Args: []string{constants.CmdCsharpRepos}, Mode: constants.CtxModeSilent},
+	}
+}
+
+func visibilityChildren() []ctxEntry {
+	return []ctxEntry{
+		{KeyName: "10_public", MUIVerb: "Make public", Args: []string{constants.CmdVisibility, "public"}, Mode: constants.CtxModeTerminal},
+		{KeyName: "20_private", MUIVerb: "Make private", Args: []string{constants.CmdVisibility, "private"}, Mode: constants.CtxModeTerminal},
+	}
+}
+
+func toolsChildren() []ctxEntry {
+	return []ctxEntry{
+		{KeyName: "10_fix_repo", MUIVerb: "Fix repo", Args: []string{constants.CmdFixRepo}, Mode: constants.CtxModeTerminal},
+		{KeyName: "20_diff", MUIVerb: "Diff", Args: []string{constants.CmdDiff}, Mode: constants.CtxModeTerminal},
+		{KeyName: "30_logs", MUIVerb: "Logs", Args: []string{constants.CmdLog}, Mode: constants.CtxModeTerminal},
+		{KeyName: "40_history", MUIVerb: "History", Args: []string{constants.CmdHistory}, Mode: constants.CtxModeTerminal},
+		{KeyName: "50_update", MUIVerb: "Update", Args: []string{constants.CmdUpdate}, Mode: constants.CtxModeTerminal},
+	}
+}
