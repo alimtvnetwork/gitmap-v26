@@ -42,14 +42,9 @@ func setupVSCodePMSyncFixture(t *testing.T) (string, func()) {
 	jsonPath := vscodepmSyncFixturePath(t, tmp)
 	writeVSCodePMSyncSeed(t, jsonPath, repoDir)
 
-	prevHome, prevXDG := os.Getenv("HOME"), os.Getenv("XDG_CONFIG_HOME")
-	os.Setenv("HOME", tmp)
-	os.Setenv("XDG_CONFIG_HOME", filepath.Join(tmp, ".config"))
+	restore := swapHomeEnv(tmp)
 
-	return repoDir, func() {
-		os.Setenv("HOME", prevHome)
-		os.Setenv("XDG_CONFIG_HOME", prevXDG)
-	}
+	return repoDir, restore
 }
 
 // vscodepmSyncFixturePath returns the projects.json path inside the
