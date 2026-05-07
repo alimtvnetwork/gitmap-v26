@@ -198,3 +198,38 @@ func TestParseLanguageErrorListsKnownSet(t *testing.T) {
 		t.Errorf("error %q should list supported languages", perr.Message)
 	}
 }
+
+// --no-release-branch defaults to OFF (i.e. release branches ARE
+// created). When the flag IS passed, IsNoReleaseBranch flips to true
+// so downstream replay-mapping (runlog.ResolveReleaseBranchName) can
+// suppress branch creation. Spec §08 §2.5 + §09 R4.
+func TestParseNoReleaseBranchDefaultsOff(t *testing.T) {
+	got, perr := Parse([]string{"src", "a"})
+	if perr != nil {
+		t.Fatalf("unexpected error: %v", perr)
+	}
+	if got.IsNoReleaseBranch {
+		t.Error("default should be OFF — branches ON")
+	}
+}
+
+func TestParseNoReleaseBranchFlagFlipsToTrue(t *testing.T) {
+	got, perr := Parse([]string{"--no-release-branch", "src", "a"})
+	if perr != nil {
+		t.Fatalf("unexpected error: %v", perr)
+	}
+	if !got.IsNoReleaseBranch {
+		t.Error("--no-release-branch should set IsNoReleaseBranch=true")
+	}
+}
+
+// Flag must reorder past positionals like every other bool flag.
+func TestParseNoReleaseBranchReordersPastPositionals(t *testing.T) {
+	got, perr := Parse([]string{"src", "a", "--no-release-branch"})
+	if perr != nil {
+		t.Fatalf("unexpected error: %v", perr)
+	}
+	if !got.IsNoReleaseBranch {
+		t.Error("--no-release-branch after positionals not picked up")
+	}
+}
