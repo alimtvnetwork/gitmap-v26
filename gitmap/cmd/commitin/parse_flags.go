@@ -44,6 +44,7 @@ func registerBoolFlags(fs *flag.FlagSet, raw *RawArgs) {
 	fs.BoolVar(&raw.IsNoPrompt, constants.CommitInFlagNoPrompt, false, constants.CommitInDescNoPrompt)
 	fs.BoolVar(&raw.IsDryRun, constants.CommitInFlagDryRun, false, constants.CommitInDescDryRun)
 	fs.BoolVar(&raw.IsKeepTemp, constants.CommitInFlagKeepTemp, false, constants.CommitInDescKeepTemp)
+	fs.BoolVar(&raw.IsNoReleaseBranch, constants.CommitInFlagNoReleaseBranch, false, constants.CommitInDescNoReleaseBranch)
 }
 
 func registerStringFlags(fs *flag.FlagSet, raw *RawArgs) {
@@ -79,5 +80,6 @@ func boolFlagSet() map[string]bool {
 		constants.CommitInFlagNoPrompt:             true,
 		constants.CommitInFlagDryRun:               true,
 		constants.CommitInFlagKeepTemp:             true,
+		constants.CommitInFlagNoReleaseBranch:      true,
 	}
 }
