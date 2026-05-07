@@ -20,9 +20,10 @@ import (
 func seedDeps(t *testing.T, db *DB) {
 	t.Helper()
 	now := time.Now().Format(time.RFC3339)
-	mustExec(t, db, `INSERT INTO Profile (ProfileId, Name) VALUES (1, 'p')`)
+	mustExec(t, db, `INSERT INTO Profile (ProfileId, Name, SourceRepoPath, PayloadJson)
+		VALUES (1, 'p', '/abs/src', '{}')`)
 	mustExec(t, db, `INSERT INTO CommitInRun
-		(CommitInRunId, RunStatusId, SourceRepoPath, WasFreshlyInit,
+		(CommitInRunId, RunStatusId, SourceRepoPath, WasSourceFreshlyInit,
 		 ProfileId, StartedAt)
 		VALUES (1,
 		 (SELECT RunStatusId FROM RunStatus WHERE Name='Running'),
