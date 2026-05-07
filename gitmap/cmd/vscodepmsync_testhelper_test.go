@@ -53,16 +53,17 @@ func setupVSCodePMSyncFixture(t *testing.T) (string, func()) {
 }
 
 // vscodepmSyncFixturePath returns the projects.json path inside the
-// faux XDG_CONFIG_HOME and ensures the parent directory exists.
+// faux user-data root and ensures the parent directory exists.
 func vscodepmSyncFixturePath(t *testing.T, tmp string) string {
 	t.Helper()
-	dir := filepath.Join(tmp, ".config", "Code", "User",
-		"globalStorage", "alefragnani.project-manager")
+	dir := filepath.Join(tmp, vscodePMUserDataRel(),
+		constants.VSCodePMUserDir, constants.VSCodePMGlobalStorageDir,
+		constants.VSCodePMExtensionDir)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatalf("mkdir extdir: %v", err)
 	}
 
-	return filepath.Join(dir, "projects.json")
+	return filepath.Join(dir, constants.VSCodePMProjectsFile)
 }
 
 // writeVSCodePMSyncSeed writes a single-entry projects.json with a
