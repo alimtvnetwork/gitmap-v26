@@ -30,7 +30,14 @@ const (
 	CommitInFlagNoPrompt             = "no-prompt"
 	CommitInFlagDryRun               = "dry-run"
 	CommitInFlagKeepTemp             = "keep-temp"
+	CommitInFlagNoReleaseBranch      = "no-release-branch"
 )
+
+// CommitInDescNoReleaseBranch — flag default is OFF (i.e. release
+// branches ARE created). Setting the flag suppresses creation even
+// when a mirrored tag matches VersionTagPattern. See spec §08 §2.5
+// + spec §09 §9.4 (`MirroredReleaseBranch` NULL contract).
+const CommitInDescNoReleaseBranch = "Suppress auto release-branch creation for version tags"
 
 // ---- Flag descriptions (rendered in --help) -----------------------
 const (
