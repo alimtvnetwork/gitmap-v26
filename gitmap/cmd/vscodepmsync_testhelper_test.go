@@ -7,10 +7,26 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
+	"github.com/alimtvnetwork/gitmap-v18/gitmap/constants"
 	"github.com/alimtvnetwork/gitmap-v18/gitmap/vscodepm"
 )
+
+// vscodePMUserDataRel returns the OS-specific subpath under the home/temp
+// dir that ProjectsJSONPath() will look at, so test fixtures place
+// projects.json where the resolver actually reads it on every platform.
+func vscodePMUserDataRel() string {
+	switch runtime.GOOS {
+	case "darwin":
+		return filepath.FromSlash(constants.VSCodeUserDataMacRel)
+	case "windows":
+		return constants.VSCodeUserDataRootDirName
+	default:
+		return filepath.Join(".config", constants.VSCodeUserDataRootDirName)
+	}
+}
 
 // setupVSCodePMSyncFixture creates a temp HOME, a real repo dir, and
 // a single-entry projects.json file pointing at the repo. Returns the
@@ -26,27 +42,23 @@ func setupVSCodePMSyncFixture(t *testing.T) (string, func()) {
 	jsonPath := vscodepmSyncFixturePath(t, tmp)
 	writeVSCodePMSyncSeed(t, jsonPath, repoDir)
 
-	prevHome, prevXDG := os.Getenv("HOME"), os.Getenv("XDG_CONFIG_HOME")
-	os.Setenv("HOME", tmp)
-	os.Setenv("XDG_CONFIG_HOME", filepath.Join(tmp, ".config"))
+	restore := swapHomeEnv(tmp)
 
-	return repoDir, func() {
-		os.Setenv("HOME", prevHome)
-		os.Setenv("XDG_CONFIG_HOME", prevXDG)
-	}
+	return repoDir, restore
 }
 
 // vscodepmSyncFixturePath returns the projects.json path inside the
-// faux XDG_CONFIG_HOME and ensures the parent directory exists.
+// faux user-data root and ensures the parent directory exists.
 func vscodepmSyncFixturePath(t *testing.T, tmp string) string {
 	t.Helper()
-	dir := filepath.Join(tmp, ".config", "Code", "User",
-		"globalStorage", "alefragnani.project-manager")
+	dir := filepath.Join(tmp, vscodePMUserDataRel(),
+		constants.VSCodePMUserDir, constants.VSCodePMGlobalStorageDir,
+		constants.VSCodePMExtensionDir)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatalf("mkdir extdir: %v", err)
 	}
 
-	return filepath.Join(dir, "projects.json")
+	return filepath.Join(dir, constants.VSCodePMProjectsFile)
 }
 
 // writeVSCodePMSyncSeed writes a single-entry projects.json with a
@@ -146,16 +158,20 @@ func setupVSCodePMSyncMalformedFile(t *testing.T) (string, func()) {
 	return jsonPath, swapHomeEnv(tmp)
 }
 
-// swapHomeEnv points HOME and XDG_CONFIG_HOME at tmp and returns a
-// restore func that puts the original values back. Centralised so
-// every fixture uses the same swap shape.
+// swapHomeEnv points HOME / XDG_CONFIG_HOME / APPDATA at tmp and returns
+// a restore func that puts the original values back. Centralised so every
+// fixture uses the same swap shape across darwin / linux / windows.
 func swapHomeEnv(tmp string) func() {
-	prevHome, prevXDG := os.Getenv("HOME"), os.Getenv("XDG_CONFIG_HOME")
-	os.Setenv("HOME", tmp)
-	os.Setenv("XDG_CONFIG_HOME", filepath.Join(tmp, ".config"))
+	prevHome := os.Getenv(constants.VSCodeEnvHome)
+	prevXDG := os.Getenv(constants.VSCodeEnvXDGConfigHome)
+	prevAppData := os.Getenv(constants.VSCodeEnvAppData)
+	os.Setenv(constants.VSCodeEnvHome, tmp)
+	os.Setenv(constants.VSCodeEnvXDGConfigHome, filepath.Join(tmp, ".config"))
+	os.Setenv(constants.VSCodeEnvAppData, tmp)
 
 	return func() {
-		os.Setenv("HOME", prevHome)
-		os.Setenv("XDG_CONFIG_HOME", prevXDG)
+		os.Setenv(constants.VSCodeEnvHome, prevHome)
+		os.Setenv(constants.VSCodeEnvXDGConfigHome, prevXDG)
+		os.Setenv(constants.VSCodeEnvAppData, prevAppData)
 	}
 }
