@@ -226,4 +226,3 @@ func firstN(s string, n int) string {
 
 	return s[:n]
 }
-
