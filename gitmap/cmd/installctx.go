@@ -9,9 +9,19 @@ import (
 	"github.com/alimtvnetwork/gitmap-v19/gitmap/constants"
 )
 
+// ctxExplainEnabled is set by runInstallCtx and read by the per-platform
+// templating helpers. When true every generated leaf wraps its real
+// command with a print of `> gitmap <args>` so users see the exact
+// invocation before it runs. Process-local; never persisted to disk —
+// only the rendered registry/script body is.
+var ctxExplainEnabled bool
+
 // runInstallCtx dispatches the right-click context-menu install to
 // the platform-specific implementation. Spec: spec/04-generic-cli/30-install-ctx.md.
-func runInstallCtx() {
+// When explain=true, generated entries print their resolved invocation
+// before executing.
+func runInstallCtx(explain bool) {
+	ctxExplainEnabled = explain
 	switch runtime.GOOS {
 	case "windows":
 		runInstallCtxWindows()
