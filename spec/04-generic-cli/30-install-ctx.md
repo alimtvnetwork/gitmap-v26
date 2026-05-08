@@ -18,9 +18,26 @@ folder (`%V`).
 Installed via:
 
 ```
-gitmap install ctx          # add the menu (HKCU only — no admin)
-gitmap uninstall ctx        # remove the menu
+gitmap install ctx              # add the menu (HKCU only — no admin)
+gitmap install ctx --explain    # bake an "> gitmap <args>" announce into every
+                                # generated entry; users see the resolved
+                                # invocation before it executes. Process-local
+                                # toggle: re-running without --explain
+                                # regenerates plain entries.
+gitmap uninstall ctx            # remove the menu
 ```
+
+### 1.1 `--explain` rendering
+
+| Mode     | Where the announce appears                                      |
+| -------- | --------------------------------------------------------------- |
+| Terminal | First line in the spawned terminal: `> gitmap pull --all`       |
+| Silent   | Prepended to the OS notification body, ahead of stdout/stderr   |
+| Prefill  | Not affected — the user is typing the command themselves        |
+
+Implemented by `ctxExplainPrefixPwsh` / `ctxExplainPrefixSh` /
+`ctxExplainAnnounce` in `gitmap/cmd/installctxexplain.go`, gated by
+the package-local `ctxExplainEnabled` flag set in `runInstallCtx`.
 
 `ctx` is added to the existing install-tool table alongside `vscode-ctx`
 and `pwsh-ctx`; this spec is **strictly additive** — neither of the
