@@ -27,15 +27,13 @@ func peekNextMinorVersion() (current, next release.Version, ok bool) {
 	return cur, bumped, true
 }
 
-// readCurrentReleaseVersion is a thin wrapper around the manifest-first
-// version lookup used by the release workflow.
+// readCurrentReleaseVersion returns the repo's current pinned version
+// using the same JSON-first / git-tag-fallback resolver the explicit
+// `--bump` path uses. This keeps every release entry-point (release,
+// release --bump, release-pending, release-pull, and the right-click
+// "Release next" menu item) reading from one single source of truth.
 func readCurrentReleaseVersion() (release.Version, error) {
-	latest, err := release.ReadLatest()
-	if err == nil {
-		return release.Parse(latest.Tag)
-	}
-
-	return release.Version{}, err
+	return release.ResolveLatestVersion()
 }
 
 // confirmAutoBump prompts the user to confirm an auto-bump.

@@ -34,6 +34,25 @@ func resolveBump(level string) (Version, error) {
 
 // resolveLatestVersion tries latest.json first, then falls back to git tags.
 func resolveLatestVersion() (Version, error) {
+	return ResolveLatestVersion()
+}
+
+// ResolveLatestVersion is the public, single source of truth for "what
+// version is the repo currently pinned at?". Read order:
+//
+//  1. .gitmap/release/latest.json — the canonical pin written by every
+//     successful release (see WriteLatest).
+//  2. Local git tags matching constants.GitTagGlob — the highest stable
+//     semver wins. Used for fresh clones / repos where the JSON has been
+//     deleted but the tag history is intact.
+//
+// Returns the parsed Version on success, or an error describing which
+// sources were tried. Used by:
+//   - release.resolveBump (the `gitmap release --bump <level>` path)
+//   - cmd.peekNextMinorVersion (the bare `gitmap release` auto-bump
+//     prompt + the right-click "Release next" context-menu entry)
+//   - any future caller that needs the same source-of-truth ordering.
+func ResolveLatestVersion() (Version, error) {
 	latest, err := ReadLatest()
 	if err == nil {
 		v, parseErr := Parse(latest.Tag)
