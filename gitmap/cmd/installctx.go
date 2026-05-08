@@ -123,12 +123,20 @@ func categoryCommands(key string, e ctxEntry, exe string) [][]string {
 	return out
 }
 
-// leafCommands wires one terminal/silent/prefill action key.
+// leafCommands wires one terminal/silent/prefill action key. When
+// e.Extended is true an empty "Extended" REG_SZ value is written; the
+// Windows shell hides those entries unless Shift is held during the
+// right-click (the standard mechanism for power-user actions).
 func leafCommands(key string, e ctxEntry, exe string) [][]string {
-	return [][]string{
+	out := [][]string{
 		{"reg", "add", key, "/ve", "/d", e.MUIVerb, "/f"},
 		{"reg", "add", key + `\command`, "/ve", "/d", commandTemplate(e, exe), "/f"},
 	}
+	if e.Extended {
+		out = append(out, []string{"reg", "add", key, "/v", "Extended", "/d", "", "/f"})
+	}
+
+	return out
 }
 
 // commandTemplate builds the pwsh invocation string baked into a
