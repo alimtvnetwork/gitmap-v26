@@ -171,60 +171,6 @@ func dolphinExec(e flatCtxEntry, exe string) string {
 	}
 }
 
-// thunarMerged splices a marker-delimited <action> block into Thunar's
-// uca.xml. If a previous block exists it is replaced; otherwise we
-// inject just before </actions>.
-func thunarMerged(cur string, flat []flatCtxEntry, exe string) string {
-	block := buildThunarBlock(flat, exe)
-	if cur == "" {
-		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<actions>\n" + block + "</actions>\n"
-	}
-	begin, end := constants.CtxThunarMarkBegin, constants.CtxThunarMarkEnd
-	if i := strings.Index(cur, begin); i >= 0 {
-		if j := strings.Index(cur[i:], end); j >= 0 {
-			return cur[:i] + block + cur[i+j+len(end):]
-		}
-	}
-	if k := strings.LastIndex(cur, "</actions>"); k >= 0 {
-		return cur[:k] + block + cur[k:]
-	}
-
-	return cur + "\n<actions>\n" + block + "</actions>\n"
-}
-
-// buildThunarBlock builds the marker-wrapped <action> entries.
-func buildThunarBlock(flat []flatCtxEntry, exe string) string {
-	var b strings.Builder
-	b.WriteString(constants.CtxThunarMarkBegin + "\n")
-	for _, e := range flat {
-		fmt.Fprintf(&b, "<action><icon>utilities-terminal</icon><name>%s</name><unique-id>%s</unique-id><command>%s</command><patterns>*</patterns><directories/></action>\n",
-			e.Label, e.Slug, dolphinExec(e, exe))
-	}
-	b.WriteString(constants.CtxThunarMarkEnd + "\n")
-
-	return b.String()
-}
-
-// rmDirCtx / rmFileCtx — small helpers returning 1 on success.
-func rmDirCtx(path string) int {
-	if err := os.RemoveAll(path); err != nil {
-		fmt.Fprintf(os.Stderr, constants.MsgCtxFsRmFail, path, err)
-
-		return 0
-	}
-
-	return 1
-}
-
-func rmFileCtx(path string) int {
-	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, constants.MsgCtxFsRmFail, path, err)
-
-		return 0
-	}
-
-	return 1
-}
 
 // stripThunarBlock removes the marker block from uca.xml, leaving
 // user-managed entries intact. Returns 1 if the file was rewritten.
