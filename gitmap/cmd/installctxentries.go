@@ -24,6 +24,9 @@ func ctxMenu() []ctxEntry {
 		{KeyName: "40_repos", MUIVerb: "Repos", Children: repoChildren()},
 		{KeyName: "50_visibility", MUIVerb: "Visibility", Children: visibilityChildren()},
 		{KeyName: "60_tools", MUIVerb: "Tools", Children: toolsChildren()},
+		{KeyName: "70_git", MUIVerb: "Git", Children: gitChildren()},
+		{KeyName: "90_terminal", MUIVerb: constants.MsgCtxOpenTerminalLbl, Mode: constants.CtxModePrefill},
+		{KeyName: "91_docs", MUIVerb: constants.MsgCtxDocsLbl, Args: []string{constants.CmdDocs}, Mode: constants.CtxModeSilent},
 		{KeyName: "90_terminal", MUIVerb: constants.MsgCtxOpenTerminalLbl, Mode: constants.CtxModePrefill},
 		{KeyName: "91_docs", MUIVerb: constants.MsgCtxDocsLbl, Args: []string{constants.CmdDocs}, Mode: constants.CtxModeSilent},
 	}
