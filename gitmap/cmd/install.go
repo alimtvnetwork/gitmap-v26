@@ -15,7 +15,7 @@ func runInstall(args []string) {
 	fs := flag.NewFlagSet("install", flag.ExitOnError)
 
 	var manager, version string
-	var verbose, dryRun, check, list, yes bool
+	var verbose, dryRun, check, list, yes, explain bool
 
 	fs.StringVar(&manager, constants.FlagInstallManager, "", constants.FlagDescInstallManager)
 	fs.StringVar(&version, constants.FlagInstallVersion, "", constants.FlagDescInstallVersion)
@@ -25,6 +25,7 @@ func runInstall(args []string) {
 	fs.BoolVar(&list, constants.FlagInstallList, false, constants.FlagDescInstallList)
 	fs.BoolVar(&yes, constants.FlagInstallYes, false, constants.FlagDescInstallYes)
 	fs.BoolVar(&yes, "y", false, constants.FlagDescInstallYes)
+	fs.BoolVar(&explain, constants.FlagInstallExplain, false, constants.FlagDescInstallExplain)
 
 	reordered := reorderFlagsBeforeArgs(args)
 	fs.Parse(reordered)
@@ -51,6 +52,7 @@ func runInstall(args []string) {
 		DryRun:  dryRun,
 		Check:   check,
 		Yes:     yes,
+		Explain: explain,
 	}
 
 	executeInstall(opts)
@@ -65,6 +67,7 @@ type installOptions struct {
 	DryRun  bool
 	Check   bool
 	Yes     bool
+	Explain bool
 }
 
 // validateToolName checks if the tool is supported.
@@ -134,7 +137,7 @@ func specialInstallHandler(tool string) func(installOptions) {
 	case constants.ToolPwshCtx:
 		return func(installOptions) { runPwshContextMenu() }
 	case constants.ToolCtx:
-		return func(installOptions) { runInstallCtx() }
+		return func(opts installOptions) { runInstallCtx(opts.Explain) }
 	case constants.ToolAllDevTools:
 		return func(opts installOptions) { runAllDevTools(opts) }
 	}

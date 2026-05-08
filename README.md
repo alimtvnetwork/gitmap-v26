@@ -1589,8 +1589,12 @@ Nautilus / Dolphin / Thunar. Right-click any folder, pick the action,
 and gitmap runs against that folder as cwd.
 
 ```bash
-gitmap install ctx     # add the cascade
-gitmap uninstall ctx   # remove every entry written by ctx (safe, idempotent)
+gitmap install ctx              # add the cascade
+gitmap install ctx --explain    # bake an `> gitmap <args>` echo into every entry,
+                                # so each click prints its exact resolved invocation
+                                # before executing (terminal echo for Terminal mode,
+                                # prepended to the notification text for Silent mode)
+gitmap uninstall ctx            # remove every entry written by ctx (safe, idempotent)
 ```
 
 The table below is the **authoritative** mapping between menu item and

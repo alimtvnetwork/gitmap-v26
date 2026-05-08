@@ -120,9 +120,19 @@ func macShellFor(e flatCtxEntry, exe string) string {
 	case constants.CtxModePrefill:
 		return `osascript -e 'tell application "Terminal" to do script "cd \"'"$1"'\" && printf \"gitmap \""' -e 'tell application "Terminal" to activate'`
 	case constants.CtxModeSilent:
-		return fmt.Sprintf(`cd "$1" && OUT=$('%s' %s 2>&1); osascript -e "display notification \"$(echo \"$OUT\" | head -c 200)\" with title \"%s\""`, target, args, e.Label)
+		announce := ctxExplainAnnounce(target, e.Args)
+
+		return fmt.Sprintf(`cd "$1" && OUT=$(printf %%s '%s'; '%s' %s 2>&1); osascript -e "display notification \"$(echo \"$OUT\" | head -c 200)\" with title \"%s\""`, announce, target, args, e.Label)
 	default:
-		open := fmt.Sprintf(`osascript -e 'tell application "Terminal" to do script "cd \"'"$1"'\" && '"'"'%s'"'"' %s"' -e 'tell application "Terminal" to activate'`, target, args)
+		// Embed the explain echo as the first command in the Terminal
+		// session so the user sees the resolved invocation above the
+		// real output. echo runs inside the new shell, not the Automator
+		// host, so quoting stays AppleScript-safe.
+		echoPrefix := ""
+		if ctxExplainEnabled {
+			echoPrefix = fmt.Sprintf(`echo \"> %s %s\" && `, target, args)
+		}
+		open := fmt.Sprintf(`osascript -e 'tell application "Terminal" to do script "cd \"'"$1"'\" && %s'"'"'%s'"'"' %s"' -e 'tell application "Terminal" to activate'`, echoPrefix, target, args)
 		if e.Extended {
 			// Power-user fan-out: confirm before running. macOS lacks
 			// Shift-filter for Quick Actions, so we gate at the script.
