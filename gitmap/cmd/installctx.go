@@ -9,15 +9,37 @@ import (
 	"github.com/alimtvnetwork/gitmap-v19/gitmap/constants"
 )
 
-// runInstallCtx installs the gitmap right-click context menu (Windows-only v1).
-// Spec: spec/04-generic-cli/30-install-ctx.md.
+// runInstallCtx dispatches the right-click context-menu install to
+// the platform-specific implementation. Spec: spec/04-generic-cli/30-install-ctx.md.
 func runInstallCtx() {
-	if runtime.GOOS != "windows" {
+	switch runtime.GOOS {
+	case "windows":
+		runInstallCtxWindows()
+	case "darwin":
+		runInstallCtxMac()
+	case "linux":
+		runInstallCtxLinux()
+	default:
 		fmt.Fprintf(os.Stderr, constants.MsgCtxOSUnsupported, runtime.GOOS)
-
-		return
 	}
+}
 
+// runUninstallCtx dispatches removal to the platform implementation.
+func runUninstallCtx() {
+	switch runtime.GOOS {
+	case "windows":
+		runUninstallCtxWindows()
+	case "darwin":
+		runUninstallCtxMac()
+	case "linux":
+		runUninstallCtxLinux()
+	default:
+		fmt.Fprintf(os.Stderr, constants.MsgCtxOSUnsupported, runtime.GOOS)
+	}
+}
+
+// runInstallCtxWindows writes the full nested HKCU registry tree.
+func runInstallCtxWindows() {
 	fmt.Print(constants.MsgCtxInstallStart)
 
 	exe := resolveCtxExe()
@@ -27,14 +49,8 @@ func runInstallCtx() {
 	fmt.Printf(constants.MsgCtxInstallDone, successes, len(cmds))
 }
 
-// runUninstallCtx removes the gitmap right-click context menu.
-func runUninstallCtx() {
-	if runtime.GOOS != "windows" {
-		fmt.Fprintf(os.Stderr, constants.MsgCtxOSUnsupported, runtime.GOOS)
-
-		return
-	}
-
+// runUninstallCtxWindows removes the gitmap subtree from both HKCU roots.
+func runUninstallCtxWindows() {
 	fmt.Print(constants.MsgCtxUninstallStart)
 
 	cmds := [][]string{

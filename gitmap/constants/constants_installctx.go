@@ -6,7 +6,7 @@ package constants
 // Tool name for the install dispatcher.
 const (
 	ToolCtx     = "ctx"
-	ToolCtxDesc = "Add gitmap to Windows right-click context menu"
+	ToolCtxDesc = "Add gitmap to the OS right-click context menu (Windows / macOS / Linux)"
 )
 
 // Top-level cascade label and registry root key names. The two roots
@@ -35,7 +35,7 @@ const (
 	MsgCtxUninstallStart  = "  Removing gitmap from Windows context menu...\n"
 	MsgCtxUninstallDone   = "  ✓ gitmap context menu removed (%d/%d registry keys).\n"
 	MsgCtxRegFail         = "  ! Registry command failed: %v\n"
-	MsgCtxOSUnsupported   = "  Error: ctx is only supported on Windows (current OS: %s)\n"
+	MsgCtxOSUnsupported   = "  Error: ctx is not supported on this OS yet (current OS: %s). Supported: windows, darwin, linux.\n"
 	MsgCtxOpenTerminalLbl = "Open terminal here"
 	MsgCtxDocsLbl         = "Docs"
 )

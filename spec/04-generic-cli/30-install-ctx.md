@@ -1,9 +1,11 @@
-# `install ctx` — Windows Right-Click Context Menu (v1)
+# `install ctx` — Cross-Platform Right-Click Context Menu
 
-> Status: v1 ships **Windows-only** (registry-based, mirrors the existing
-> `install vscode-ctx` / `install pwsh-ctx` pattern in
-> `gitmap/cmd/installctxmenu.go`). macOS Services and Linux file-manager
-> integrations are specced in §7 as **deferred** future work.
+> Status: ships on **Windows** (HKCU registry cascade), **macOS**
+> (Automator Quick Action `.workflow` bundles in `~/Library/Services`)
+> and **Linux** (Nautilus scripts + Dolphin service menu + Thunar
+> `uca.xml`). The flat menu used on macOS/Linux is generated from the
+> same `[]ctxEntry` table that drives the Windows nested cascade —
+> single source of truth.
 
 ## 1. Purpose
 
@@ -209,31 +211,53 @@ Append to `constants_install.go`:
 - Use `cliexit.Reportf` for any error print (not bare `fmt.Fprintf`),
   per the `check-bare-stderr-err.sh` CI gate.
 
-## 7. Deferred — macOS / Linux (future)
+## 7. macOS / Linux — Implementation Notes
 
-### 7.1 macOS — `~/Library/Services/*.workflow`
+Because Finder Services and Linux file-manager menus do not support
+arbitrary nested cascades, `flattenCtxMenu()` (in
+`gitmap/cmd/installctxflatten.go`) collapses each `Category ▸ Child`
+into a single labelled `flatCtxEntry`:
 
-Each menu entry becomes one Automator-Service `.workflow` bundle
-generated from a Go-embedded plist template. Bundles are dropped in
-`~/Library/Services/` and appear under **Finder ▸ Services** and the
-right-click contextual menu after `pkill -kill -u $USER cfprefsd`. No
-code-signing required for user-installed Services. **Deferred**: the
-template + 25-bundle generator is non-trivial and the cascade UX
-differs from Windows (Services list is flat).
+```
+gitmap: Release — Release next (bump minor)
+gitmap: Tools — Fix repo
+gitmap: Open terminal here
+```
 
-### 7.2 Linux — Nautilus + Dolphin (GNOME + KDE only)
+### 7.1 macOS — `~/Library/Services/<slug>.workflow`
 
-- **Nautilus**: one shell script per entry in
-  `~/.local/share/nautilus/scripts/gitmap/`. Cascade is implicit via
-  the `gitmap/` subdirectory.
-- **Dolphin**: one `.desktop` file per category in
-  `~/.local/share/kio/servicemenus/` with `Actions=` listing the
-  entries. Single `gitmap-ctx.desktop` produces the cascade.
+For every flat entry we generate one Automator Quick Action bundle
+containing `Contents/Info.plist` (registers the service for
+`public.folder`) and `Contents/document.wflow` (a single
+`Run Shell Script` action). The shell script:
 
-Thunar / Nemo / Caja are **out of scope** for v2 — would need per-WM
-config-file generators with no shared format. v2 ships if and only if
-both Nautilus and Dolphin can be covered by the same `[]ctxEntry`
-table that v1 uses (no per-platform action drift).
+- **Terminal mode** → `osascript` to open Terminal.app at the folder
+  and run `gitmap <args>`.
+- **Silent mode** → run inline, surface output via
+  `display notification`.
+- **Prefill mode** → open Terminal.app and `printf "gitmap "` to leave
+  a prompt.
+
+After install, the user runs `pkill -KILL -u $USER cfprefsd` (or logs
+out/in) to refresh Finder. No code-signing or notarization required —
+`.workflow` bundles installed under the user's home are trusted.
+
+### 7.2 Linux — Nautilus + Dolphin + Thunar
+
+| Manager  | Path                                                  | Format                                   |
+| -------- | ----------------------------------------------------- | ---------------------------------------- |
+| Nautilus | `~/.local/share/nautilus/scripts/gitmap/<label>`      | One executable shell script per entry; filename = menu label. |
+| Dolphin  | `~/.local/share/kio/servicemenus/gitmap-ctx.desktop`  | Single `.desktop` with `Actions=` listing every entry under `X-KDE-Submenu=gitmap` (KDE renders this as a real cascade). |
+| Thunar   | `~/.config/Thunar/uca.xml`                            | Marker-delimited (`<!-- gitmap-ctx-begin --> … end -->`) `<action>` block; uninstall strips the block in place, leaving foreign actions intact. |
+
+All three use `x-terminal-emulator` for Terminal/Prefill modes and
+`notify-send` (with `echo` fallback) for Silent mode.
+
+### 7.3 Future managers (out of scope)
+
+Nemo, Caja and PCManFM use private formats with no shared schema; they
+are not covered. Nautilus/Dolphin/Thunar already cover GNOME, KDE and
+XFCE — roughly 95% of Linux desktop usage.
 
 ## 8. Cross-References
 
