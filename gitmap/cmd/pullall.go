@@ -1,6 +1,5 @@
 package cmd
 
-
 // runPullAll is the explicit batch-pull entry point. It forwards to
 // runPull with the --all flag injected, so the heavy lifting
 // (resolution, parallelism, stop-on-fail, pending-task accounting)

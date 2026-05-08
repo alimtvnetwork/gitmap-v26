@@ -22,13 +22,13 @@ var expectedCtxArgv = map[string]struct {
 	argv []string
 }{
 	// Scan
-	"10_scan/10_scan_here":     {"", []string{"scan"}},
-	"10_scan/20_rescan":        {"", []string{"rescan"}},
-	"10_scan/30_find_next":     {"", []string{"find-next"}},
+	"10_scan/10_scan_here": {"", []string{"scan"}},
+	"10_scan/20_rescan":    {"", []string{"rescan"}},
+	"10_scan/30_find_next": {"", []string{"find-next"}},
 	// Clone
-	"20_clone/10_clone_next":   {"", []string{"clone-next"}},
-	"20_clone/20_pull":         {"", []string{"pull"}},
-	"20_clone/30_pull_all":     {"", []string{"pull-all"}},
+	"20_clone/10_clone_next": {"", []string{"clone-next"}},
+	"20_clone/20_pull":       {"", []string{"pull"}},
+	"20_clone/30_pull_all":   {"", []string{"pull-all"}},
 	// Release — verifies FlagBumpDash + BumpMinor compose to "--bump minor"
 	"30_release/10_release":         {"", []string{"release"}},
 	"30_release/20_release_next":    {"", []string{"release", "--bump", "minor"}},

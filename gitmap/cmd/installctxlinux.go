@@ -177,5 +177,3 @@ func dolphinExec(e flatCtxEntry, exe string) string {
 		return fmt.Sprintf(`cd "%%f" && %sx-terminal-emulator -e sh -c "%s'%s' %s; exec $SHELL"`, guard, echoSh, target, args)
 	}
 }
-
-
