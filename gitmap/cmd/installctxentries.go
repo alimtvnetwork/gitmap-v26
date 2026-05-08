@@ -10,6 +10,7 @@ type ctxEntry struct {
 	Args     []string
 	Mode     constants.CtxMode
 	Exe      string     // override executable; empty => use the gitmap binary
+	Extended bool       // Windows: Shift+right-click only (HKCU "Extended" REG_SZ); macOS/Linux: prepend confirm prompt
 	Children []ctxEntry // non-nil => this is a submenu
 }
 
