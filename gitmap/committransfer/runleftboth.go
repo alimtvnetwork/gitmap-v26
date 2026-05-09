@@ -65,11 +65,13 @@ func runOneDirection(sourceDir, targetDir string, opts Options) error {
 	res, replayErr := Replay(plan, opts)
 	if replayErr != nil {
 		PrintSummary(os.Stderr, opts.LogPrefix, res)
+		PrintReconciliation(os.Stderr, os.Stderr, opts.LogPrefix, plan, res)
 
 		return replayErr
 	}
 	res.Pushed = maybePush(targetDir, opts, len(res.NewSHAs))
 	PrintSummary(os.Stdout, opts.LogPrefix, res)
+	PrintReconciliation(os.Stdout, os.Stderr, opts.LogPrefix, plan, res)
 
 	return nil
 }

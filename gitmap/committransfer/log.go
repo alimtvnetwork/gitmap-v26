@@ -16,7 +16,15 @@ func PrintPlan(w io.Writer, plan ReplayPlan, prefix string) int {
 			willReplay++
 		}
 	}
-	fmt.Fprintf(w, "%s replaying %d commits onto target:\n", prefix, willReplay)
+	considered := len(plan.Commits) + plan.MergeExcluded
+	fmt.Fprintf(w,
+		"%s replaying %d commits onto target (source-considered=%d, merge-excluded=%d)\n",
+		prefix, willReplay, considered, plan.MergeExcluded)
+	if plan.MergeExcluded > 0 {
+		fmt.Fprintf(w,
+			"%s   note: pass --include-merges to also replay merge commits\n",
+			prefix)
+	}
 	for i, c := range plan.Commits {
 		printPlanLine(w, prefix, i+1, len(plan.Commits), c)
 	}
@@ -55,6 +63,33 @@ func PrintSummary(w io.Writer, prefix string, res ReplayResult) {
 		res.SkippedDrop, res.SkippedReplayed, res.SkippedEmpty)
 	if res.Pushed && len(res.NewSHAs) > 0 {
 		fmt.Fprintf(w, "%s pushed %d commits\n", prefix, len(res.NewSHAs))
+	}
+}
+
+// PrintReconciliation writes a count-parity line so users can reconcile
+// what they saw in `git log` against what landed on the target. When
+// source-considered != accounted, a `discrepancy` line is written to
+// errW so CI scripts can detect drift.
+//
+// Issue: .lovable/memory/issues/2026-05-09-commit-transfer-count-mismatch.md
+func PrintReconciliation(w, errW io.Writer, prefix string, plan ReplayPlan, res ReplayResult) {
+	considered := len(plan.Commits) + plan.MergeExcluded
+	accounted := res.Replayed + res.SkippedDrop + res.SkippedReplayed +
+		res.SkippedEmpty + plan.MergeExcluded
+	mark := "ok"
+	if considered != accounted {
+		mark = "discrepancy"
+	}
+	fmt.Fprintf(w,
+		"%s reconcile: source-considered=%d, replayed=%d, skipped=%d (drop=%d, already-replayed=%d, empty=%d), merge-excluded=%d → accounted=%d [%s]\n",
+		prefix, considered, res.Replayed,
+		res.SkippedDrop+res.SkippedReplayed+res.SkippedEmpty,
+		res.SkippedDrop, res.SkippedReplayed, res.SkippedEmpty,
+		plan.MergeExcluded, accounted, mark)
+	if considered != accounted && errW != nil {
+		fmt.Fprintf(errW,
+			"%s reconcile DISCREPANCY: source-considered=%d but accounted=%d (delta=%d)\n",
+			prefix, considered, accounted, considered-accounted)
 	}
 }
 
