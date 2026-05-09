@@ -591,12 +591,9 @@ jobs:
           restore-keys: |
             golangci-baseline-main-${{ inputs.lint_baseline_cache_version || 'v1' }}-
 
-      - name: Install golangci-lint v1.64.8
+      - name: Install golangci-lint (pinned)
         if: needs.sha-check.outputs.already-built != 'true'
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-            | sh -s -- -b "$(go env GOPATH)/bin" v1.64.8
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+        uses: ./.github/actions/install-golangci-lint
 
       - name: Run golangci-lint (JSON, non-blocking)
         if: needs.sha-check.outputs.already-built != 'true'
@@ -1445,6 +1442,13 @@ jobs:
           echo "packages_failed=$failed" >> "$GITHUB_OUTPUT"
           exit "$rc"
 
+      - name: Install golangci-lint (pinned)
+        if: |
+          always() &&
+          needs.sha-check.outputs.already-built != 'true' &&
+          steps.full-test.conclusion != 'skipped'
+        uses: ./.github/actions/install-golangci-lint
+
       - name: golangci-lint (strict, full suite)
         if: |
           always() &&
@@ -1453,29 +1457,10 @@ jobs:
         id: full-lint
         working-directory: gitmap
         shell: bash
-        # Run the linter directly (instead of golangci-lint-action@v6) so we
-        # can capture stdout into an artifact for the PR summary AND keep
-        # the step's exit code as the gate. The linter binary itself is
-        # cached by the previous setup-go layer + ~/.cache/golangci-lint.
-        run: |
-          set -uo pipefail
-          mkdir -p /tmp/full-suite
-          # Install pinned linter version (mirrors lint-baseline-diff job).
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-            | sh -s -- -b "$(go env GOPATH)/bin" v1.64.8
-          export PATH="$(go env GOPATH)/bin:$PATH"
-          set +e
-          golangci-lint run ./... \
-            --timeout=5m \
-            --max-issues-per-linter=0 \
-            --max-same-issues=0 2>&1 | tee /tmp/full-suite/lint-output.txt
-          rc=${PIPESTATUS[0]}
-          set -e
-          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
-          # Count linter issues for the PR summary (lines like "path:line:col: msg (linter)").
-          issues=$(grep -cE '^[^[:space:]].+:[0-9]+:[0-9]+:' /tmp/full-suite/lint-output.txt || true)
-          echo "issue_count=$issues" >> "$GITHUB_OUTPUT"
-          exit "$rc"
+        # Captures stdout to an artifact for the PR summary AND keeps the
+        # step's exit code as the gate. Linter binary cached by the
+        # install-golangci-lint composite + ~/.cache/golangci-lint.
+        run: bash ../.github/scripts/full-suite-lint.sh
 
       - name: Upload full-suite outputs
         if: always() && needs.sha-check.outputs.already-built != 'true'
