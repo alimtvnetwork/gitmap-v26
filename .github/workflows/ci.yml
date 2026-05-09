@@ -174,131 +174,27 @@ jobs:
           cache-suffix: lint
 
       - name: fix-repo gofmt audit (affected .go files only)
-        # Targeted pre-gate that fires BEFORE the global `gofmt -l .`
-        # check. Detects PRs that look like a fix-repo bump (any .go
-        # file in the diff contains a `*-v<digits>` token, which is
-        # the canonical fix-repo rewrite signature) and runs gofmt on
-        # ONLY those files. This narrows the failure message from
-        # "some file isn't gofmt-clean" to "fix-repo left these files
-        # gofmt-dirty — re-run with the v4.8.0+ binary or invoke
-        # `fix-repo.ps1` v4.9.0+", which is actionable in a single
-        # read. Pure read-only — never writes back, never auto-commits;
-        # CI auto-fixes would mask the upstream bug (someone bypassed
-        # the v4.8.0 post-rewrite gofmt step). See
-        # .lovable/memory/issues/2026-05-01-fixrepo-no-gofmt.md.
+        # Targeted pre-gate that fires BEFORE the global gofmt check.
+        # Detects fix-repo-style version bumps and audits ONLY the
+        # affected files so a plain refactor PR doesn't trip it. Body
+        # extracted to .github/scripts/fix-repo-gofmt-audit.sh — see
+        # that file + .lovable/memory/issues/2026-05-01-fixrepo-no-gofmt.md.
         if: needs.sha-check.outputs.already-built != 'true'
         working-directory: gitmap
         shell: bash
-        run: |
-          set -uo pipefail
-          # Resolve the diff base. Pull requests get github.event.pull_request.base.sha;
-          # pushes diff against HEAD~1. Both fall back to "no diff" silently if the ref
-          # is missing (shallow checkouts, first push to a new branch).
-          base="${{ github.event.pull_request.base.sha || 'HEAD~1' }}"
-          changed=$(git -C .. diff --name-only --diff-filter=AM "$base" -- 'gitmap/**/*.go' 2>/dev/null | sed 's|^gitmap/||' || true)
-          if [ -z "$changed" ]; then
-            echo "fix-repo audit: no .go files changed vs $base — skipping."
-            exit 0
-          fi
-          # A fix-repo bump leaves `<base>-v<N>` literals scattered across the changed
-          # files. We grep for that signature and only audit the matching subset so a
-          # plain refactor PR doesn't trip this targeted gate.
-          affected=""
-          for f in $changed; do
-            [ -f "$f" ] || continue
-            if grep -Eq '[A-Za-z0-9._-]+-v[0-9]+' "$f"; then
-              affected="$affected $f"
-            fi
-          done
-          affected=$(echo "$affected" | xargs -n1 echo | sort -u | xargs)
-          if [ -z "$affected" ]; then
-            echo "fix-repo audit: no fix-repo-shaped tokens in changed .go files — skipping."
-            exit 0
-          fi
-          echo "fix-repo audit: scanning $(echo $affected | wc -w) affected .go file(s)…"
-          dirty=$(gofmt -l $affected)
-          if [ -n "$dirty" ]; then
-            echo "::error title=fix-repo gofmt regression::These .go files contain fix-repo-style version tokens AND are not gofmt-clean — the v4.8.0+ post-rewrite gofmt step did not run on them."
-            echo "$dirty" | sed 's/^/  /'
-            echo ""
-            echo "----- gofmt -d (diff) -----"
-            gofmt -d $dirty
-            echo "---------------------------"
-            echo ""
-            echo "Root cause: the fix-repo invocation that produced these changes did NOT auto-run gofmt."
-            echo "Most likely you ran a pre-v4.8.0 'gitmap fix-repo' or pre-v4.9.0 'fix-repo.ps1'."
-            echo ""
-            echo "Fix locally (one of):"
-            echo "  • cd gitmap && gofmt -w . && git add -u && git commit --amend --no-edit"
-            echo "  • Re-run with the current binary: gitmap fix-repo --all (auto-formats since v4.8.0)"
-            echo "  • Re-run the .ps1 helper: pwsh -File fix-repo.ps1 -All (auto-formats since v4.9.0)"
-            exit 1
-          fi
-          echo "✅ fix-repo audit: all affected .go files are gofmt-clean."
+        env:
+          GH_PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: bash ../.github/scripts/fix-repo-gofmt-audit.sh
 
-      - name: gofmt check (fail on unformatted .go files)
-        # Hard-gate: `gofmt -l` lists any .go file whose source
-        # differs from canonical gofmt output. We scan the entire
-        # `gitmap/` tree (excluding vendored / generated dirs that
-        # gofmt already skips by convention) and fail with the
-        # offending file list + the exact diff so the contributor
-        # can `gofmt -w` locally and recommit. Runs BEFORE `go vet`
-        # so a formatting regression is the first signal in the log,
-        # not buried under unrelated vet noise.
+      - name: gofmt + goimports check (fail on unformatted .go files)
+        # Hard-gate. Runs `gofmt -l` then `goimports -l` over the whole
+        # gitmap/ tree, surfacing the exact diff on failure. goimports
+        # is pinned to v0.24.0 (no @latest, per static-analysis rule).
+        # Body extracted to .github/scripts/go-format-check.sh.
         if: needs.sha-check.outputs.already-built != 'true'
         working-directory: gitmap
         shell: bash
-        run: |
-          set -uo pipefail
-          unformatted=$(gofmt -l .)
-          if [ -n "$unformatted" ]; then
-            echo "::error::The following .go files are not gofmt-clean:"
-            echo "$unformatted" | sed 's/^/  /'
-            echo ""
-            echo "----- gofmt -d (diff) -----"
-            gofmt -d $unformatted
-            echo "---------------------------"
-            echo ""
-            echo "Fix locally with:  cd gitmap && gofmt -w ."
-            exit 1
-          fi
-          echo "✅ All .go files are gofmt-clean."
-
-      - name: goimports check (import grouping + formatting)
-        # Hard-gate companion to the `gofmt` step. `goimports` is a
-        # superset of gofmt that ALSO normalizes import blocks
-        # (adds missing imports, removes unused ones, and groups
-        # std / third-party / local imports in canonical order).
-        # Run in check mode by collecting `goimports -l` output and
-        # failing if any file would be rewritten. We pin a specific
-        # version (no `@latest`, per the project's static-analysis
-        # rule) and surface the full `-d` diff so a contributor can
-        # apply the suggested edits with `goimports -w` locally.
-        #
-        # Local-prefix is set to the module path so internal imports
-        # are grouped in their own block separated from third-party.
-        if: needs.sha-check.outputs.already-built != 'true'
-        working-directory: gitmap
-        shell: bash
-        run: |
-          set -uo pipefail
-          go install golang.org/x/tools/cmd/goimports@v0.24.0
-          GOIMPORTS="$(go env GOPATH)/bin/goimports"
-          LOCAL_PREFIX="$(awk '/^module /{print $2; exit}' go.mod)"
-          unformatted=$("$GOIMPORTS" -l -local "$LOCAL_PREFIX" .)
-          if [ -n "$unformatted" ]; then
-            echo "::error::The following .go files have goimports issues (import grouping or formatting):"
-            echo "$unformatted" | sed 's/^/  /'
-            echo ""
-            echo "----- goimports -d (diff) -----"
-            "$GOIMPORTS" -d -local "$LOCAL_PREFIX" $unformatted
-            echo "-------------------------------"
-            echo ""
-            echo "Fix locally with:  cd gitmap && goimports -w -local $LOCAL_PREFIX ."
-            exit 1
-          fi
-          echo "✅ All .go files pass goimports (local prefix: $LOCAL_PREFIX)."
-
+        run: bash ../.github/scripts/go-format-check.sh
       - name: Go vet
         if: needs.sha-check.outputs.already-built != 'true'
         working-directory: gitmap
