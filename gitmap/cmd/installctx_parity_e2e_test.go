@@ -46,8 +46,13 @@ func TestCtxParityWindowsLinuxMacEmitSameLeafSet(t *testing.T) {
 		joined := strings.Join(c, " ")
 		for slug, tu := range canonical {
 			winKey := `\shell\` + strings.ReplaceAll(tu.Path, ".", `\shell\`) + `\command`
-			if strings.Contains(joined, winKey) &&
-				strings.Contains(joined, tu.Target) {
+			if !strings.Contains(joined, winKey) {
+				continue
+			}
+			// Prefill mode emits a generic pwsh prompt with no target
+			// binary baked in (see commandTemplate in installctx.go) —
+			// matches Linux/macOS branches below which also exempt it.
+			if tu.Mode == string(constants.CtxModePrefill) || strings.Contains(joined, tu.Target) {
 				winSlugs[slug] = true
 			}
 		}
