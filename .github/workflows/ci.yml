@@ -1867,3 +1867,62 @@ jobs:
           echo "  Total: $count binaries, $total_human"
           echo "========================================="
 
+  # ------------------------------------------------------------------
+  # publish-badges: per-job README badges via BYOB.
+  #
+  # GitHub's native workflow badge (badge.svg) reflects the entire
+  # workflow's last run, which makes it impossible to tell at a glance
+  # whether lint, tests, vulncheck, or build is the failing job.
+  #
+  # This job reads needs.<job>.result for the four headline jobs and
+  # publishes one shields-endpoint JSON per job to the orphan `BYOB`
+  # branch. README references them via:
+  #   https://byob.yarr.is/<owner>/<repo>/<name>
+  #
+  # The job runs with if: always() so a failed upstream still updates
+  # its own badge to red instead of leaving stale "passing" output.
+  # ------------------------------------------------------------------
+  publish-badges:
+    name: Publish per-job badges
+    runs-on: ubuntu-latest
+    needs: [lint, test, vulncheck, build]
+    if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - name: Lint badge
+        uses: RubbaBoy/[email protected]
+        with:
+          NAME: ci-lint
+          LABEL: lint
+          STATUS: ${{ needs.lint.result == 'success' && 'passing' || needs.lint.result }}
+          COLOR: ${{ needs.lint.result == 'success' && 'brightgreen' || (needs.lint.result == 'skipped' && 'lightgrey' || 'red') }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tests badge
+        uses: RubbaBoy/[email protected]
+        with:
+          NAME: ci-tests
+          LABEL: tests
+          STATUS: ${{ needs.test.result == 'success' && 'passing' || needs.test.result }}
+          COLOR: ${{ needs.test.result == 'success' && 'brightgreen' || (needs.test.result == 'skipped' && 'lightgrey' || 'red') }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Vulncheck badge
+        uses: RubbaBoy/[email protected]
+        with:
+          NAME: ci-vulncheck
+          LABEL: vulncheck
+          STATUS: ${{ needs.vulncheck.result == 'success' && 'passing' || needs.vulncheck.result }}
+          COLOR: ${{ needs.vulncheck.result == 'success' && 'brightgreen' || (needs.vulncheck.result == 'skipped' && 'lightgrey' || 'red') }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build badge
+        uses: RubbaBoy/[email protected]
+        with:
+          NAME: ci-build
+          LABEL: build
+          STATUS: ${{ needs.build.result == 'success' && 'passing' || needs.build.result }}
+          COLOR: ${{ needs.build.result == 'success' && 'brightgreen' || (needs.build.result == 'skipped' && 'lightgrey' || 'red') }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
