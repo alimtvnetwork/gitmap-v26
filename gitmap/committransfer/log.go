@@ -16,7 +16,15 @@ func PrintPlan(w io.Writer, plan ReplayPlan, prefix string) int {
 			willReplay++
 		}
 	}
-	fmt.Fprintf(w, "%s replaying %d commits onto target:\n", prefix, willReplay)
+	considered := len(plan.Commits) + plan.MergeExcluded
+	fmt.Fprintf(w,
+		"%s replaying %d commits onto target (source-considered=%d, merge-excluded=%d)\n",
+		prefix, willReplay, considered, plan.MergeExcluded)
+	if plan.MergeExcluded > 0 {
+		fmt.Fprintf(w,
+			"%s   note: pass --include-merges to also replay merge commits\n",
+			prefix)
+	}
 	for i, c := range plan.Commits {
 		printPlanLine(w, prefix, i+1, len(plan.Commits), c)
 	}
