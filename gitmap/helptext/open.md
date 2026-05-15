@@ -10,8 +10,19 @@ land in both tools.
 
     gitmap open
     gitmap op
+    gitmap open --force          # re-inject Desktop + VS Code (alias: -f)
 
-No arguments. Run from anywhere inside the repo folder.
+No positional arguments. Run from anywhere inside the repo folder.
+
+## Idempotency (--force / -f)
+
+Each tool slot is gated by a stamp on the `Repo` row
+(`LastInjectedDesktopAt`, `LastInjectedVSCodeAt`, both schema v25).
+When a stamp is already set, the matching action is skipped with a
+one-line notice. Pass `--force` (`-f`) to bypass both gates and
+re-stamp to "now". The check is per-tool: it's valid to skip
+Desktop while still re-opening VS Code (or vice versa).
+
 
 ## What it does
 
