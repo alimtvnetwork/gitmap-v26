@@ -39,6 +39,8 @@ import (
 func runInject(args []string) {
 	checkHelp("inject", args)
 
+	force := parseInjectForceFlag("inject", args)
+
 	target, err := resolveInjectTarget(args)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, constants.ErrInjectResolve, err)
@@ -48,18 +50,30 @@ func runInject(args []string) {
 	repoName := filepath.Base(target)
 	fmt.Printf(constants.MsgInjectStart, repoName, target)
 
+	if force {
+		fmt.Printf(constants.MsgInjectForceNotice, repoName)
+	}
+
 	// 1. DB upsert — only when an origin remote is configured. A
 	//    local-only repo (or a non-repo folder) silently skips this
 	//    step; we still proceed to Desktop + VS Code below.
 	upsertInjectIfRemote(target, repoName)
 
-	// 2. GitHub Desktop registration. Reuses the same helper that
-	//    `clone` and `clone-next` use, so behavior stays identical.
-	registerSingleDesktop(repoName, target)
+	// Load post-upsert stamps so a freshly-inserted row is correctly
+	// seen as "never injected" (zero strings) on first run.
+	stamps := loadInjectStamps(target)
 
-	// 3. VS Code open. Helper is no-op + warning if VS Code isn't
-	//    installed, so we don't need to gate this.
-	openInVSCode(target)
+	// 2. GitHub Desktop registration — gated by per-tool stamp.
+	if shouldRunDesktop(target, stamps, force) {
+		registerSingleDesktop(repoName, target)
+		markInjected(target, constants.InjectKindDesktop)
+	}
+
+	// 3. VS Code open — same gate.
+	if shouldRunVSCode(target, stamps, force) {
+		openInVSCode(target)
+		markInjected(target, constants.InjectKindVSCode)
+	}
 
 	// 4. Shell handoff so the parent shell cds into the injected
 	//    folder (mirrors clone / cn / cd UX). Skipped silently when

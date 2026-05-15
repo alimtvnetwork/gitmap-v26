@@ -23,6 +23,8 @@ import (
 func runOpen(args []string) {
 	checkHelp(constants.CmdOpen, args)
 
+	force := parseInjectForceFlag(constants.CmdOpen, args)
+
 	target, err := resolveOpenTarget()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, constants.ErrOpenResolveCwd, err)
@@ -32,13 +34,25 @@ func runOpen(args []string) {
 	repoName := filepath.Base(target)
 	fmt.Printf(constants.MsgOpenStart, repoName, target)
 
+	if force {
+		fmt.Printf(constants.MsgInjectForceNotice, repoName)
+	}
+
 	// Best-effort DB upsert (skipped silently if no origin remote).
 	upsertInjectIfRemote(target, repoName)
 
-	// Always re-inject Desktop + VS Code so a freshly moved/cloned
-	// repo lands in both tools without a separate `inject` call.
-	registerSingleDesktop(repoName, target)
-	openInVSCode(target)
+	stamps := loadInjectStamps(target)
+
+	// Always re-inject when forced; otherwise gate on per-tool stamp.
+	if shouldRunDesktop(target, stamps, force) {
+		registerSingleDesktop(repoName, target)
+		markInjected(target, constants.InjectKindDesktop)
+	}
+
+	if shouldRunVSCode(target, stamps, force) {
+		openInVSCode(target)
+		markInjected(target, constants.InjectKindVSCode)
+	}
 
 	fmt.Printf(constants.MsgOpenDone, repoName)
 }
