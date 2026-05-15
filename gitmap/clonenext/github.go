@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v19/gitmap/constants"
 	"github.com/alimtvnetwork/gitmap-v19/gitmap/ghtoken"
 )
 
