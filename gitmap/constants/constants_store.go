@@ -41,6 +41,8 @@ const SQLCreateRepo = `CREATE TABLE IF NOT EXISTS Repo (
 	AbsolutePath     TEXT NOT NULL,
 	CloneInstruction TEXT NOT NULL,
 	Notes            TEXT DEFAULT '',
+	LastInjectedDesktopAt TEXT DEFAULT '',
+	LastInjectedVSCodeAt  TEXT DEFAULT '',
 	CreatedAt        TEXT DEFAULT CURRENT_TIMESTAMP,
 	UpdatedAt        TEXT DEFAULT CURRENT_TIMESTAMP
 )`

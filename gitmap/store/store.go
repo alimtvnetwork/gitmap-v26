@@ -194,6 +194,7 @@ func (db *DB) Migrate() error {
 	db.migrateNotesColumn()
 	db.migrateRepoVersionColumns()
 	db.migrateRepoScanFolderID()
+	db.migrateRepoInjectTimestamps()
 	db.migrateVSCodeProjectPaths()
 
 	if err := db.SeedProjectTypes(); err != nil {
@@ -277,6 +278,14 @@ func (db *DB) migrateRepoVersionColumns() {
 // `gitmap scan` re-discovers them.
 func (db *DB) migrateRepoScanFolderID() {
 	db.addColumnIfNotExists(constants.SQLAddRepoScanFolderId)
+}
+
+// migrateRepoInjectTimestamps adds LastInjectedDesktopAt + LastInjectedVSCodeAt
+// to existing Repo rows (schema v25). Both default to '' so the inject /
+// open idempotency check treats legacy rows as "never injected".
+func (db *DB) migrateRepoInjectTimestamps() {
+	db.addColumnIfNotExists(constants.SQLAddRepoLastInjectedDesktopAt)
+	db.addColumnIfNotExists(constants.SQLAddRepoLastInjectedVSCodeAt)
 }
 
 // migrateVSCodeProjectPaths adds the JSON-encoded Paths TEXT column to
