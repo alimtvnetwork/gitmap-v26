@@ -356,6 +356,11 @@ func upsertDirectClone(url, repoName, folderName, absPath string) {
 
 	if upsertErr := db.UpsertRepos([]model.ScanRecord{rec}); upsertErr != nil {
 		fmt.Fprintf(os.Stderr, "  Warning: could not save repo to database: %v\n", upsertErr)
+
+		return
+	}
+	if markErr := db.MarkCloned(absPath); markErr != nil {
+		fmt.Fprintf(os.Stderr, "  Warning: could not stamp clone time: %v\n", markErr)
 	}
 }
 
