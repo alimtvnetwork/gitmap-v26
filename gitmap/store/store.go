@@ -195,6 +195,7 @@ func (db *DB) Migrate() error {
 	db.migrateRepoVersionColumns()
 	db.migrateRepoScanFolderID()
 	db.migrateRepoInjectTimestamps()
+	db.migrateRepoLastClonedAt()
 	db.migrateVSCodeProjectPaths()
 
 	if err := db.SeedProjectTypes(); err != nil {
