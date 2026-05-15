@@ -34,6 +34,11 @@ func recordVersionHistory(absPath string, fromVersion, toVersion int, flattenedP
 		fmt.Fprintf(os.Stderr, "  Warning: could not update repo version: %v\n", updateErr)
 	}
 
+	// Stamp clone-recency so `gitmap release` can auto-cd here from a parent dir.
+	if markErr := db.MarkCloned(absPath); markErr != nil {
+		fmt.Fprintf(os.Stderr, "  Warning: could not stamp clone time: %v\n", markErr)
+	}
+
 	// Insert version history record.
 	record := model.RepoVersionHistoryRecord{
 		RepoID:         repoID,
