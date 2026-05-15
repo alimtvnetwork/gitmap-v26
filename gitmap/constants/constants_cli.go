@@ -145,8 +145,9 @@ const (
 	// `git pull --ff-only` in the current repo, then delegates to
 	// the regular release pipeline. Hard-fails on non-fast-forward
 	// so we never tag on top of a divergent tree.
-	CmdReleasePull      = "release-pull"
-	CmdReleasePullAlias = "relp"
+	CmdReleasePull       = "release-pull"
+	CmdReleasePullAlias  = "relp"
+	CmdReleasePullAlias2 = "pr" // short form: "pull then release"
 	// CmdMakePublic / CmdMakePrivate toggle the current repo's
 	// visibility on GitHub or GitLab via `gh` / `glab`. No alias —
 	// the long forms are the spec-mandated UX. Spec:

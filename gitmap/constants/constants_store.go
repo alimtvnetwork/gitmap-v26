@@ -43,6 +43,7 @@ const SQLCreateRepo = `CREATE TABLE IF NOT EXISTS Repo (
 	Notes            TEXT DEFAULT '',
 	LastInjectedDesktopAt TEXT DEFAULT '',
 	LastInjectedVSCodeAt  TEXT DEFAULT '',
+	LastClonedAt     TEXT DEFAULT '',
 	CreatedAt        TEXT DEFAULT CURRENT_TIMESTAMP,
 	UpdatedAt        TEXT DEFAULT CURRENT_TIMESTAMP
 )`

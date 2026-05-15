@@ -195,6 +195,7 @@ func (db *DB) Migrate() error {
 	db.migrateRepoVersionColumns()
 	db.migrateRepoScanFolderID()
 	db.migrateRepoInjectTimestamps()
+	db.migrateRepoLastClonedAt()
 	db.migrateVSCodeProjectPaths()
 
 	if err := db.SeedProjectTypes(); err != nil {
@@ -286,6 +287,13 @@ func (db *DB) migrateRepoScanFolderID() {
 func (db *DB) migrateRepoInjectTimestamps() {
 	db.addColumnIfNotExists(constants.SQLAddRepoLastInjectedDesktopAt)
 	db.addColumnIfNotExists(constants.SQLAddRepoLastInjectedVSCodeAt)
+}
+
+// migrateRepoLastClonedAt adds LastClonedAt (schema v26). Powers the
+// `gitmap release` auto-cd-into-most-recent-clone fallback. Defaults
+// to '' so legacy rows are treated as "never cloned by gitmap".
+func (db *DB) migrateRepoLastClonedAt() {
+	db.addColumnIfNotExists(constants.SQLAddRepoLastClonedAt)
 }
 
 // migrateVSCodeProjectPaths adds the JSON-encoded Paths TEXT column to
