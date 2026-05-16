@@ -19,7 +19,7 @@ Clone-next flattens by default (v2.75.0+): clones into base name folder, tracks 
 Clone-next `-f` / `--force` (v3.50.0+): chdir-to-parent before remove when cwd IS target folder; refuses versioned-folder fallback.
 Completion generator uses marker-comment opt-in (v3.0.0+): `// gitmap:cmd top-level` on const block, `// gitmap:cmd skip` per spec. CI `generate-check` enforces drift.
 VS Code Project Manager sync: resolve user-data root per OS first, then append `User/globalStorage/alefragnani.project-manager/projects.json` — never hardcode the full path.
-Current version: v4.43.0 (cfrp skip-no-vN + `gitmap open` + self-install auto-setup + gh-CLI token fallback added).
+Current version: v5.1.0 (cfrp remote-based version detection fix).
 Consumer-facing JSON outputs use `gitmap/stablejson` (key-by-key, no struct reflection) so field order cannot drift across Go versions or encoding/json/v2.
 `gitmap cn` accepts folder-arg forms (v3.117.0+): `cn vX <folder>`, `cn v+1 <folder>`, `cn <folder>` (defaults v++). Dispatcher in `clonenextfolderdispatch.go` runs BEFORE alias dispatcher; uses path-hint + os.Stat heuristic. Hero card uses `--accent-success` semantic token (no hardcoded greens).
 `gitmap clone <url>` cds into cloned folder via WriteShellHandoff (v3.118.0+) — single-URL only; multi-URL deliberately skips handoff.
@@ -82,7 +82,7 @@ commit-in / cin (SPEC ONLY, spec 03-commit-in/, plan 2026-05-06): replays commit
 - [Commit-In](mem://features/commit-in) — gitmap commit-in / cin: replay commits from N input repos into one source repo, dedupe by SourceSha, replicate dual dates, profile-driven message+exclusion+function-intel rules, auto-init source (URL/repo/non-repo folder/missing). SPEC ONLY at spec/03-commit-in/, 7-phase plan in plan.md.
 - [Strictly-Prohibited](mem://constraints/strictly-prohibited) — Append-only numbered registry of forbidden actions; mirrors spec/03-general/10-strictly-prohibited.md. Entry #3 forbids file content/hash in commit-in tables; #4 forbids rewriting source-repo history.
 - [Install Ctx Menu](mem://features/install-ctx-menu) — Cross-platform `gitmap install ctx`: Windows HKCU nested cascade, macOS Automator `.workflow` Quick Actions, Linux Nautilus scripts + Dolphin .desktop submenu + Thunar uca.xml marker block. Single `[]ctxEntry` source, mixed Terminal/Silent/Prefill exec, flatten helper for non-cascading platforms.
-- [cfrp Skip No-vN](mem://features/cfrp-skip-no-version) — clone-fix-repo / cfrp gracefully skip fix-repo (one-line notice) when repo has no -vN suffix; --require-version restores strict exit. v4.43.0+.
+- [cfrp Remote No-vN Detection](mem://features/cfrp-skip-no-version) — clone-fix-repo / cfrp check Git remote repo name, not flattened folder, before skipping fix-repo. v5.1.0+.
 - [Open Command](mem://features/open-command) — `gitmap open` (op): launches BOTH GitHub Desktop and VS Code on the cwd repo, re-injecting on every call. v4.43.0+.
 - [Inject/Open Idempotency](mem://features/inject-open-idempotency) — Schema v25 stamps `LastInjectedDesktopAt`/`LastInjectedVSCodeAt` on Repo; `inject`/`open` skip per-tool unless `--force`/`-f`.
 - [Self-Install Auto-Setup](mem://features/selfinstall-auto-setup) — `gitmap self-install` invokes `gitmap setup` as a final non-fatal step so the gcd shell wrapper is installed without a separate command. v4.43.0+.
