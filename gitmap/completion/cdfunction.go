@@ -159,6 +159,32 @@ func replaceCDFunction(text, snippet string) string {
 	return text[:start] + replacement + text[end:]
 }
 
+func reconcileCDFunction(text, snippet string) string {
+	start := strings.Index(text, constants.CDFuncMarker)
+	if start < 0 {
+		return text
+	}
+	endRel, marker := findCDFunctionEnd(text[start:])
+	if endRel < 0 {
+		return text
+	}
+	blockEnd := start + endRel + len(marker)
+
+	desired := constants.CDFuncMarker + "\n" + snippet
+	existing := text[start:blockEnd]
+	after := text[blockEnd:]
+	trailingSignificant := strings.TrimSpace(after) != ""
+
+	if existing == desired && !trailingSignificant {
+		return text
+	}
+	if !trailingSignificant {
+		return text[:start] + desired + after
+	}
+
+	return appendBlock(text[:start]+after, desired)
+}
+
 func moveCDFunctionToEnd(text, snippet string) string {
 	without := removeCDFunction(text)
 	block := constants.CDFuncMarker + "\n" + snippet
