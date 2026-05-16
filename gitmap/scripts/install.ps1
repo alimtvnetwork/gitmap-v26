@@ -938,27 +938,7 @@ function Add-ToPath([string]$dir) {
     # --- 2. PowerShell $PROFILE -- ensures PATH in all PowerShell sessions ---
     $psProfilePath = $PROFILE
     if ($psProfilePath) {
-        $exportLine = "`$env:PATH = `"$dir;`$env:PATH`""
-        $marker = "# gitmap-path"
-        $markerLine = "$exportLine $marker"
-
-        $profileExists = Test-Path $psProfilePath
-        $alreadyPresent = $false
-
-        if ($profileExists) {
-            $content = Get-Content $psProfilePath -Raw -ErrorAction SilentlyContinue
-            if ($content -and ($content -match [regex]::Escape($marker))) {
-                $alreadyPresent = $true
-            }
-        }
-
-        if (-not $alreadyPresent) {
-            # Ensure parent directory exists
-            $profileDir = Split-Path $psProfilePath -Parent
-            if ($profileDir -and -not (Test-Path $profileDir)) {
-                New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
-            }
-            Add-Content -Path $psProfilePath -Value "`n$markerLine" -Encoding UTF8
+        if (Update-PowerShellProfilePathLine $psProfilePath $dir) {
             Write-OK "Added to PowerShell profile: $psProfilePath"
             $modified += "PowerShell `$PROFILE"
         }
