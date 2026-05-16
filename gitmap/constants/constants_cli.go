@@ -147,7 +147,7 @@ const (
 	// so we never tag on top of a divergent tree.
 	CmdReleasePull       = "release-pull"
 	CmdReleasePullAlias  = "relp"
-	CmdReleasePullAlias2 = "pr" // short form: "pull then release"
+	CmdReleasePullAlias2 = "rlp" // short form: "release-pull"
 	// CmdMakePublic / CmdMakePrivate toggle the current repo's
 	// visibility on GitHub or GitLab via `gh` / `glab`. No alias —
 	// the long forms are the spec-mandated UX. Spec:
