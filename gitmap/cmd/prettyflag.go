@@ -13,7 +13,21 @@ import (
 const (
 	flagPrettyPositive = "--pretty"
 	flagPrettyNegative = "--no-pretty"
+	flagColorPositive  = "--color"
+	flagColorNegative  = "--no-color"
 )
+
+// prettyFlagPrefixes lists every token recognized by ParsePrettyFlag.
+// Centralized so splitPrettyToken's prefix gate stays in sync with the
+// switch in ParsePrettyFlag. `--color` / `--no-color` are accepted as
+// synonyms for `--pretty` / `--no-pretty` because in this CLI the
+// pretty-markdown pipeline is the only thing that emits ANSI color,
+// and `--no-color` is the conventional spelling users reach for first
+// (it also mirrors the widely-supported NO_COLOR env convention).
+var prettyFlagPrefixes = []string{
+	flagPrettyPositive, flagPrettyNegative,
+	flagColorPositive, flagColorNegative,
+}
 
 // ParsePrettyFlag pulls --pretty / --no-pretty out of args and returns
 // the cleaned slice + the resolved render.PrettyMode. Accepted forms:
