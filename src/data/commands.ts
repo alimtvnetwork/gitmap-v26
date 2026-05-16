@@ -525,7 +525,7 @@ export const commands: CommandDef[] = [
   },
   {
     category: "release",
-    name: "prune", alias: "pr", description: "Delete stale release/* branches that already have a matching tag",
+    name: "prune", alias: "prn", description: "Delete stale release/* branches that already have a matching tag (alias changed v5.6.0 — was `pr`, now `prn`; `pr` belongs to pull-release)",
     usage: "gitmap prune [flags]",
     flags: [
       { flag: "--dry-run", description: "List stale branches without deleting" },
