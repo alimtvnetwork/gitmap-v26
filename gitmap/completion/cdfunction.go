@@ -135,7 +135,8 @@ func appendCDFunction(snippet, profilePath string) error {
 }
 
 func hasCurrentCDFunction(text string) bool {
-	return strings.Contains(text, constants.CDFuncMarker)
+	return strings.Contains(text, constants.CDFuncMarker) &&
+		strings.Contains(text, constants.CDFuncMarkerEnd)
 }
 
 func replaceCDFunction(text, snippet string) string {
