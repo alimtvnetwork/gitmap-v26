@@ -780,6 +780,7 @@ function Rebuild-SessionPath([string]$dir) {
 }
 
 function Get-GitmapCommandWrapperBlock([string]$dir) {
+	$safeDir = $dir.Replace("'", "''")
     $template = @'
 # gitmap command wrapper v1
 function global:Get-GitmapCommand { $candidate = Join-Path -Path '__GITMAP_DIR__' -ChildPath 'gitmap.exe'; if (Test-Path -LiteralPath $candidate) { return $candidate }; return (Get-Command gitmap.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source }
@@ -787,7 +788,7 @@ function global:gcd { $real = Get-GitmapCommand; if (-not $real) { Write-Error "
 function global:gitmap { $real = Get-GitmapCommand; if (-not $real) { Write-Error "gitmap executable not found"; return }; if ($args.Count -gt 0 -and ($args[0] -eq 'cd' -or $args[0] -eq 'go')) { $env:GITMAP_WRAPPER = "1"; $env:GITMAP_COMMAND_WRAPPER = "1"; $dest = & $real @args; if ($LASTEXITCODE -ne 0) { return }; if ($dest -and (Test-Path -LiteralPath $dest)) { Set-Location -LiteralPath $dest }; return }; & $real @args }
 # gitmap command wrapper v1 end
 '@
-    return $template.Replace('__GITMAP_DIR__', $dir)
+    return $template.Replace('__GITMAP_DIR__', $safeDir)
 }
 
 function Add-CommandWrapperToProfile([string]$profilePath, [string]$dir) {
