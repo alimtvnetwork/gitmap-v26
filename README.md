@@ -2215,16 +2215,39 @@ have to re-derive it from the row URLs.
 | Command | Alias | Description |
 |---------|-------|-------------|
 | `release` | `r` | Create release branch, tag, and push |
+| `pull-release` | `pr` *(also `release-pull`, `relp`, `rlp`)* | `git pull` (ff/rebase/merge), then release the current repo |
 | `release-alias` | `ra` | Release a repo by its registered alias from anywhere |
 | `release-alias-pull` | `rap` | `release-alias` with implicit `--pull` (pull-then-release) |
 | `release-self` | `rs` | Release gitmap itself from any directory |
 | `release-branch` | `rb` | Create release branch without tagging |
 | `temp-release` | `tr` | Create lightweight temp release branches |
 
+#### Alias mapping — `pull-release` family (v5.6.0+)
+
+`pull-release` was renamed from `release-pull` in v5.6.0 to read verb-first.
+Every legacy spelling still routes to the exact same handler — no behavior
+change, no deprecation warning. Pick whichever you have muscle memory for.
+
+| Token            | Status                        | Routes to      | Notes                                              |
+|------------------|-------------------------------|----------------|----------------------------------------------------|
+| `pull-release`   | **Canonical** (v5.6.0+)       | `pull-release` | Preferred spelling; shown in help and completions. |
+| `pr`             | **Canonical short alias**     | `pull-release` | Freed up by moving `prune` to `prn`.               |
+| `release-pull`   | Legacy long form (pre-v5.6.0) | `pull-release` | Wired as alias; safe in scripts and CI.            |
+| `relp`           | Legacy short alias            | `pull-release` | Wired as alias.                                    |
+| `rlp`            | Legacy short alias            | `pull-release` | Wired as alias.                                    |
+| `prn`            | **Canonical short alias** for `prune` (v5.6.0+) | `prune` | Previously `pr`; renamed to free `pr` for `pull-release`. `gitmap prune` (long form) is unchanged. |
+
 ```bash
 gitmap release --bump patch
 gitmap release --bump minor --bin --compress --checksums
 gitmap release v3.0.0 -N "Major redesign"
+
+# pull-release: every spelling below does the same thing
+gitmap pull-release --rebase v1.4.0      # canonical
+gitmap pr --ff-only                      # canonical short alias
+gitmap release-pull --merge              # legacy long form
+gitmap relp v1.4.0                       # legacy short alias
+gitmap rlp --dry-run                     # legacy short alias
 
 # Release any aliased repo from anywhere — no `cd` required
 gitmap as my-api                                   # one-time, run from inside the repo
@@ -2240,7 +2263,7 @@ gitmap tr 10 v1.$$ -s 5
 > Dirty trees are auto-stashed before `release-alias` runs and restored on
 > exit. Pass `--no-stash` to abort instead, or `--dry-run` to preview.
 
-→ [release](gitmap/helptext/release.md) · [release-alias](gitmap/helptext/release-alias.md) · [release-alias-pull](gitmap/helptext/release-alias-pull.md) · [release-self](gitmap/helptext/release-self.md) · [release-branch](gitmap/helptext/release-branch.md) · [temp-release](gitmap/helptext/temp-release.md)
+→ [release](gitmap/helptext/release.md) · [pull-release](gitmap/helptext/pull-release.md) · [release-alias](gitmap/helptext/release-alias.md) · [release-alias-pull](gitmap/helptext/release-alias-pull.md) · [release-self](gitmap/helptext/release-self.md) · [release-branch](gitmap/helptext/release-branch.md) · [temp-release](gitmap/helptext/temp-release.md)
 
 ---
 
