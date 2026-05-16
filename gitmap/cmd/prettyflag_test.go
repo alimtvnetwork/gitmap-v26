@@ -87,3 +87,60 @@ func TestParsePrettyFlagPassesThroughUnknownValues(t *testing.T) {
 		t.Errorf("rest = %v, want passthrough so downstream errors clearly", rest)
 	}
 }
+
+// TestParsePrettyFlagAcceptsColorSynonyms locks the `--no-color` /
+// `--color[=value]` aliases. `--no-color` is the conventional spelling
+// users reach for first (mirrors NO_COLOR env), and the CLI's only
+// ANSI surface is the pretty markdown pipeline, so the two flags
+// share a single resolver.
+func TestParsePrettyFlagAcceptsColorSynonyms(t *testing.T) {
+	cases := []struct {
+		arg  string
+		want render.PrettyMode
+	}{
+		{"--no-color", render.PrettyOff},
+		{"--color=false", render.PrettyOff},
+		{"--color=off", render.PrettyOff},
+		{"--color", render.PrettyOn},
+		{"--color=true", render.PrettyOn},
+		{"--color=on", render.PrettyOn},
+		{"--color=auto", render.PrettyAuto},
+	}
+	for _, tc := range cases {
+		rest, mode := ParsePrettyFlag([]string{tc.arg})
+		if mode != tc.want {
+			t.Errorf("%s → %v, want %v", tc.arg, mode, tc.want)
+		}
+		if len(rest) != 0 {
+			t.Errorf("%s left residue in args: %v", tc.arg, rest)
+		}
+	}
+}
+
+// TestParsePrettyFlagColorAndPrettyInteract guards last-writer-wins
+// across the synonym families — a script may compose flags from
+// multiple sources and the final mode must reflect the last token
+// regardless of which spelling it used.
+func TestParsePrettyFlagColorAndPrettyInteract(t *testing.T) {
+	_, mode := ParsePrettyFlag([]string{"--pretty", "--no-color"})
+	if mode != render.PrettyOff {
+		t.Fatalf("--pretty then --no-color → %v, want PrettyOff", mode)
+	}
+	_, mode = ParsePrettyFlag([]string{"--no-color", "--pretty=on"})
+	if mode != render.PrettyOn {
+		t.Fatalf("--no-color then --pretty=on → %v, want PrettyOn", mode)
+	}
+}
+
+// TestParsePrettyFlagDoesNotEatColorPrefixedFlags protects unrelated
+// flags that happen to share a prefix substring with `--color`
+// (e.g. a hypothetical `--colorblind`) from being silently swallowed.
+func TestParsePrettyFlagDoesNotEatColorPrefixedFlags(t *testing.T) {
+	rest, mode := ParsePrettyFlag([]string{"--colorblind", "--color=blue"})
+	if mode != render.PrettyAuto {
+		t.Errorf("unknown color value → %v, want PrettyAuto", mode)
+	}
+	if !reflect.DeepEqual(rest, []string{"--colorblind", "--color=blue"}) {
+		t.Errorf("rest = %v, want both flags passed through", rest)
+	}
+}
