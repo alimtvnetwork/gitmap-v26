@@ -8,25 +8,31 @@ import (
 	"github.com/alimtvnetwork/gitmap-v19/gitmap/constants"
 )
 
-const TestCloneFixRemoteURL = "https://github.com/alimtvnetwork/gitmap-v20.git"
+const (
+	TestCloneFixGitInitCmd  = "init"
+	TestCloneFixRepoName    = "gitmap-v20"
+	TestCloneFixFolderName  = "gitmap"
+	TestCloneFixRemoteURL   = "https://github.com/alimtvnetwork/gitmap-v20.git"
+	TestCloneFixRemoteKey   = "remote.origin.url"
+)
 
 func TestResolveCloneFixRepoNameUsesRemote(t *testing.T) {
 	dir := t.TempDir()
-	runTestGit(t, dir, "init")
-	runTestGit(t, dir, constants.GitConfigCmd, "remote.origin.url", TestCloneFixRemoteURL)
+	runTestGit(t, dir, TestCloneFixGitInitCmd)
+	runTestGit(t, dir, constants.GitConfigCmd, TestCloneFixRemoteKey, TestCloneFixRemoteURL)
 
 	got := resolveCloneFixRepoName(dir)
-	if got != "gitmap-v20" {
-		t.Fatalf("resolveCloneFixRepoName() = %q, want gitmap-v20", got)
+	if got != TestCloneFixRepoName {
+		t.Fatalf("resolveCloneFixRepoName() = %q, want %s", got, TestCloneFixRepoName)
 	}
 }
 
 func TestResolveCloneFixRepoNameFallsBackToFolder(t *testing.T) {
-	dir := filepath.Join(t.TempDir(), "gitmap")
+	dir := filepath.Join(t.TempDir(), TestCloneFixFolderName)
 
 	got := resolveCloneFixRepoName(dir)
-	if got != "gitmap" {
-		t.Fatalf("resolveCloneFixRepoName() = %q, want gitmap", got)
+	if got != TestCloneFixFolderName {
+		t.Fatalf("resolveCloneFixRepoName() = %q, want %s", got, TestCloneFixFolderName)
 	}
 }
 
