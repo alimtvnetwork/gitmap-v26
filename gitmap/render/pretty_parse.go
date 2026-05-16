@@ -52,6 +52,10 @@ func parse(lines []string) []block {
 		case strings.TrimSpace(line) == "":
 			out = append(out, block{kind: bkBlank})
 			i++
+		case isListItem(line):
+			items, next := readList(lines, i)
+			out = append(out, block{kind: bkList, lines: items})
+			i = next
 		default:
 			para, next := readParagraph(lines, i)
 			out = append(out, block{kind: bkParagraph, text: para})
