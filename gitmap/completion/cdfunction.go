@@ -136,7 +136,12 @@ func appendCDFunction(snippet, profilePath string) error {
 
 func hasCurrentCDFunction(text string) bool {
 	return strings.Contains(text, constants.CDFuncMarker) &&
-		strings.Contains(text, constants.CDFuncMarkerEnd)
+		hasCDFunctionEnd(text)
+}
+
+func hasCDFunctionEnd(text string) bool {
+	return strings.Contains(text, constants.CDFuncMarkerEnd) ||
+		strings.Contains(text, constants.CDFuncMarkerEndLegacy)
 }
 
 func replaceCDFunction(text, snippet string) string {
@@ -144,12 +149,21 @@ func replaceCDFunction(text, snippet string) string {
 	if start < 0 {
 		return text
 	}
-	end := strings.Index(text[start:], constants.CDFuncMarkerEnd)
+	end, marker := findCDFunctionEnd(text[start:])
 	if end < 0 {
 		return text
 	}
-	end += start + len(constants.CDFuncMarkerEnd)
+	end += start + len(marker)
 	replacement := constants.CDFuncMarker + "\n" + snippet
 
 	return text[:start] + replacement + text[end:]
+}
+
+func findCDFunctionEnd(text string) (int, string) {
+	current := strings.Index(text, constants.CDFuncMarkerEnd)
+	legacy := strings.Index(text, constants.CDFuncMarkerEndLegacy)
+	if current >= 0 && (legacy < 0 || current < legacy) {
+		return current, constants.CDFuncMarkerEnd
+	}
+	return legacy, constants.CDFuncMarkerEndLegacy
 }
