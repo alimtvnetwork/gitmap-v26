@@ -145,9 +145,16 @@ const (
 	// `git pull --ff-only` in the current repo, then delegates to
 	// the regular release pipeline. Hard-fails on non-fast-forward
 	// so we never tag on top of a divergent tree.
-	CmdReleasePull       = "release-pull"
-	CmdReleasePullAlias  = "relp"
-	CmdReleasePullAlias2 = "rlp" // short form: "release-pull"
+	//
+	// Renamed v5.6.0: canonical name is now `pull-release` (verb-first,
+	// reads as "pull then release"). Short alias is `pr`. The legacy
+	// names `release-pull`, `relp`, and `rlp` remain wired as aliases
+	// for backward compatibility and will not be removed.
+	CmdReleasePull       = "pull-release"
+	CmdReleasePullAlias  = "pr"
+	CmdReleasePullAlias2 = "release-pull" // legacy long form
+	CmdReleasePullAlias3 = "relp"         // legacy alias
+	CmdReleasePullAlias4 = "rlp"          // legacy alias
 	// CmdMakePublic / CmdMakePrivate toggle the current repo's
 	// visibility on GitHub or GitLab via `gh` / `glab`. No alias —
 	// the long forms are the spec-mandated UX. Spec:
