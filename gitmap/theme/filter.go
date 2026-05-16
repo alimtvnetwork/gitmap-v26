@@ -69,33 +69,33 @@ func isSGRParam(b byte) bool {
 	return (b >= '0' && b <= '9') || b == ';'
 }
 
-// downgrade maps a single SGR escape from the bright palette to its
-// plain-3X equivalent. Anything we don't recognize is dropped (safer
-// than passing through, since bright bold leaking into "standard"
-// mode would defeat the purpose).
+// downgrade maps a bright-palette SGR escape to its plain-3X
+// equivalent. Unknown escapes pass through unchanged so plain SGRs
+// emitted by other surfaces (e.g. the changelog pretty-renderer's
+// `\033[36m` / `\033[39m` / `\033[1m`) keep working in standard
+// mode — only the explicitly-bright variants are rewritten.
 func downgrade(seq string) string {
 	if alt, ok := standardDowngrades[seq]; ok {
 		return alt
 	}
 
-	return ""
+	return seq
 }
 
-// standardDowngrades enumerates every escape constants.Color* can
-// produce so the rewriter stays deterministic. Adding a new accent
-// in constants_terminal.go MUST add a row here too — otherwise the
-// standard theme will silently swallow it.
+// standardDowngrades enumerates the bright-palette escapes emitted by
+// constants.Color* so the rewriter stays deterministic. Anything not
+// listed here passes through unchanged (see downgrade). Adding a new
+// bright accent in constants_terminal.go SHOULD add a row here so the
+// "standard" theme actually tones it down.
 var standardDowngrades = map[string]string{
-	"\033[0m":               "\033[0m",
-	"\033[1;92m":            "\033[32m",
-	"\033[1;91m":            "\033[31m",
-	"\033[1;93m":            "\033[33m",
-	"\033[1;96m":            "\033[36m",
-	"\033[1;97m":            "\033[97m",
-	"\033[2;37m":            "\033[90m",
-	"\033[1;95m":            "\033[35m",
-	"\033[1;94m":            "\033[34m",
-	"\033[38;5;208m":        "\033[33m",
-	"\033[1m":               "",
-	"\033[22m":              "",
+	"\033[1;92m":     "\033[32m",
+	"\033[1;91m":     "\033[31m",
+	"\033[1;93m":     "\033[33m",
+	"\033[1;96m":     "\033[36m",
+	"\033[1;97m":     "\033[97m",
+	"\033[2;37m":     "\033[90m",
+	"\033[1;95m":     "\033[35m",
+	"\033[1;94m":     "\033[34m",
+	"\033[38;5;208m": "\033[33m",
 }
+
