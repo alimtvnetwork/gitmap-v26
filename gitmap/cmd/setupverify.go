@@ -47,6 +47,18 @@ func warnIfNoWrapper() {
 		return
 	}
 
+	installWrapperForCurrentShell()
+	printNoWrapperWarning()
+}
+
+func installWrapperForCurrentShell() {
+	shell := completion.DetectShell()
+	if err := completion.InstallCDFunction(shell); err != nil {
+		fmt.Fprintf(os.Stderr, constants.WarnWrapperInstallFmt, err)
+	}
+}
+
+func printNoWrapperWarning() {
 	fmt.Fprintf(os.Stderr, constants.MsgWrapperNotLoaded,
 		constants.ColorYellow, constants.ColorReset,
 		constants.ColorCyan, constants.ColorReset,
