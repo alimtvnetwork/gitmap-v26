@@ -134,6 +134,28 @@ func TestAppendCDFunctionRewritesLegacyEndMarker(t *testing.T) {
 	}
 }
 
+func TestAppendCDFunctionMovesManagedWrapperAfterStaleSnippet(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "profile")
+	seed := constants.CDFuncMarker + "\nfunction gitmap { 'old' }\n" +
+		constants.CDFuncMarkerEnd + "\n# later stale gitmap shell wrapper v2\nfunction gitmap { 'stale' }\n"
+
+	if err := os.WriteFile(path, []byte(seed), 0o644); err != nil {
+		t.Fatalf("seed profile failed: %v", err)
+	}
+	if err := appendCDFunction(constants.CDFuncPowerShell, path); err != nil {
+		t.Fatalf("appendCDFunction failed: %v", err)
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read profile failed: %v", err)
+	}
+	text := string(data)
+	if strings.LastIndex(text, constants.CDFuncMarker) < strings.LastIndex(text, "function gitmap { 'stale' }") {
+		t.Fatal("expected current command wrapper to load after stale wrapper")
+	}
+}
+
 func TestAppendCDFunctionCreatesProfileDir(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "Documents", "WindowsPowerShell", "profile.ps1")
 
