@@ -47,6 +47,9 @@ const (
 // CD shell wrapper functions — installed by setup/completion.
 const CDFuncMarker = "# gitmap command wrapper v1"
 
+// CDFuncMarkerEnd closes the managed command-wrapper block for rewrites.
+const CDFuncMarkerEnd = "# end gitmap command wrapper v1"
+
 // Legacy markers identify older/broken command-wrapper blocks that must be
 // replaced instead of causing setup to skip installation.
 const CDFuncMarkerLegacy = "# gitmap shell wrapper v2"
@@ -118,7 +121,8 @@ gitmap() {
     return $status
   fi
   command gitmap "$@"
-}`
+}
+# end gitmap command wrapper v1`
 
 // CDFuncZsh installs gitmap and gcd wrappers for Zsh.
 const CDFuncZsh = `gcd() {
@@ -164,7 +168,8 @@ gitmap() {
     return $status
   fi
   command gitmap "$@"
-}`
+}
+# end gitmap command wrapper v1`
 
 // CDFuncPowerShell installs gitmap and gcd wrappers for PowerShell.
 const CDFuncPowerShell = `function gcd {
@@ -231,7 +236,8 @@ function gitmap {
     Remove-Item -LiteralPath $handoff -ErrorAction SilentlyContinue
     Remove-Item Env:\GITMAP_HANDOFF_FILE -ErrorAction SilentlyContinue
   }
-}`
+}
+# end gitmap command wrapper v1`
 
 // CD function messages.
 const (

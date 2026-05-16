@@ -1,10 +1,10 @@
 ---
 name: Command Wrapper Marker Separation
-description: `gitmap`/`gcd` command-wrapper marker and runtime sentinel are separate from PATH snippet marker/env; Windows installers must write/load the PowerShell command wrapper and PATH-level shim. v5.5.0+.
+description: `gitmap`/`gcd` command-wrapper marker and runtime sentinel are separate from PATH snippet marker/env; Windows installers and release ZIPs must ship the PowerShell command wrapper plus `gitmap.ps1` shim. v5.7.0+.
 type: feature
 ---
 
-# Command Wrapper Marker Separation (v5.3.0+; installer hardening v5.4.0+; shim v5.5.0+)
+# Command Wrapper Marker Separation (v5.3.0+; installer hardening v5.4.0+; shim v5.5.0+; release asset fix v5.7.0+)
 
 ## Rule
 
@@ -40,3 +40,6 @@ exe. Result: `gitmap cd <repo>` printed a path but could not change directory.
   function has not been reloaded yet.
 - Installer/setup must replace stale `# gitmap command wrapper v1` blocks when
   the wrapper body changes; marker presence alone is not proof the body is current.
+- Release ZIPs and release-specific `install.ps1` must ship/install `gitmap.ps1`
+  beside `gitmap.exe`. The v5.5.0 fix failed for release installs because the
+  pipeline zipped only the exe, so users never received the shim.

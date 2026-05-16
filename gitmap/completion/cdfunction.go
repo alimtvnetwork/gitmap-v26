@@ -10,7 +10,7 @@ import (
 	"github.com/alimtvnetwork/gitmap-v19/gitmap/constants"
 )
 
-// InstallCDFunction writes the gcd shell wrapper to the user's profile.
+// InstallCDFunction writes the gitmap/gcd shell wrapper to user profiles.
 func InstallCDFunction(shell string) error {
 	snippet := cdSnippet(shell)
 	if len(snippet) == 0 {
@@ -42,7 +42,7 @@ func installPowerShellCommandShim() error {
 	dir := filepath.Dir(exe)
 	body := renderPowerShellCommandShim(dir)
 
-	return os.WriteFile(filepath.Join(dir, constants.PowerShellShimFile), []byte(body), 0o644)
+	return os.WriteFile(filepath.Join(dir, constants.PowerShellShimFile), []byte(body), 0o755)
 }
 
 func renderPowerShellCommandShim(dir string) string {
@@ -99,10 +99,23 @@ func appendCDFunction(snippet, profilePath string) error {
 	}
 
 	existing, err := os.ReadFile(profilePath)
-	if err == nil && hasCurrentCDFunction(string(existing)) {
-		fmt.Fprintf(os.Stderr, constants.MsgCDFuncAlready)
+	if err == nil {
+		text := string(existing)
+		if hasCurrentCDFunction(text) {
+			next := replaceCDFunction(text, snippet)
+			if next == text {
+				fmt.Fprintf(os.Stderr, constants.MsgCDFuncAlready)
 
-		return nil
+				return nil
+			}
+
+			if writeErr := os.WriteFile(profilePath, []byte(next), 0o644); writeErr != nil {
+				return fmt.Errorf(constants.ErrCompProfileWrite, profilePath, writeErr)
+			}
+			fmt.Fprintf(os.Stderr, constants.MsgCDFuncInstalled)
+
+			return nil
+		}
 	}
 
 	f, err := os.OpenFile(profilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
@@ -122,5 +135,21 @@ func appendCDFunction(snippet, profilePath string) error {
 }
 
 func hasCurrentCDFunction(text string) bool {
-	return strings.Contains(text, constants.CDFuncMarker)
+	return strings.Contains(text, constants.CDFuncMarker) &&
+		strings.Contains(text, constants.CDFuncMarkerEnd)
+}
+
+func replaceCDFunction(text, snippet string) string {
+	start := strings.Index(text, constants.CDFuncMarker)
+	if start < 0 {
+		return text
+	}
+	end := strings.Index(text[start:], constants.CDFuncMarkerEnd)
+	if end < 0 {
+		return text
+	}
+	end += start + len(constants.CDFuncMarkerEnd)
+	replacement := constants.CDFuncMarker + "\n" + snippet
+
+	return text[:start] + replacement + text[end:]
 }

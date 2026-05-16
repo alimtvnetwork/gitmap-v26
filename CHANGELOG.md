@@ -1,5 +1,36 @@
 # Changelog
 
+## v5.7.0 — (2026-05-16) — Ship PowerShell shim in release installs
+
+### Fixed
+
+- Root cause of the still-broken `gitmap cd` on Windows release installs: the
+  v5.5.0 shim existed in setup/installer code, but the release asset pipeline
+  still zipped only `gitmap.exe`, and the release-specific `install.ps1` only
+  moved the exe. Users installing from release assets therefore never received
+  `gitmap.ps1`, so PowerShell still resolved the raw exe and printed the wrapper
+  warning.
+- Windows release ZIPs now contain both `gitmap.exe` and `gitmap.ps1`.
+- The release-specific installer now moves `gitmap.ps1` beside `gitmap.exe` when
+  present, and release smoke fails if the shim is missing.
+- The generic installer now writes the shim after binary extraction even when PATH
+  handling is skipped, so `-NoPath` test/install paths still leave a complete
+  install directory.
+
+### Files
+
+- `.github/workflows/release.yml` — Windows ZIP packaging now stages `gitmap.exe`
+  + `gitmap.ps1`; release installer extracts both.
+- `.github/scripts/smoke-installer.ps1` — asserts installed releases contain the
+  shim beside the exe.
+- `gitmap/scripts/install.ps1`, `gitmap/constants/constants_cd_shim.go` — shim no
+  longer calls `exit` for normal forwarding; it preserves `$LASTEXITCODE` and
+  returns to the current PowerShell session.
+- `gitmap/completion/cdfunction.go` — managed wrapper blocks are rewritten when
+  stale instead of skipped on marker presence.
+- `src/constants/index.ts`, `gitmap/constants/constants.go` — version bumped to
+  **v5.7.0**.
+
 ## v5.6.0 — (2026-05-16) — Rename `release-pull` → `pull-release` (`pr`), refreshed help
 
 ### Changed
