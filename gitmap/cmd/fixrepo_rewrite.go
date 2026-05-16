@@ -46,9 +46,104 @@ func applyAllTargets(text, base string, current int, targets []int) (string, int
 		updated, added := applyOneTarget(text, base, n, current)
 		text = updated
 		total += added
+		// When the target is v1, the original repo on the remote may
+		// have shipped as a BARE `{base}` (no `-v1` suffix), so all
+		// downstream references read `img-pdf` rather than
+		// `img-pdf-v1`. Sweep those bare-base hits too with strict
+		// word-boundary guards so we never clobber substrings of
+		// other identifiers (or already-versioned `{base}-vN` forms).
+		if n == 1 {
+			updated, added = applyBareBase(text, base, current)
+			text = updated
+			total += added
+		}
 	}
 
 	return text, total
+}
+
+// applyBareBase rewrites every bare `{base}` occurrence to
+// `{base}-v{current}` when it appears between non-word boundaries.
+// "Word char" includes ASCII alnum, `_`, `-`, `.` so versioned forms
+// like `{base}-v2` (next byte `-`) and dotted forms like `{base}.js`
+// are left alone — the bare-base rewrite targets ONLY the standalone
+// repo-name token left over from the pre-versioned (v1 == bare) era.
+func applyBareBase(text, base string, current int) (string, int) {
+	replacement := base + "-v" + strconv.Itoa(current)
+	if base == "" || !strings.Contains(text, base) {
+		return text, 0
+	}
+
+	return scanBareBase(text, base, replacement)
+}
+
+// scanBareBase is the inner loop — split out so applyBareBase stays
+// under the 15-line cap.
+func scanBareBase(text, base, replacement string) (string, int) {
+	var b strings.Builder
+	count := 0
+	tlen := len(base)
+	pos := 0
+	for pos <= len(text) {
+		rel := strings.Index(text[pos:], base)
+		if rel < 0 {
+			b.WriteString(text[pos:])
+			break
+		}
+		idx := pos + rel
+		b.WriteString(text[pos:idx])
+		end := idx + tlen
+		count += writeBareBaseHit(&b, text, idx, end, base, replacement)
+		pos = end
+	}
+
+	return b.String(), count
+}
+
+// writeBareBaseHit emits either replacement or the literal base.
+func writeBareBaseHit(b *strings.Builder, text string, start, end int,
+	base, replacement string,
+) int {
+	if isBareBaseBoundary(text, start, end) {
+		b.WriteString(replacement)
+
+		return 1
+	}
+	b.WriteString(base)
+
+	return 0
+}
+
+// isBareBaseBoundary returns true iff the bytes immediately before
+// `start` and at `end` are not word chars (alnum / `_` / `-` / `.`).
+// Start/end of string count as non-word boundaries.
+func isBareBaseBoundary(text string, start, end int) bool {
+	if start > 0 && isBareBaseWordByte(text[start-1]) {
+		return false
+	}
+	if end < len(text) && isBareBaseWordByte(text[end]) {
+		return false
+	}
+
+	return true
+}
+
+// isBareBaseWordByte reports whether c continues an identifier-like
+// token (so the bare-base scan must NOT treat the adjacent position
+// as a boundary).
+func isBareBaseWordByte(c byte) bool {
+	switch {
+	case c >= 'a' && c <= 'z':
+		return true
+	case c >= 'A' && c <= 'Z':
+		return true
+	case c >= '0' && c <= '9':
+		return true
+	case c == '_' || c == '-' || c == '.':
+		return true
+	}
+
+	return false
 }
 
 // applyOneTarget walks every literal `{base}-vN` occurrence and
