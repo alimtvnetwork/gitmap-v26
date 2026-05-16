@@ -104,7 +104,7 @@ func TestAppendCDFunctionAppendsManagedWrapperAfterLegacyMarker(t *testing.T) {
 	if !strings.Contains(text, constants.CDFuncMarker) {
 		t.Fatal("expected managed wrapper marker to be appended")
 	}
-	if strings.Count(text, constants.CDFuncMarker) != 1 {
+	if countCDFunctionStartMarkers(text) != 1 {
 		t.Fatal("expected exactly one managed wrapper marker")
 	}
 }
