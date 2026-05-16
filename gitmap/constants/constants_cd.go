@@ -65,9 +65,10 @@ const ErrShellHandoffWriteFmt = "  ⚠ Could not write shell-handoff file %s: %v
 
 // CD wrapper verification messages.
 const (
-	MsgWrapperNotLoaded = "  %s! Shell wrapper not active%s — 'gitmap cd' printed the path but cannot change your directory.\n    Run: %s. $PROFILE%s (PowerShell) or %ssource ~/.bashrc%s / %ssource ~/.zshrc%s, then retry.\n"
-	MsgWrapperVerifyOK  = "  %s✓%s Shell wrapper is active (gitmap resolves as a function)\n"
-	MsgWrapperVerifyTip = "\n  %s→%s To activate: restart your terminal or reload your profile\n    PowerShell: %s. $PROFILE%s | Bash: %ssource ~/.bashrc%s | Zsh: %ssource ~/.zshrc%s\n"
+	WarnWrapperInstallFmt = "  ⚠ Could not auto-install shell wrapper: %v\n"
+	MsgWrapperNotLoaded   = "  %s! Shell wrapper not active%s — 'gitmap cd' printed the path but cannot change your directory yet.\n    Wrapper install was attempted; run: %s. $PROFILE%s (PowerShell) or %ssource ~/.bashrc%s / %ssource ~/.zshrc%s, then retry.\n"
+	MsgWrapperVerifyOK    = "  %s✓%s Shell wrapper is active (gitmap resolves as a function)\n"
+	MsgWrapperVerifyTip   = "\n  %s→%s To activate: restart your terminal or reload your profile\n    PowerShell: %s. $PROFILE%s | Bash: %ssource ~/.bashrc%s | Zsh: %ssource ~/.zshrc%s\n"
 )
 
 // CDFuncBash installs gitmap and gcd wrappers for Bash.
