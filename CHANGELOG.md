@@ -1,5 +1,21 @@
 # Changelog
 
+## v5.8.0 — (2026-05-16) — fix-repo bare-base rewrite for pre-versioned v1 repos
+
+### Fixed
+- `gitmap fix-repo` now rewrites bare `{base}` occurrences (not just
+  `{base}-v1`) when v1 is in the target span. Pre-versioned remotes
+  shipped without a `-v1` suffix, so downstream references read `img-pdf`
+  rather than `img-pdf-v1`; the previous rewriter skipped them entirely
+  and reported `changed: 0`. The bare-base sweep is guarded by strict
+  word-boundary checks (alnum / `_` / `-` / `.`) so `{base}-v2`,
+  `{base}.js`, `{base}_alt`, and `myimg-pdf` are all left untouched.
+
+### Tests
+- `fixrepo_rewrite_barebase_test.go` covers the v1→current bare-base
+  substitution, every word-boundary guard case, and the guarantee that
+  the bare-base pass does NOT run when v1 is absent from the target set.
+
 ## v5.7.0 — (2026-05-16) — Ship PowerShell shim in release installs
 
 ### Fixed
