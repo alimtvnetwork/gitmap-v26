@@ -1395,6 +1395,16 @@ try {
 
     Invoke-InstallVerification $binPath $installResult.InstallDir $NoPath.IsPresent
 
+    # v5.18.0+: auto-run `gitmap setup` so the shell wrapper (gcd /
+    # gitmap function) + completions are installed without a second
+    # command. Setup is idempotent (marker `# gitmap shell wrapper v2`).
+    # Non-fatal: install itself already succeeded.
+    if (Test-Path -LiteralPath $binPath) {
+        Write-Host ""
+        Write-Host "  -> Running 'gitmap setup' to install shell wrapper + completions..." -ForegroundColor Cyan
+        try { & $binPath setup } catch { Write-Host "  (setup auto-run skipped: $_)" -ForegroundColor Yellow }
+    }
+
     Write-Host ""
     Write-OK "Done! Run 'gitmap --help' to get started."
     Write-Host ""
