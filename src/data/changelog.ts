@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.17.0",
+    date: "2026-05-18",
+    subtitle: "`gitmap cd` PowerShell wrapper: coerce stdout to a single string (fixes `Set-Location : Cannot convert 'System.Object[]'`)",
+    items: [
+      "`gitmap cd <repo>` crashed in PowerShell with `Set-Location : Cannot convert 'System.Object[]' to the type 'System.String' required by parameter 'LiteralPath'` whenever the captured stdout parsed as a multi-element array (extra line, CRLF artifact, or auxiliary write turned `$dest` into `System.Object[]`).",
+      "All four PowerShell wrapper templates now collapse the captured output with `(& $real … | Out-String).Trim()` so `$dest` is always a single trimmed string before `Test-Path` / `Set-Location`: `gitmap/constants/constants_cd.go` (CDFuncPowerShell `gcd` + `gitmap`), `gitmap/constants/constants_pathsnippet.go` (PathSnippetPwshFmt `Invoke-GitmapAndSetLocation`), `gitmap/constants/constants_cd_shim.go` (gitmap.ps1 shim), `gitmap/scripts/install.ps1` (Get-GitmapCommandWrapperBlock + Get-GitmapPowerShellShimContent).",
+      "Users hit by the v5.16.0-and-earlier wrapper must re-run `gitmap setup` (or re-install) so their `Microsoft.PowerShell_profile.ps1` snippet is rewritten with the fixed body.",
+    ],
+  },
+  {
     version: "v5.16.0",
     date: "2026-05-18",
     subtitle: "`gitmap release` no longer leaks gitmap-specific content (CHANGELOG body + release-version.{ps1,sh} snapshots) into other repos' releases",
