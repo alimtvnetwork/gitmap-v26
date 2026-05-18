@@ -1,5 +1,14 @@
 # Changelog
 
+## v5.15.0 — (2026-05-18) — `gitmap install gitmap-oneliner`: print canonical Windows + macOS install one-liners in the terminal
+
+### Added
+- New `gitmap install gitmap-oneliner` command prints the canonical bootstrap one-liners for Windows (PowerShell `irm … | iex`) and macOS/Linux (bash `curl -fsSL … | sh`) without leaving the terminal. URLs are fixed to the canonical `alimtvnetwork/gitmap-v20/main` branch installers; the header version is rendered dynamically from `constants.Version`.
+- `ToolGitmapOneliner = "gitmap-oneliner"` added to the Core install tool category with description "Print the Windows + macOS install-gitmap one-liners".
+
+### Docs
+- New spec `spec/01-app/109-install-gitmap-oneliner.md` documents the command synopsis, output format, and implementation contract (fixed URLs, dynamic rendering, special-install dispatch).
+
 ## v5.14.0 — (2026-05-18) — Colorful help text: green comments, magenta keys, padded lists
 
 ### Added
