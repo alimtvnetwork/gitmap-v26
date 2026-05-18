@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.19.0",
+    date: "2026-05-18",
+    subtitle: "`gitmap rp` (release-pending) rejects version args + canonical command banner clears `rp` vs `pr` alias confusion",
+    items: [
+      "Fixed: `gitmap rp v3.1` no longer silently runs `release-pending` and releases unrelated versions (e.g. an orphaned `v2.233.0` metadata file). The old code parsed `v3.1` into `flag.Args()` and ignored it, so users who meant `pr v3.1` (pull-release) ended up releasing whatever was pending. `runReleasePending` now scans positional args for a version-shaped token (regex `^v?\\d+(\\.\\d+){0,2}(-...)?$`) and exits 2 with a precise suggestion pointing at `gitmap pr <ver>` or `gitmap release <ver>`.",
+      "Added: canonical command banner at the start of `gitmap release-pending` and `gitmap pull-release` — when a short alias (`rp`, `pr`) is invoked, the resolved canonical name + alias print to stderr first (`→ Running: gitmap release-pending  (alias: rp)`) so it's immediately obvious which pipeline is running. New reusable helper `printCanonicalCmdBanner` in `gitmap/cmd/releasepending.go`.",
+      "Files: `gitmap/cmd/releasepending.go` (runReleasePending, rejectVersionArgOnPending, printCanonicalCmdBanner, versionLikeArgPattern); `gitmap/cmd/releasepull.go` (runReleasePull banner call).",
+    ],
+  },
+  {
     version: "v5.18.0",
     date: "2026-05-18",
     subtitle: "Auto-run `gitmap setup` after install and on first `gitmap cd` when the shell wrapper isn't loaded",
