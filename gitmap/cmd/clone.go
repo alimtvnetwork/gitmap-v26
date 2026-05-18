@@ -66,6 +66,7 @@ func runClone(args []string) {
 
 	requireOnline()
 	applySSHKey(cf.SSHKeyName)
+	cf = applyURLSchemeFlags(cf)
 
 	// Multi-URL form: any positional arg containing a comma, OR 2+ positional
 	// args where the second one looks like a URL. This catches PowerShell's
@@ -529,4 +530,65 @@ func registerCloned(s model.CloneSummary, targetDir string, enabled bool) {
 		result := desktop.AddRepos(records)
 		fmt.Printf(constants.MsgDesktopSummary, result.Added, result.Failed)
 	}
+}
+
+// applyURLSchemeFlags rewrites cf.Source and every positional URL via
+// ConvertURLToSSH / ConvertURLToHTTPS when the user passes `--ssh` or
+// `--https`. Non-URL positionals (folder names, manifest shorthands
+// like `json` / `csv`) are passed through unchanged so a stray flag
+// can't corrupt a manifest-style invocation.
+//
+// `--ssh` and `--https` are mutually exclusive — when both are set,
+// `--ssh` wins and a one-line stderr warning is printed so the user
+// can spot the conflict.
+//
+// Spec: spec/01-app/110-clone-ssh-flag.md
+func applyURLSchemeFlags(cf CloneFlags) CloneFlags {
+	if !cf.UseSSH && !cf.UseHTTPS {
+		return cf
+	}
+
+	toSSH := cf.UseSSH
+	if cf.UseSSH && cf.UseHTTPS {
+		fmt.Fprintln(os.Stderr,
+			"  Warning: --ssh and --https are mutually exclusive; --ssh wins.")
+	}
+
+	rewrite := func(in string) string {
+		if !isDirectURL(in) {
+			return in
+		}
+		if toSSH {
+			if out, ok := ConvertURLToSSH(in); ok {
+				return out
+			}
+		} else {
+			if out, ok := ConvertURLToHTTPS(in); ok {
+				return out
+			}
+		}
+
+		return in
+	}
+
+	before := cf.Source
+	cf.Source = rewrite(cf.Source)
+	for i, p := range cf.Positional {
+		cf.Positional[i] = rewrite(p)
+	}
+
+	if before != cf.Source {
+		fmt.Printf("  ↪ %s rewrite: %s → %s\n", schemeLabel(toSSH), before, cf.Source)
+	}
+
+	return cf
+}
+
+// schemeLabel returns the human-readable label for the active rewrite.
+func schemeLabel(toSSH bool) string {
+	if toSSH {
+		return "--ssh"
+	}
+
+	return "--https"
 }

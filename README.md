@@ -50,31 +50,31 @@ irm https://raw.githubusercontent.com/alimtvnetwork/gitmap-v20/main/gitmap/scrip
 curl -fsSL https://raw.githubusercontent.com/alimtvnetwork/gitmap-v20/main/gitmap/scripts/install.sh | sh
 ```
 
-### 📌 Pinned version (`v5.19.0`)
+### 📌 Pinned version (`v5.20.0`)
 
 ```powershell
 # Windows · PowerShell
-irm https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/release-version-v5.19.0.ps1 | iex
+irm https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/release-version-v5.20.0.ps1 | iex
 ```
 
 ```bash
 # macOS · Linux · Bash
-curl -fsSL https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/release-version-v5.19.0.sh | bash
+curl -fsSL https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/release-version-v5.20.0.sh | bash
 ```
 
-#### 🧭 Version matrix — `v5.19.0` install-script URLs
+#### 🧭 Version matrix — `v5.20.0` install-script URLs
 
-One-line installers and release assets for the pinned **v5.19.0** build across every supported platform. All URLs resolve to the exact release tag — no fallback, no discovery.
+One-line installers and release assets for the pinned **v5.20.0** build across every supported platform. All URLs resolve to the exact release tag — no fallback, no discovery.
 
 | Platform | Shell | Install-script URL | Release binary asset |
 | --- | --- | --- | --- |
-| **Windows** (amd64) | PowerShell | [`release-version-v5.19.0.ps1`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/release-version-v5.19.0.ps1) | [`gitmap-v20.44.0-windows-amd64.zip`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/gitmap-v20.44.0-windows-amd64.zip) |
-| **macOS** (arm64) | Bash | [`release-version-v5.19.0.sh`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/release-version-v5.19.0.sh) | [`gitmap-v20.44.0-darwin-arm64.tar.gz`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/gitmap-v20.44.0-darwin-arm64.tar.gz) |
-| **macOS** (amd64) | Bash | [`release-version-v5.19.0.sh`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/release-version-v5.19.0.sh) | [`gitmap-v20.44.0-darwin-amd64.tar.gz`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/gitmap-v20.44.0-darwin-amd64.tar.gz) |
-| **Linux** (amd64) | Bash | [`release-version-v5.19.0.sh`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/release-version-v5.19.0.sh) | [`gitmap-v20.44.0-linux-amd64.tar.gz`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/gitmap-v20.44.0-linux-amd64.tar.gz) |
-| **Linux** (arm64) | Bash | [`release-version-v5.19.0.sh`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/release-version-v5.19.0.sh) | [`gitmap-v20.44.0-linux-arm64.tar.gz`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.19.0/gitmap-v20.44.0-linux-arm64.tar.gz) |
+| **Windows** (amd64) | PowerShell | [`release-version-v5.20.0.ps1`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/release-version-v5.20.0.ps1) | [`gitmap-v20.45.0-windows-amd64.zip`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/gitmap-v20.45.0-windows-amd64.zip) |
+| **macOS** (arm64) | Bash | [`release-version-v5.20.0.sh`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/release-version-v5.20.0.sh) | [`gitmap-v20.45.0-darwin-arm64.tar.gz`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/gitmap-v20.45.0-darwin-arm64.tar.gz) |
+| **macOS** (amd64) | Bash | [`release-version-v5.20.0.sh`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/release-version-v5.20.0.sh) | [`gitmap-v20.45.0-darwin-amd64.tar.gz`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/gitmap-v20.45.0-darwin-amd64.tar.gz) |
+| **Linux** (amd64) | Bash | [`release-version-v5.20.0.sh`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/release-version-v5.20.0.sh) | [`gitmap-v20.45.0-linux-amd64.tar.gz`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/gitmap-v20.45.0-linux-amd64.tar.gz) |
+| **Linux** (arm64) | Bash | [`release-version-v5.20.0.sh`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/release-version-v5.20.0.sh) | [`gitmap-v20.45.0-linux-arm64.tar.gz`](https://github.com/alimtvnetwork/gitmap-v20/releases/download/v5.20.0/gitmap-v20.45.0-linux-arm64.tar.gz) |
 
-> **Release page:** [github.com/alimtvnetwork/gitmap-v20/releases/tag/v5.19.0](https://github.com/alimtvnetwork/gitmap-v20/releases/tag/v5.19.0) · **Asset naming contract:** `gitmap-<version>-<os>-<arch>.<ext>` (`.zip` on Windows, `.tar.gz` elsewhere) — verified by the installer pre-flight HEAD probe.
+> **Release page:** [github.com/alimtvnetwork/gitmap-v20/releases/tag/v5.20.0](https://github.com/alimtvnetwork/gitmap-v20/releases/tag/v5.20.0) · **Asset naming contract:** `gitmap-<version>-<os>-<arch>.<ext>` (`.zip` on Windows, `.tar.gz` elsewhere) — verified by the installer pre-flight HEAD probe.
 
 ### 🎯 Install — Quick (pick your install drive)
 
@@ -1228,6 +1228,11 @@ gitmap clone https://github.com/alimtvnetwork/gitmap-v20
 gitmap clone https://github.com/alimtvnetwork/gitmap-v20 my-folder
 gitmap clone git@github.com:alimtvnetwork/gitmap-v20.git my-folder
 gitmap clone https://github.com/alimtvnetwork/gitmap-v20 --replace   # see spec 96
+
+# force the transport — auto-converts HTTPS <-> SSH-shorthand before git runs
+gitmap clone https://github.com/alimtvnetwork/gitmap-v20.git --ssh    # -> git@github.com:alimtvnetwork/gitmap-v20.git
+gitmap clone git@github.com:alimtvnetwork/gitmap-v20.git --https      # -> https://github.com/alimtvnetwork/gitmap-v20.git
+gitmap clone "https://github.com/a/x,https://github.com/a/y" --ssh    # batch — every URL converted
 
 # clone-next: jump to the next (or specific) versioned sibling
 gitmap cn v++                                   # my-app-v3 -> my-app-v4

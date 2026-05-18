@@ -204,6 +204,16 @@ type CloneFlags struct {
 	// Manager sidebar without an extra command. See
 	// spec/01-vscode-project-manager-sync/02-clone-sync.md.
 	NoVSCodeSync bool
+	// UseSSH forces every direct URL (and the first positional in
+	// multi-URL form) to be rewritten into its `git@host:owner/repo.git`
+	// SSH-shorthand form before git is invoked. HTTPS and `ssh://` URLs
+	// are converted via ConvertURLToSSH; already-SSH-shorthand URLs are
+	// normalized (`.git` suffix appended). See `--ssh` in clone.md.
+	UseSSH bool
+	// UseHTTPS is the symmetric counterpart of UseSSH — forces every
+	// URL into `https://host/owner/repo.git` form. Useful in CI/headless
+	// environments where the SSH agent isn't unlocked.
+	UseHTTPS bool
 }
 
 // parseCloneFlags parses flags for the clone command.
@@ -235,6 +245,10 @@ func parseCloneFlags(args []string) CloneFlags {
 		constants.FlagDescNoVSCodeSync)
 	debugPathsFlag := fs.Bool(constants.FlagDebugPaths, false,
 		constants.FlagDescDebugPaths)
+	sshFlag := fs.Bool("ssh", false,
+		"Force every clone URL into `git@host:owner/repo.git` SSH-shorthand form before git runs (auto-converts HTTPS / `ssh://` URLs)")
+	httpsFlag := fs.Bool("https", false,
+		"Force every clone URL into `https://host/owner/repo.git` form (auto-converts SSH-shorthand / `ssh://` URLs)")
 	fs.Parse(args)
 
 	applyDebugPathsEnv(*debugPathsFlag)
@@ -257,6 +271,8 @@ func parseCloneFlags(args []string) CloneFlags {
 		VerifyCmdFaithfulExitOnMismatch: *verifyExitFlag,
 		PrintCloneArgv:                  *printArgvFlag,
 		NoVSCodeSync:                    *noVSCodeSyncFlag,
+		UseSSH:                          *sshFlag,
+		UseHTTPS:                        *httpsFlag,
 	}
 }
 

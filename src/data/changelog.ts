@@ -8,6 +8,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.20.0",
+    date: "2026-05-18",
+    subtitle: "`gitmap clone --ssh` / `--https` coerce every URL into the requested transport before git runs",
+    items: [
+      "Added: `gitmap clone --ssh` rewrites every recognised Git URL into its `git@host:owner/repo.git` SSH-shorthand form before `git clone` is invoked. HTTPS (`https://github.com/owner/repo`) and `ssh://git@host[:port]/owner/repo` URLs are both converted; already-shorthand URLs are normalized (`.git` suffix appended). The flag flows through the multi-URL form too — `clone url1,url2,url3 --ssh` converts the whole batch in one shot.",
+      "Added: `gitmap clone --https` is the symmetric counterpart — forces every URL into `https://host/owner/repo.git` form. Useful in CI/headless environments where the SSH agent isn't unlocked. `--ssh` and `--https` are mutually exclusive; when both are set, `--ssh` wins and a one-line stderr warning is printed.",
+      "Behaviour: conversion happens AFTER `applySSHKey` and BEFORE the multi-URL / direct-URL routers, so the multi-URL detector sees the converted URLs. Non-URL positionals (folder names, `json`/`csv`/`text` shorthands) are skipped via the existing `isDirectURL` predicate — a stray `--ssh` cannot corrupt a manifest invocation. Port hints in `ssh://` URLs are dropped (SSH-shorthand has no port slot — use `~/.ssh/config` for non-default ports).",
+      "Files: `gitmap/cmd/cloneurlconvert.go` (new — `ConvertURLToSSH`, `ConvertURLToHTTPS`, `httpsToSSHShorthand`, `shorthandToHTTPS`, `sshSchemeToShorthand`, `sshSchemeToHTTPS`, `ensureGitSuffix`); `gitmap/cmd/rootflags.go` (UseSSH/UseHTTPS on CloneFlags, `--ssh`/`--https` registration); `gitmap/cmd/clone.go` (`applyURLSchemeFlags`, wired into `runClone`).",
+      "Spec: `spec/01-app/110-clone-ssh-flag.md`. Memory: `.lovable/memory/features/clone-ssh-flag.md`.",
+    ],
+  },
+  {
     version: "v5.19.0",
     date: "2026-05-18",
     subtitle: "`gitmap rp` (release-pending) rejects version args + canonical command banner clears `rp` vs `pr` alias confusion",

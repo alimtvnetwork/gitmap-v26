@@ -24,6 +24,8 @@ c
 | --verbose | false | Write detailed debug log |
 | --output \<mode\> | (off) | `terminal` streams a standardized branch/from/to/command block to **stdout** immediately before each URL's `git clone`. Git progress and the per-repo summary stay on **stderr**. Pipe stdout to capture just the previews. |
 | --no-vscode-sync | false | Skip writing every successfully-cloned repo into the VS Code Project Manager `projects.json`. Default is to sync (one entry per cloned repo, additive — never clobbers existing entries). Use this in CI / headless environments or when VS Code is not installed. |
+| --ssh | false | Force every clone URL into `git@host:owner/repo.git` SSH-shorthand form before `git clone` runs. Converts `https://…` and `ssh://git@…` URLs automatically. Mutually exclusive with `--https`. |
+| --https | false | Force every clone URL into `https://host/owner/repo.git` form. Converts SSH-shorthand and `ssh://…` URLs automatically. Useful in CI where the SSH agent isn't unlocked. |
 
 ## VS Code Project Manager sync
 
@@ -214,6 +216,16 @@ Delete the cache file to force a full reclone of every entry.
     [1/5] Cloning https://github.com/user/my-api.git... done
     ...
     Clone complete: 5 succeeded, 0 failed
+
+### Example 6: Force every URL into SSH-shorthand (`--ssh`)
+
+    gitmap clone https://github.com/alimtvnetwork/wp-onboarding.git --ssh
+
+**Output:**
+
+      ↪ --ssh rewrite: https://github.com/alimtvnetwork/wp-onboarding.git → git@github.com:alimtvnetwork/wp-onboarding.git
+    Cloning wp-onboarding into wp-onboarding...
+    Cloned wp-onboarding successfully.
 
 ## See Also
 
