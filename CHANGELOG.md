@@ -1,5 +1,30 @@
 # Changelog
 
+## v5.19.0 — (2026-05-18) — `gitmap rp` (release-pending) rejects version args + canonical command banner
+
+### Fixed
+- **`gitmap rp v3.1` no longer silently runs `release-pending` and releases unrelated versions** (e.g. picking up an orphaned `v2.233.0` metadata file). Users were confusing `rp` (alias for `release-pending`, which scans for ALL pending branches + orphan metadata) with `pr` (alias for `pull-release`, which pulls then releases a specific version). The old code parsed `v3.1` away into `flag.Args()` and ignored it.
+- `runReleasePending` now scans positional args for a version-shaped token (regex `^v?\d+(\.\d+){0,2}(-...)?$`) and exits 2 with a precise suggestion:
+  ```
+  ✗ gitmap release-pending (rp) takes no version argument (got "v3.1").
+    It releases EVERY pending branch + orphan metadata file — not a specific version.
+
+    Did you mean:  gitmap pr v3.1        # pull-release: pull, then release v3.1
+               or  gitmap release v3.1   # release v3.1 directly
+  ```
+
+### Added
+- **Canonical command banner** at the start of `gitmap release-pending` and `gitmap pull-release`. When the user invokes a short alias (`rp`, `pr`), the resolved canonical command name is printed to stderr first so it's immediately obvious which pipeline is running:
+  ```
+  → Running: gitmap release-pending  (alias: rp)
+  ```
+- New helper `printCanonicalCmdBanner` in `gitmap/cmd/releasepending.go` is reusable for any future alias-prone command pair.
+
+### Files
+- `gitmap/cmd/releasepending.go` — `runReleasePending`, `rejectVersionArgOnPending`, `printCanonicalCmdBanner`, `versionLikeArgPattern`.
+- `gitmap/cmd/releasepull.go` — `runReleasePull` now calls `printCanonicalCmdBanner`.
+
+
 ## v5.18.0 — (2026-05-18) — Auto-run `gitmap setup` after install and on first `gitmap cd` when shell wrapper isn't loaded
 
 ### Added
