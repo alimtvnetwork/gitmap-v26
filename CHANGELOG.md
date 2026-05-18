@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.22.0 — (2026-05-18) — Pin bump (rolls up v5.21.0 ssh view/copy/create)
+
+### Pinned
+- README pinned-version + version-matrix moved to **v5.22.0**.
+- Version constants synced: `gitmap/constants/constants.go` (`Version = "5.22.0"`), `src/constants/index.ts` (`VERSION = "v5.22.0"`).
+- No behavior changes since v5.21.0 — this release re-pins the `gitmap ssh view` / `copy` / `create` surface (clipboard-aware, soft-fails on missing `clip`/`pbcopy`/`wl-copy`/`xclip`/`xsel`) as the new stable.
+
 ## v5.21.0 — (2026-05-18) — `gitmap ssh` gets `view` / `copy` / `create` subcommands
 
 ### Added
