@@ -8,6 +8,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.23.0",
+    date: "2026-05-18",
+    subtitle: "Root-level installer URLs — `/install.ps1` and `/install.sh`",
+    items: [
+      "Added: `install.ps1` and `install.sh` now live at the **repository root**. New one-liners: Windows `irm https://raw.githubusercontent.com/alimtvnetwork/gitmap-v20/main/install.ps1 | iex` and macOS/Linux `curl -fsSL https://raw.githubusercontent.com/alimtvnetwork/gitmap-v20/main/install.sh | sh`. Shorter, more discoverable — no more `gitmap/scripts/` segment for end users.",
+      "Kept: `gitmap/scripts/install.{ps1,sh}` are unchanged source-of-truth (consumed by `go:embed` for `gitmap self-install`, the `release-version` generators, CI workflows, smoke tests, and ~50 spec/memory docs). Root files are byte-identical copies — same checksum contract, same behavior.",
+      "Pinned: README pinned-version block + version matrix moved to **v5.23.0**. All 11 install URLs in the README rewritten from `main/gitmap/scripts/install.{ps1,sh}` → `main/install.{ps1,sh}`.",
+      "Synced: `gitmap/constants/constants.go` (`Version = \"5.23.0\"`) and `src/constants/index.ts` (`VERSION = \"v5.23.0\"`).",
+    ],
+  },
+  {
     version: "v5.22.0",
     date: "2026-05-18",
     subtitle: "Pin bump — rolls up v5.21.0 `gitmap ssh view` / `copy` / `create`",
