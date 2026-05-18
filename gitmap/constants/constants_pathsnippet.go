@@ -64,7 +64,7 @@ function global:Invoke-GitmapAndSetLocation {
   if ($GitMapArgs.Count -gt 0 -and ($GitMapArgs[0] -eq 'cd' -or $GitMapArgs[0] -eq 'go')) {
     $env:GITMAP_WRAPPER = "1"
     $env:GITMAP_COMMAND_WRAPPER = "1"
-    $dest = & $real @GitMapArgs
+    $dest = (& $real @GitMapArgs | Out-String).Trim()
     if ($LASTEXITCODE -ne 0) { return }
     if ($dest -and (Test-Path -LiteralPath $dest)) { Set-Location -LiteralPath $dest }
     return
