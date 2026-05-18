@@ -10,6 +10,7 @@
 - First-time users were running `gitmap install` then `gitmap cd repo` and hitting `! Shell wrapper not active — 'gitmap cd' printed the path but cannot change your directory.` because `gitmap setup` was a separate manual step. Closing the gap in both entry points (install scripts AND cd-on-no-wrapper) means the wrapper is always there after one terminal restart.
 
 
+## v5.17.0 — (2026-05-18) — `gitmap cd` PowerShell wrapper: coerce stdout to a single string
 
 ### Fixed
 - **`gitmap cd <repo>` crashed in PowerShell** with `Set-Location : Cannot convert 'System.Object[]' to the type 'System.String'` when the captured stdout was parsed as a multi-element array (any extra line, CRLF artifact, or auxiliary write from the binary turned `$dest` into `System.Object[]`, which `Set-Location -LiteralPath` rejects).
