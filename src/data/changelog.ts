@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.22.0",
+    date: "2026-05-18",
+    subtitle: "Pin bump — rolls up v5.21.0 `gitmap ssh view` / `copy` / `create`",
+    items: [
+      "Pinned: README pinned-version block + version matrix moved to **v5.22.0** (PowerShell + Bash installer URLs and all per-platform release assets).",
+      "Synced: `gitmap/constants/constants.go` (`Version = \"5.22.0\"`) and `src/constants/index.ts` (`VERSION = \"v5.22.0\"`).",
+      "No behavior changes since v5.21.0 — this release re-pins the new `gitmap ssh view` / `copy` / `create` surface (clipboard-aware, soft-fails when no `clip` / `pbcopy` / `wl-copy` / `xclip` / `xsel` is on PATH) as the stable build.",
+    ],
+  },
+  {
     version: "v5.21.0",
     date: "2026-05-18",
     subtitle: "`gitmap ssh` gets `view` / `copy` / `create` subcommands (clipboard-aware)",
