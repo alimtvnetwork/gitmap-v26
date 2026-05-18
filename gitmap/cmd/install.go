@@ -140,6 +140,8 @@ func specialInstallHandler(tool string) func(installOptions) {
 		return func(opts installOptions) { runInstallCtx(opts.Explain) }
 	case constants.ToolAllDevTools:
 		return func(opts installOptions) { runAllDevTools(opts) }
+	case constants.ToolGitmapOneliner:
+		return func(installOptions) { runInstallGitmapOneliner() }
 	}
 
 	return nil
