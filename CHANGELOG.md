@@ -1,5 +1,16 @@
 # Changelog
 
+## v5.16.0 — (2026-05-18) — `gitmap release` no longer leaks gitmap-specific content into other repos' releases
+
+### Fixed
+- **Release body**: `gitmap release` no longer dumps gitmap's own `CHANGELOG.md` notes into the GitHub release body of unrelated repositories. `uploadToGitHub` in `gitmap/release/workflowgithub.go` now starts with an empty body and only calls `DetectChangelog()` + `AppendPinnedInstallSnippet` when `ShouldPrintInstallHint(getRemoteURL())` is true (i.e. the current repo is a `alimtvnetwork/gitmap-v<N>` source repo). Non-gitmap repos get a tag-only release with an empty body.
+- **`release-version-vX.Y.Z.{ps1,sh}` snapshot assets** are no longer attached to non-gitmap releases. Those snapshots hard-code `REPO="alimtvnetwork/gitmap-v20"` and `BINARY_NAME="gitmap"` — uploading them to `img-pdf-v2`, `some-tool-v3`, etc. would mislead users into downloading the gitmap binary from the wrong release page. `pushAndFinalize` in `gitmap/release/workflowfinalize.go` now wraps `buildReleaseVersionSnapshots` in the same `ShouldPrintInstallHint` gate.
+- All other assets (cross-compiled Go binaries, zip groups, ad-hoc bundles, checksums, docs-site) are unaffected — only the two gitmap-specific pieces are gated.
+
+### Docs
+- New spec `spec/02-app-issues/27-release-body-and-snapshots-gitmap-only.md` documents the contract: for any repo NOT matching `alimtvnetwork/gitmap-v<N>`, release body is empty and no `release-version.{ps1,sh}` snapshots are uploaded.
+- New memory `.lovable/memory/features/release-gitmap-only-body-and-snapshots.md` captures the gate rule and lists the two call sites.
+
 ## v5.15.0 — (2026-05-18) — `gitmap install gitmap-oneliner`: print canonical Windows + macOS install one-liners in the terminal
 
 ### Added

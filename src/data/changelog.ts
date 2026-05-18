@@ -8,6 +8,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.16.0",
+    date: "2026-05-18",
+    subtitle: "`gitmap release` no longer leaks gitmap-specific content (CHANGELOG body + release-version.{ps1,sh} snapshots) into other repos' releases",
+    items: [
+      "Release body: `uploadToGitHub` in `gitmap/release/workflowgithub.go` now starts with an empty body and only calls `DetectChangelog()` + `AppendPinnedInstallSnippet` when `ShouldPrintInstallHint(getRemoteURL())` is true. Non-gitmap repos get a tag-only release with an empty body — no more gitmap CHANGELOG.md notes dumped into unrelated release pages.",
+      "`release-version-vX.Y.Z.{ps1,sh}` snapshot assets are no longer attached to non-gitmap releases. Those snapshots hard-code `REPO=\"alimtvnetwork/gitmap-v20\"` and `BINARY_NAME=\"gitmap\"`. `pushAndFinalize` in `gitmap/release/workflowfinalize.go` wraps `buildReleaseVersionSnapshots` in the same `ShouldPrintInstallHint` gate.",
+      "All other assets (cross-compiled Go binaries, zip groups, ad-hoc bundles, checksums, docs-site) are unaffected.",
+      "New spec `spec/02-app-issues/27-release-body-and-snapshots-gitmap-only.md` + memory `.lovable/memory/features/release-gitmap-only-body-and-snapshots.md` document the contract.",
+    ],
+  },
+  {
     version: "v5.15.0",
     date: "2026-05-18",
     subtitle: "`gitmap install gitmap-oneliner`: print canonical Windows + macOS install one-liners in the terminal",
