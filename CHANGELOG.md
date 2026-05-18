@@ -1,6 +1,15 @@
 # Changelog
 
-## v5.17.0 — (2026-05-18) — `gitmap cd` PowerShell wrapper: coerce stdout to a single string
+## v5.18.0 — (2026-05-18) — Auto-run `gitmap setup` after install and on first `gitmap cd` when shell wrapper isn't loaded
+
+### Added
+- **Install scripts auto-run `gitmap setup`** as a final non-fatal step. Both `gitmap/scripts/install.sh` and `gitmap/scripts/install.ps1` now invoke `<bin_path> setup` immediately after `Invoke-InstallVerification` / `verify_installation`, so a fresh `irm … | iex` or `curl … | sh` lands the user with shell wrapper (`gcd` / `gitmap` profile function) + completions installed — no second manual command required. Setup is idempotent (marker `# gitmap shell wrapper v2`), so re-runs on every install are safe. Failures print a yellow `(setup auto-run skipped …)` line and continue — the install itself already succeeded.
+- **`gitmap cd` self-heals when the shell wrapper isn't loaded.** `warnIfNoWrapper` in `gitmap/cmd/setupverify.go` now auto-runs the full `gitmap setup` (not just `InstallCDFunction`) so the very first `gitmap cd <repo>` after a fresh install installs the wrapper + completions automatically. The existing stderr reload tip (`. $PROFILE` / `source ~/.zshrc`) still prints so the user knows why the *next* `cd` will actually move the parent shell. Recover-guarded — a setup panic never breaks the cd output.
+
+### Why
+- First-time users were running `gitmap install` then `gitmap cd repo` and hitting `! Shell wrapper not active — 'gitmap cd' printed the path but cannot change your directory.` because `gitmap setup` was a separate manual step. Closing the gap in both entry points (install scripts AND cd-on-no-wrapper) means the wrapper is always there after one terminal restart.
+
+
 
 ### Fixed
 - **`gitmap cd <repo>` crashed in PowerShell** with `Set-Location : Cannot convert 'System.Object[]' to the type 'System.String'` when the captured stdout was parsed as a multi-element array (any extra line, CRLF artifact, or auxiliary write from the binary turned `$dest` into `System.Object[]`, which `Set-Location -LiteralPath` rejects).
