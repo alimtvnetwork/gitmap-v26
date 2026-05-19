@@ -321,8 +321,13 @@ const (
 	ErrRegoldensPrecheckFailed  = "regoldens: determinism pre-check FAILED — at least one golden writer produced different bytes across runs; fix the writer (likely culprits: map iteration, time.Now, randomness, locale-dependent formatting). Pass 1 was NOT run; no fixtures were touched."
 )
 
-// Usage header.
-const UsageHeaderFmt = "gitmap v%s\n\n"
+// Usage header — colorful banner shown above every help screen.
+// Width is intentionally unboxed because ANSI escapes + dynamic version
+// width make fixed-width box alignment unreliable across terminals.
+const UsageHeaderFmt = "\n  " + ColorMagenta + "🗺  " + ColorWhite + "gitmap" + ColorReset +
+	"  " + ColorCyan + "v%s" + ColorReset +
+	"  " + ColorDim + "— Git repo discovery, cloning & release toolkit" + ColorReset + "\n" +
+	"  " + ColorMagenta + "────────────────────────────────────────────────────────────" + ColorReset + "\n\n"
 
 const (
 	HelpUsage            = "Usage: gitmap <command> [flags]"

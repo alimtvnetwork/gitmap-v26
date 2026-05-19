@@ -32,24 +32,31 @@ func printUsage() {
 	printGroupUtilities()
 	fmt.Println()
 	printUsageFlagSections()
+	printUsageFooter()
+}
+
+// colorGroupHeader wraps a group header line in bold cyan so each
+// section stands out from the muted command rows beneath it.
+func colorGroupHeader(header string) string {
+	return constants.ColorCyan + header + constants.ColorReset
 }
 
 // printUsageQuickStart prints examples and the help hint.
 func printUsageQuickStart() {
-	fmt.Println(constants.HelpGroupExample)
+	fmt.Println(colorGroupHeader(constants.HelpGroupExample))
 	fmt.Println(constants.HelpExampleScan)
 	fmt.Println(constants.HelpExampleList)
 	fmt.Println(constants.HelpExamplePull)
 	fmt.Println(constants.HelpExampleCD)
 	fmt.Println()
-	fmt.Println(constants.HelpGroupHint)
+	fmt.Println(colorGroupHeader(constants.HelpGroupHint))
 	fmt.Println(constants.HelpCompactHint)
 }
 
 // printGroupScanning prints the scanning commands.
 func printGroupScanning() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupScanning)
+	fmt.Println(colorGroupHeader(constants.HelpGroupScanning))
 	fmt.Println(constants.HelpScan)
 	fmt.Println(constants.HelpRescan)
 	fmt.Println(constants.HelpList)
@@ -58,7 +65,7 @@ func printGroupScanning() {
 // printGroupCloning prints the cloning commands.
 func printGroupCloning() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupCloning)
+	fmt.Println(colorGroupHeader(constants.HelpGroupCloning))
 	fmt.Println(constants.HelpClone)
 	fmt.Println(constants.HelpCloneNext)
 	fmt.Println(constants.HelpDesktopSync)
@@ -68,7 +75,7 @@ func printGroupCloning() {
 // printGroupGitOps prints the git operations commands.
 func printGroupGitOps() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupGitOps)
+	fmt.Println(colorGroupHeader(constants.HelpGroupGitOps))
 	fmt.Println(constants.HelpPull)
 	fmt.Println(constants.HelpExec)
 	fmt.Println(constants.HelpStatus)
@@ -81,7 +88,7 @@ func printGroupGitOps() {
 // printGroupNavigation prints the navigation commands.
 func printGroupNavigation() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupNavigation)
+	fmt.Println(colorGroupHeader(constants.HelpGroupNavigation))
 	fmt.Println(constants.HelpCD)
 	fmt.Println(constants.HelpGroup)
 	fmt.Println(constants.HelpMultiGroup)
@@ -93,7 +100,7 @@ func printGroupNavigation() {
 // printGroupRelease prints the release workflow commands.
 func printGroupRelease() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupRelease)
+	fmt.Println(colorGroupHeader(constants.HelpGroupRelease))
 	fmt.Println(constants.HelpRelease)
 	fmt.Println(constants.HelpReleasePull)
 	fmt.Println(constants.HelpReleaseSelf)
@@ -104,7 +111,7 @@ func printGroupRelease() {
 // printGroupReleaseInfo prints the release info commands.
 func printGroupReleaseInfo() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupReleaseInfo)
+	fmt.Println(colorGroupHeader(constants.HelpGroupReleaseInfo))
 	fmt.Println(constants.HelpChangelog)
 	fmt.Println(constants.HelpChangelogGen)
 	fmt.Println(constants.HelpListVersions)
@@ -118,7 +125,7 @@ func printGroupReleaseInfo() {
 // printGroupData prints the data/profile/bookmark commands.
 func printGroupData() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupData)
+	fmt.Println(colorGroupHeader(constants.HelpGroupData))
 	fmt.Println(constants.HelpExport)
 	fmt.Println(constants.HelpImport)
 	fmt.Println(constants.HelpProfile)
@@ -129,7 +136,7 @@ func printGroupData() {
 // printGroupHistory prints the history and stats commands.
 func printGroupHistory() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupHistory)
+	fmt.Println(colorGroupHeader(constants.HelpGroupHistory))
 	fmt.Println(constants.HelpHistory)
 	fmt.Println(constants.HelpHistoryReset)
 	fmt.Println(constants.HelpVersionHistory)
@@ -139,7 +146,7 @@ func printGroupHistory() {
 // printGroupAmend prints the amend commands.
 func printGroupAmend() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupAmendGroup)
+	fmt.Println(colorGroupHeader(constants.HelpGroupAmendGroup))
 	fmt.Println(constants.HelpAmend)
 	fmt.Println(constants.HelpAmendList)
 }
@@ -147,7 +154,7 @@ func printGroupAmend() {
 // printGroupProject prints the project detection commands.
 func printGroupProject() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupProject)
+	fmt.Println(colorGroupHeader(constants.HelpGroupProject))
 	fmt.Println(constants.HelpGoRepos)
 	fmt.Println(constants.HelpNodeRepos)
 	fmt.Println(constants.HelpReactRepos)
@@ -158,21 +165,21 @@ func printGroupProject() {
 // printGroupSSH prints the SSH key management commands.
 func printGroupSSH() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupSSH)
+	fmt.Println(colorGroupHeader(constants.HelpGroupSSH))
 	fmt.Println(constants.HelpSSH)
 }
 
 // printGroupZip prints the zip group commands.
 func printGroupZip() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupZip)
+	fmt.Println(colorGroupHeader(constants.HelpGroupZip))
 	fmt.Println(constants.HelpZipGroup)
 }
 
 // printGroupEnvTools prints the env and install commands.
 func printGroupEnvTools() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupEnvTools)
+	fmt.Println(colorGroupHeader(constants.HelpGroupEnvTools))
 	fmt.Println(constants.HelpEnv)
 	fmt.Println(constants.HelpInstall)
 	fmt.Println(constants.HelpUninstall)
@@ -181,7 +188,7 @@ func printGroupEnvTools() {
 // printGroupTasks prints the task commands.
 func printGroupTasks() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupTasks)
+	fmt.Println(colorGroupHeader(constants.HelpGroupTasks))
 	fmt.Println(constants.HelpTask)
 	fmt.Println(constants.HelpPending)
 	fmt.Println(constants.HelpDoPending)
@@ -190,7 +197,7 @@ func printGroupTasks() {
 // printGroupVisualize prints the visualization commands.
 func printGroupVisualize() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupVisualize)
+	fmt.Println(colorGroupHeader(constants.HelpGroupVisualize))
 	fmt.Println(constants.HelpDashboard)
 }
 
@@ -200,7 +207,7 @@ func printGroupVisualize() {
 // to learn the aliases (cml / cmr / cmb) even exist.
 func printGroupCommitXfer() {
 	fmt.Println()
-	fmt.Println(constants.HelpGroupCommitXfer)
+	fmt.Println(colorGroupHeader(constants.HelpGroupCommitXfer))
 	fmt.Println(constants.HelpCommitRight)
 	fmt.Println(constants.HelpCommitLeft)
 	fmt.Println(constants.HelpCommitBoth)
