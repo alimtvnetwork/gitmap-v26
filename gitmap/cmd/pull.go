@@ -79,12 +79,11 @@ func shouldPullCWD(opts pullOptions) bool {
 	return isGitRepoCWD()
 }
 
-// isGitRepoCWD returns true when the cwd (or an ancestor) contains a
-// `.git` entry. Uses `git rev-parse --is-inside-work-tree` so worktrees
+// isGitRepoCWD returns true when the cwd (or an ancestor) is inside a
+// git work tree. Uses `git rev-parse --is-inside-work-tree` so worktrees
 // and submodules are honoured.
 func isGitRepoCWD() bool {
-	cmd := execCommand("git", "rev-parse", "--is-inside-work-tree")
-	out, err := cmd.Output()
+	out, err := exec.Command("git", "rev-parse", "--is-inside-work-tree").Output()
 	if err != nil {
 		return false
 	}
@@ -96,13 +95,14 @@ func isGitRepoCWD() bool {
 func runPullCWD() {
 	cwd, _ := os.Getwd()
 	fmt.Printf("→ Running: git pull (cwd: %s)\n", cwd)
-	cmd := execCommand("git", "pull")
+	cmd := exec.Command("git", "pull")
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		if code := exitCodeFromErr(err); code != 0 {
-			exitWith(code)
+		var exitErr *exec.ExitError
+		if errors.As(err, &exitErr) {
+			exitWith(exitErr.ExitCode())
 		}
 		fmt.Fprintf(os.Stderr, "git pull failed: %v\n", err)
 		exitWith(1)
