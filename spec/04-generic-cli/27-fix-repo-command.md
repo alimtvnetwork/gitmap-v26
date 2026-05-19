@@ -127,14 +127,24 @@ NOT the pre-versioned origin URL — it is the binary name, package
 identifier, brand string, or an unrelated repo reference, and rewriting
 it to `{base}-v{current}` silently corrupts the repo.
 
-Example — running `gitmap fix-repo` inside `gitmap-v4`:
+### Before / after table — `gitmap fix-repo` semantics by current version
 
-- BEFORE v5.38.0: every bare `gitmap` mention (including
-  `https://github.com/owner/gitmap`, the `gitmap` binary name in
-  install scripts, `gitmap-cli` package descriptions, etc.) got
-  rewritten to `gitmap-v4` — corrupting the working tree.
-- v5.38.0+: bare `gitmap` is left alone. Only `gitmap-v1`, `gitmap-v2`,
-  `gitmap-v3` are rewritten to `gitmap-v4`.
+| Working repo | Target span | Token in source       | Rewritten to        | Why |
+|--------------|-------------|-----------------------|---------------------|-----|
+| `gitmap-v2`  | v1          | `gitmap`              | `gitmap-v2`         | Bare sweep ACTIVE (n=1, current=2) |
+| `gitmap-v2`  | v1          | `gitmap-v1`           | `gitmap-v2`         | Versioned token rewrite |
+| `gitmap-v2`  | v1          | `gitmap.js`           | `gitmap.js`         | Word-boundary guard |
+| `gitmap-v2`  | v1 (`-r nv`)| `gitmap`              | `gitmap`            | Bare sweep suppressed by `--restrict no-version` |
+| `gitmap-v3`  | v1, v2      | `gitmap`              | `gitmap`            | Bare sweep SKIPPED (current ≥ 3) |
+| `gitmap-v3`  | v1, v2      | `gitmap-v1`/`-v2`     | `gitmap-v3`         | Versioned token rewrite |
+| `gitmap-v4`  | v1..v3      | `https://…/gitmap`    | `https://…/gitmap`  | Bare upstream URL preserved |
+| `gitmap-v4`  | v1..v3      | `gitmap-v18`          | `gitmap-v18`        | Negative-lookahead vs `-v1` |
+| `gitmap-v4`  | v1..v3      | `gitmap-v1..v3`       | `gitmap-v4`         | Versioned token rewrite |
+
+Pre-v5.38.0 regression: running inside `gitmap-v4` rewrote every bare
+`gitmap` mention (binary name, upstream URL, `gitmap-cli` package
+descriptor, brand strings) to `gitmap-v4`. The v5.38.0 gate restored
+correctness; the table above is the contract going forward.
 
 Implementation: `applyAllTargets` in `gitmap/cmd/fixrepo_rewrite.go`,
 guarded by `if n == 1 && current == 2`. Regression locks:

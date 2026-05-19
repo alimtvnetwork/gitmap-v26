@@ -57,6 +57,45 @@ changed: 2 files (5 replacements)
 mode:    dry-run
 ```
 
+## Before / after by current version
+
+The bare-base sweep only fires on the v1→v2 bump. Use `--restrict no-version`
+(`-r nv`) to suppress it even there.
+
+### Inside `gitmap-v2` (current=v2, target includes v1) — bare sweep ACTIVE
+
+```
+BEFORE                                      AFTER (gitmap fix-repo)
+gitmap          → script body                gitmap-v2
+gitmap-v1       → install URL                gitmap-v2
+gitmap-v2       → already current            gitmap-v2  (no-op)
+gitmap.js       → filename, word-boundary    gitmap.js  (skipped)
+```
+
+With `--restrict no-version` (`-r nv`):
+
+```
+BEFORE                                      AFTER (gitmap fr -r nv)
+gitmap          → bare token                 gitmap     (PRESERVED)
+gitmap-v1       → versioned                  gitmap-v2
+```
+
+### Inside `gitmap-v3` or higher (current≥v3) — bare sweep SKIPPED
+
+```
+BEFORE                                      AFTER (gitmap fix-repo --all)
+gitmap                  → binary / brand     gitmap         (PRESERVED)
+https://…/owner/gitmap  → upstream URL       …/owner/gitmap (PRESERVED)
+gitmap-v1               → prior version      gitmap-v<cur>
+gitmap-v2               → prior version      gitmap-v<cur>
+gitmap-v18              → unrelated future   gitmap-v18     (negative-lookahead)
+```
+
+Rule of thumb: once you've shipped past v2, bare `{base}` is almost always
+the binary, package, or brand name — never the pre-versioned remote — so
+the rewriter leaves it alone.
+
+
 ## Exit codes
 
 `0` ok / `2` not-a-repo / `3` no-remote / `4` no-version-suffix /
