@@ -34,6 +34,10 @@ func runPull(args []string) {
 	if opts.verbose {
 		initVerboseLog()
 	}
+	if shouldPullCWD(opts) {
+		runPullCWD()
+		return
+	}
 	records := resolvePullTargets(opts.slug, opts.group, opts.all)
 	if opts.onlyAvailable {
 		records = filterByAvailableUpdates(records)
@@ -60,6 +64,47 @@ func runPull(args []string) {
 	}
 
 	completePendingTask(taskDB, taskID)
+}
+
+// shouldPullCWD reports whether `gitmap pull` was invoked with no
+// targeting flags AND the current working directory is itself a git
+// repo. In that case we short-circuit to a plain `git pull` so the
+// command behaves like the muscle-memory `git pull` users expect.
+func shouldPullCWD(opts pullOptions) bool {
+	if opts.slug != "" || opts.group != "" || opts.all || HasAlias() {
+		return false
+	}
+	return isGitRepoCWD()
+}
+
+// isGitRepoCWD returns true when the cwd (or an ancestor) contains a
+// `.git` entry. Uses `git rev-parse --is-inside-work-tree` so worktrees
+// and submodules are honoured.
+func isGitRepoCWD() bool {
+	cmd := execCommand("git", "rev-parse", "--is-inside-work-tree")
+	out, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+	return strings.TrimSpace(string(out)) == "true"
+}
+
+// runPullCWD streams `git pull` in the current directory, forwarding
+// stdout/stderr/stdin and propagating the underlying exit code.
+func runPullCWD() {
+	cwd, _ := os.Getwd()
+	fmt.Printf("→ Running: git pull (cwd: %s)\n", cwd)
+	cmd := execCommand("git", "pull")
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		if code := exitCodeFromErr(err); code != 0 {
+			exitWith(code)
+		}
+		fmt.Fprintf(os.Stderr, "git pull failed: %v\n", err)
+		exitWith(1)
+	}
 }
 
 // beginPullTask records the pending task entry for this pull batch.
