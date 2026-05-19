@@ -37,6 +37,13 @@ func runSSHCopy(args []string) {
 	pub := strings.TrimSpace(key.PublicKey)
 	fmt.Println(pub)
 
+	copyPubKeyAndAnnounce(pub)
+}
+
+// copyPubKeyAndAnnounce pushes the public key to the OS clipboard and
+// prints a friendly emoji status line to stderr. Soft-fails when no
+// clipboard tool is on PATH so the caller never blocks.
+func copyPubKeyAndAnnounce(pub string) {
 	tool, err := writeClipboard(pub)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, constants.ErrSSHClipboard, tool, err)
