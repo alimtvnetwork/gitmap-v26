@@ -61,7 +61,7 @@ func processFixRepoFile(rel string, identity fixRepoIdentity, targets []int,
 		return
 	}
 	result.scanned++
-	reps, err := rewriteFixRepoFile(full, identity.base, identity.current, targets, opts.isDryRun)
+	reps, err := rewriteFixRepoFileR(full, identity.base, identity.current, targets, opts.isDryRun, opts.restrictNoVersion)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, constants.FixRepoErrWriteFmt, rel, err)
 		result.failed = true
