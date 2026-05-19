@@ -142,6 +142,32 @@ guarded by `if n == 1 && current == 2`. Regression locks:
 `TestApplyAllTargets_BareBase_SkippedAtV4WithV1InTargets` in
 `fixrepo_rewrite_barebase_test.go`.
 
+## Restrict modes (v5.39.0+)
+
+`--restrict <mode>` (alias `-r <mode>`) narrows the rewrite scope.
+Currently the only defined value is `no-version` (short: `nv`).
+
+When `--restrict no-version` is set, the v1→v2 bare-base sweep is
+suppressed. The engine rewrites ONLY versioned `{base}-vN` tokens —
+bare `{base}` occurrences are left untouched even during a v1→v2
+bump. Useful when the project already used the `{base}-v1` form on
+its first remote and the bare token is a legitimate unrelated
+identifier (binary name, package, brand) that must be preserved.
+
+Examples:
+
+```
+gitmap fix-repo -2 --restrict no-version
+gitmap fr -2 -r nv
+```
+
+Implementation: `applyAllTargetsR` in
+`gitmap/cmd/fixrepo_rewrite.go` gates the bare-base call on
+`!restrictNoVersion`. Flag parsing in `fixrepo_flags.go`
+(`consumeFixRepoRestrictArg`) accepts `--restrict`, `-restrict`,
+`-r`, plus the `=value` forms; unknown values exit with
+`E_BAD_FLAG` (code 6).
+
 ## Cross-references
 
 - PowerShell script: `fix-repo.ps1` + `scripts/fix-repo/*.ps1`.

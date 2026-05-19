@@ -20,6 +20,11 @@ type fixRepoOptions struct {
 	isVerbose  bool
 	isStrict   bool // --strict / -Strict: post-rewrite `go test` on touched pkgs
 	configPath string
+	// restrictNoVersion (v5.39.0+): when true, suppress the v1→v2
+	// bare-base sweep so ONLY `{base}-vN` tokens are rewritten. Set
+	// via `--restrict no-version` / `-r nv`. See spec
+	// 27-fix-repo-command.md §"Restrict modes".
+	restrictNoVersion bool
 }
 
 // runFixRepo is the dispatcher entry. checkHelp first so `--help`
