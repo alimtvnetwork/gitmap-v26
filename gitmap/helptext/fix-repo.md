@@ -49,8 +49,8 @@ fix-repo  base=myrepo  current=v3  mode=-2
 targets:  v1, v2
 host:     github.com  owner=acme
 
-modified: README.md (4 replacements)
-modified: docs/install.md (1 replacements)
+  [dry-run] would rewrite README.md (4 replacements): v1×3, v2×1
+  [dry-run] would rewrite docs/install.md (1 replacements): v2×1
 
 scanned: 87 files
 changed: 2 files (5 replacements)
