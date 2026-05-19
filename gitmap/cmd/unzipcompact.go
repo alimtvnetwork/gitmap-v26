@@ -15,9 +15,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/archive"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/archive"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/store"
 )
 
 // runUnzipCompact is the dispatch entrypoint for `unzip-compact` / `uzc`.

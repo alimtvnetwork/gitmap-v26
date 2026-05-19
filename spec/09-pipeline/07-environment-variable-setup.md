@@ -11,9 +11,9 @@ This is particularly useful for portable installations where the binary lives on
 ## Core Concept
 
 ```
-User specifies:    E:\gitmap           (or /opt/gitmap)
-Tool ensures:      GITMAP_HOME=E:\gitmap   is set persistently
-                   E:\gitmap is in PATH    if not already present
+User specifies:    E:\gitmap-v22           (or /opt/gitmap-v22)
+Tool ensures:      GITMAP_HOME=E:\gitmap-v22   is set persistently
+                   E:\gitmap-v22 is in PATH    if not already present
 ```
 
 If the environment variable is already set and valid → no action taken.
@@ -42,25 +42,25 @@ If the environment variable is missing or points to a stale path → auto-regist
 This is the primary power feature. The user specifies where the tool lives:
 
 ```
-$ <tool> env home E:\gitmap
+$ <tool> env home E:\gitmap-v22
 ```
 
 This does:
 
 1. Validates the directory exists (or creates it with confirmation)
-2. Sets `<TOOL>_HOME=E:\gitmap` persistently
-3. Adds `E:\gitmap` to PATH if not already present
+2. Sets `<TOOL>_HOME=E:\gitmap-v22` persistently
+3. Adds `E:\gitmap-v22` to PATH if not already present
 4. Records the registration in `env-registry.json`
 5. Prints activation command
 
 ### Terminal Output
 
 ```
-$ <tool> env home E:\gitmap
+$ <tool> env home E:\gitmap-v22
 
   Setting <TOOL>_HOME...
 
-  [+] <TOOL>_HOME = E:\gitmap
+  [+] <TOOL>_HOME = E:\gitmap-v22
 
   Registering PATH...
 
@@ -73,8 +73,8 @@ $ <tool> env home E:\gitmap
 
   To activate in this session:
 
-    $env:GITMAP_HOME = "E:\gitmap"
-    $env:Path = "E:\gitmap;" + $env:Path
+    $env:GITMAP_HOME = "E:\gitmap-v22"
+    $env:Path = "E:\gitmap-v22;" + $env:Path
 
   Or restart your terminal.
   ============================================
@@ -132,7 +132,7 @@ Environment variables are persisted by writing to shell profiles:
 
 ```bash
 # Appended to ~/.bashrc, ~/.zshrc, etc.
-export GITMAP_HOME="/opt/gitmap"   # <tool>-env
+export GITMAP_HOME="/opt/gitmap-v22"   # <tool>-env
 ```
 
 The marker comment (`# <tool>-env`) enables idempotent updates and clean removal.
@@ -155,20 +155,20 @@ The tool maintains an `env-registry.json` file to track all managed variables:
   "variables": [
     {
       "key": "GITMAP_HOME",
-      "value": "E:\\gitmap",
+      "value": "E:\\gitmap-v22",
       "createdAt": "2026-04-09T14:30:00Z",
       "platforms": ["registry", "powershell-profile", "git-bash"]
     },
     {
       "key": "GITMAP_DATA",
-      "value": "E:\\gitmap\\data",
+      "value": "E:\\gitmap-v22\\data",
       "createdAt": "2026-04-09T14:30:00Z",
       "platforms": ["registry", "powershell-profile"]
     }
   ],
   "pathEntries": [
     {
-      "directory": "E:\\gitmap",
+      "directory": "E:\\gitmap-v22",
       "createdAt": "2026-04-09T14:30:00Z"
     }
   ]
@@ -189,8 +189,8 @@ $ <tool> env doctor
 
   Checking managed environment variables...
 
-  [OK]   GITMAP_HOME = E:\gitmap (directory exists)
-  [OK]   E:\gitmap is in PATH
+  [OK]   GITMAP_HOME = E:\gitmap-v22 (directory exists)
+  [OK]   E:\gitmap-v22 is in PATH
 
   Checking shell profiles...
 
@@ -208,12 +208,12 @@ $ <tool> env doctor
 
   Checking managed environment variables...
 
-  [FAIL] GITMAP_HOME = E:\gitmap (directory does NOT exist)
-  [WARN] E:\gitmap is NOT in PATH
+  [FAIL] GITMAP_HOME = E:\gitmap-v22 (directory does NOT exist)
+  [WARN] E:\gitmap-v22 is NOT in PATH
 
   Suggested fix:
 
-    <tool> env home E:\gitmap    # Re-register with valid path
+    <tool> env home E:\gitmap-v22    # Re-register with valid path
 
   1 failure, 1 warning.
 ```

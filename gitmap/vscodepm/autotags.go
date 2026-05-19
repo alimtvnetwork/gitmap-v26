@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // DetectTags inspects rootPath's top-level filesystem and returns a sorted,

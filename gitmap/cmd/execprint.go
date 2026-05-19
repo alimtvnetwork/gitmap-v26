@@ -5,8 +5,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
 )
 
 // execInRepo runs a git command inside a single repo directory.

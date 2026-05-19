@@ -28,7 +28,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // TestCloneCLI_HelpExitsZero asserts the success contract: every

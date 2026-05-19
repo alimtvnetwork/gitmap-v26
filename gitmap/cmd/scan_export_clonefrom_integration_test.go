@@ -31,12 +31,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/clonefrom"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/formatter"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/mapper"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/scanner"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/clonefrom"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/formatter"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/mapper"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/scanner"
 )
 
 // TestScanExportCloneFrom_HTTPSAndSSH_RoundTrips runs the full

@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/release"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/release"
 )
 
 // setupSkipMetaDir overrides DefaultReleaseDir to a temp directory

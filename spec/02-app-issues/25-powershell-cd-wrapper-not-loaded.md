@@ -1,15 +1,15 @@
-# `gitmap cd` still prints the path in PowerShell after setup
+# `gitmap-v22 cd` still prints the path in PowerShell after setup
 
 ## Ticket
 
 After the shell-wrapper work landed, some Windows users still see
-`gitmap cd <repo>` print the resolved repository path instead of moving the
+`gitmap-v22 cd <repo>` print the resolved repository path instead of moving the
 active PowerShell session into that directory.
 
 ## Symptoms
 
-1. User runs `gitmap setup` and sees the completion / cd wrapper install step.
-2. User opens PowerShell and runs `gitmap cd gitmap`.
+1. User runs `gitmap-v22 setup` and sees the completion / cd wrapper install step.
+2. User opens PowerShell and runs `gitmap-v22 cd gitmap-v22`.
 3. The command resolves the SQLite record correctly and prints the repo path.
 4. The prompt stays in the original directory because no shell function takes
    over the result.
@@ -27,7 +27,7 @@ installation path was not reliable:
 - Profile parent directories were not created before appending content, so new
   profile targets could silently fail to materialize.
 
-That meant `gitmap setup` often wrote the managed `gitmap` / `gcd` wrapper to a
+That meant `gitmap-v22 setup` often wrote the managed `gitmap-v22` / `gcd` wrapper to a
 file the active shell never loaded. When that happened, PowerShell executed the
 real binary directly, and the binary could only print the destination path.
 
@@ -40,7 +40,7 @@ Update PowerShell shell integration installation to:
    `powershell` and `pwsh` when available.
 3. Fall back to the standard all-hosts profile files for Windows PowerShell and
    PowerShell 7 when probing is unavailable.
-4. Install the `gitmap` / `gcd` wrapper and completion source line into every
+4. Install the `gitmap-v22` / `gcd` wrapper and completion source line into every
    resolved PowerShell profile target.
 5. Create profile parent directories before writing.
 
@@ -58,5 +58,5 @@ Update PowerShell shell integration installation to:
 ## Related
 
 - `spec/02-app-issues/24-cd-command-does-not-change-shell-directory.md`
-- `gitmap/completion/install.go`
-- `gitmap/completion/cdfunction.go`
+- `gitmap-v22/completion/install.go`
+- `gitmap-v22/completion/cdfunction.go`

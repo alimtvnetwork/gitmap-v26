@@ -216,8 +216,8 @@
 		"profile": ""
 	},
 	{
-		"name": "gitmap-v20",
-		"rootPath": "d:\\wp-work\\riseup-asia\\gitmap-v20",
+		"name": "gitmap-v22",
+		"rootPath": "d:\\wp-work\\riseup-asia\\gitmap-v22",
 		"paths": [],
 		"tags": [],
 		"enabled": true,
@@ -248,8 +248,8 @@
 		"profile": ""
 	},
 	{
-		"name": "gitmap",
-		"rootPath": "d:\\wp-work\\riseup-asia\\gitmap",
+		"name": "gitmap-v22",
+		"rootPath": "d:\\wp-work\\riseup-asia\\gitmap-v22",
 		"paths": [],
 		"tags": [],
 		"enabled": true,

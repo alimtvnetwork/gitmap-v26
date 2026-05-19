@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // timeMillisecond is a named duration for readability.

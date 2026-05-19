@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // ensureFilterRepoInstalled exits 3 with an OS-appropriate install

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // TestExecute_CreatesMissingParentDirs covers the "preserve folder

@@ -24,8 +24,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/fsutil"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/fsutil"
 )
 
 // isDebugWindowsRequested returns true when --debug-windows is on argv

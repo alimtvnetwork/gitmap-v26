@@ -22,10 +22,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/cliexit"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/clonefrom"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/vscodepm"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/cliexit"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/clonefrom"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/vscodepm"
 )
 
 // cloneFromFlags holds parsed CLI inputs. Grouped in a struct

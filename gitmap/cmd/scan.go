@@ -7,15 +7,15 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/config"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/desktop"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/detector"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/config"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/desktop"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/detector"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/mapper"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/scanner"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/mapper"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/scanner"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/store"
 )
 
 // runScan handles the "scan" subcommand.

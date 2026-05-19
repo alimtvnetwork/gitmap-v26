@@ -4,8 +4,8 @@ package store
 import (
 	"fmt"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
 )
 
 // InsertTempRelease records a new temp-release branch in the database.

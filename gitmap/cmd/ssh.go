@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // runSSH handles the "ssh" subcommand and routes to sub-handlers.

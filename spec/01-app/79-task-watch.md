@@ -24,17 +24,17 @@ at a configurable interval (default 5 seconds).
 
 ## Commands
 
-### `gitmap task` (alias: `tk`)
+### `gitmap-v22 task` (alias: `tk`)
 
 Manage and execute file-sync watch tasks.
 
 ```bash
-gitmap task create <name> --src <path> --dest <path>
-gitmap task list
-gitmap task run <name>
-gitmap task run <name> --interval 10
-gitmap task delete <name>
-gitmap task show <name>
+gitmap-v22 task create <name> --src <path> --dest <path>
+gitmap-v22 task list
+gitmap-v22 task run <name>
+gitmap-v22 task run <name> --interval 10
+gitmap-v22 task delete <name>
+gitmap-v22 task show <name>
 ```
 
 ---
@@ -115,7 +115,7 @@ Tasks persist in `.gitmap/tasks.json`:
 ## Dashboard Output
 
 ```
-gitmap task run frontend-sync — checking every 5s (Ctrl+C to stop)
+gitmap-v22 task run frontend-sync — checking every 5s (Ctrl+C to stop)
 Last sync: 2026-04-04 10:05:32
 
   Watched: 142 files | Synced: 3 | Skipped (gitignore): 28
@@ -165,22 +165,22 @@ Last sync: 2026-04-04 10:05:32
 
 ```bash
 # Create a task
-gitmap task create ui-sync --src ./frontend/src --dest ./backend/static
+gitmap-v22 task create ui-sync --src ./frontend/src --dest ./backend/static
 
 # List all tasks
-gitmap task list
+gitmap-v22 task list
 
 # Run a task with default 5s interval
-gitmap task run ui-sync
+gitmap-v22 task run ui-sync
 
 # Run with faster polling and verbose output
-gitmap task run ui-sync --interval 2 --verbose
+gitmap-v22 task run ui-sync --interval 2 --verbose
 
 # Preview what would sync
-gitmap task run ui-sync --dry-run
+gitmap-v22 task run ui-sync --dry-run
 
 # Delete a task
-gitmap task delete ui-sync
+gitmap-v22 task delete ui-sync
 ```
 
 ---

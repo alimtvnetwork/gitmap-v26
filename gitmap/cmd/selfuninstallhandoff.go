@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // isWindows is a tiny helper so other selfuninstall files can use it

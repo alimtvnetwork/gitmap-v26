@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // runRescanSubtree is the CLI entry point for

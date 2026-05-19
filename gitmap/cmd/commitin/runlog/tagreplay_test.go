@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 
 	_ "modernc.org/sqlite"
 )

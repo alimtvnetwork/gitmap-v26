@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // sampleTemplateFile is the scaffold written by --create-template.

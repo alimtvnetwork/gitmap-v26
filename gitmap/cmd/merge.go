@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/cliexit"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/movemerge"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/cliexit"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/movemerge"
 )
 
 // mergeSpec describes one merge variant for the dispatcher.

@@ -2,8 +2,8 @@
 
 ## Ticket
 
-After installing gitmap via `curl | bash` on macOS (or `irm | iex` on Windows),
-running `gitmap` immediately returns "command not found" / "not recognized".
+After installing gitmap-v22 via `curl | bash` on macOS (or `irm | iex` on Windows),
+running `gitmap-v22` immediately returns "command not found" / "not recognized".
 The user must manually source their profile or open a new terminal.
 
 ## Symptoms
@@ -13,14 +13,14 @@ The user must manually source their profile or open a new terminal.
 1. User runs `curl -fsSL .../install.sh | bash` on macOS (zsh default).
 2. Installer adds PATH entry to `~/.zprofile` (or `~/.zshrc`).
 3. Installer prints `export PATH=...` and reload instructions.
-4. User types `gitmap` → `zsh: command not found: gitmap`.
+4. User types `gitmap-v22` → `zsh: command not found: gitmap-v22`.
 
 ### Windows
 
 1. User runs `irm .../install.ps1 | iex` in PowerShell.
 2. Installer adds install directory to User PATH in the registry.
-3. User types `gitmap` → `gitmap: The term 'gitmap' is not recognized`.
-4. CMD and Git Bash sessions also cannot find `gitmap`.
+3. User types `gitmap-v22` → `gitmap-v22: The term 'gitmap-v22' is not recognized`.
+4. CMD and Git Bash sessions also cannot find `gitmap-v22`.
 
 ## Root Cause
 
@@ -48,7 +48,7 @@ Three separate issues compound across platforms:
 ### 3. No immediate activation instruction
 
 The post-install message was either absent or buried, making users expect
-`gitmap` to just work immediately after install.
+`gitmap-v22` to just work immediately after install.
 
 ## Fix
 
@@ -87,7 +87,7 @@ command that the user can copy-paste immediately.
 #### Unix example
 
 ```
-  ✓ Installed! To start using gitmap right now, run:
+  ✓ Installed! To start using gitmap-v22 right now, run:
 
       source ~/.zshrc
 
@@ -97,7 +97,7 @@ command that the user can copy-paste immediately.
 #### Windows example
 
 ```
-  ✓ Installed! To start using gitmap right now:
+  ✓ Installed! To start using gitmap-v22 right now:
 
     PowerShell:  $env:PATH += ";C:\Users\you\.local\bin"
     CMD:         set PATH=%PATH%;C:\Users\you\.local\bin
@@ -134,5 +134,5 @@ command that the user can copy-paste immediately.
 
 - `spec/02-app-issues/20-path-not-available-in-other-shells.md` — cross-shell visibility (superseded)
 - `spec/01-app/94-install-script.md` — installer specification
-- `gitmap/scripts/install.sh` — Unix implementation
-- `gitmap/scripts/install.ps1` — Windows implementation
+- `gitmap-v22/scripts/install.sh` — Unix implementation
+- `gitmap-v22/scripts/install.ps1` — Windows implementation

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
 )
 
 // WriteJSON writes records to the given writer as a JSON array.

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // runPending displays all pending tasks from the database, OR

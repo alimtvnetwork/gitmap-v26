@@ -3,8 +3,8 @@ package store
 import (
 	"fmt"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
 )
 
 // UpsertRepos inserts or updates all records by absolute_path.

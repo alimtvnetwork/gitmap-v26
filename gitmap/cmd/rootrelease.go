@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // dispatchRelease routes release-related commands.

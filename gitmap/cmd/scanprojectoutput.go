@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/detector"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/detector"
 )
 
 // projectTypeJSONMap maps project type keys to JSON filenames.

@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // validateRow enforces per-row invariants:

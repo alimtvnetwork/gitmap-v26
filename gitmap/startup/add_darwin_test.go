@@ -15,7 +15,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // writeRawPlist drops a third-party (un-marked) plist in place so

@@ -32,7 +32,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // scanWorkersMax caps the worker pool regardless of CPU count. Filesystem

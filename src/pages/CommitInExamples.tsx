@@ -18,7 +18,7 @@ const CommitInExamples = () => (
     <CodeBlock
       language="bash"
       code={`# folder exists, no .git/ yet — commit-in will run \`git init\` for you
-gitmap commit-in ./my-project https://github.com/me/my-project-archive.git`}
+gitmap-v22 commit-in ./my-project https://github.com/me/my-project-archive.git`}
     />
 
     <h3 className="font-semibold text-sm mt-6 mb-2 text-foreground">
@@ -34,7 +34,7 @@ gitmap commit-in ./my-project https://github.com/me/my-project-archive.git`}
       language="bash"
       code={`# target = ./canonical (auto-init if missing)
 # inputs = local folder + 2 remote forks, walked oldest -> newest
-gitmap cin ./canonical \\
+gitmap-v22 cin ./canonical \\
     ./old-local-checkout,https://github.com/me/old-fork.git,git@github.com:me/new-fork.git`}
     />
 
@@ -47,7 +47,7 @@ gitmap cin ./canonical \\
     </p>
     <CodeBlock
       language="bash"
-      code={`gitmap commit-in ./brand-new-canonical \\
+      code={`gitmap-v22 commit-in ./brand-new-canonical \\
     https://github.com/me/legacy-v1.git,https://github.com/me/legacy-v2.git`}
     />
 
@@ -61,18 +61,18 @@ gitmap cin ./canonical \\
     </p>
     <p className="text-sm text-muted-foreground mb-2">
       <strong>Concrete example.</strong> Say your TARGET is{" "}
-      <code>./gitmap</code> and the parent directory looks like this:
+      <code>./gitmap-v22</code> and the parent directory looks like this:
     </p>
     <CodeBlock
       language="bash"
       code={`$ ls ./
-gitmap         <-- TARGET (the one receiving appended commits)
-gitmap-v1
-gitmap-v2
-gitmap-v3
+gitmap-v22         <-- TARGET (the one receiving appended commits)
+gitmap-v22
+gitmap-v22
+gitmap-v22
 ...
-gitmap-v20
-gitmap-v20     <-- newest sibling`}
+gitmap-v22
+gitmap-v22     <-- newest sibling`}
     />
     <p className="text-sm text-muted-foreground mb-2 mt-3">
       Then the keywords expand like this — <em>no manual list needed</em>:
@@ -87,23 +87,23 @@ gitmap-v20     <-- newest sibling`}
         </thead>
         <tbody>
           <tr className="border-t border-border">
-            <td className="px-4 py-2 font-mono text-primary">gitmap cin ./gitmap all</td>
-            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v1, gitmap-v2, …, gitmap-v20 (every sibling, oldest first)</td>
+            <td className="px-4 py-2 font-mono text-primary">gitmap-v22 cin ./gitmap-v22 all</td>
+            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v22, gitmap-v22, …, gitmap-v22 (every sibling, oldest first)</td>
           </tr>
           <tr className="border-t border-border">
-            <td className="px-4 py-2 font-mono text-primary">gitmap cin ./gitmap -5</td>
-            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v15, gitmap-v16, gitmap-v17, gitmap-v20, gitmap-v20</td>
+            <td className="px-4 py-2 font-mono text-primary">gitmap-v22 cin ./gitmap-v22 -5</td>
+            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v22, gitmap-v22, gitmap-v22, gitmap-v22, gitmap-v22</td>
           </tr>
           <tr className="border-t border-border">
-            <td className="px-4 py-2 font-mono text-primary">gitmap cin ./gitmap -1</td>
-            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v20 (just the newest)</td>
+            <td className="px-4 py-2 font-mono text-primary">gitmap-v22 cin ./gitmap-v22 -1</td>
+            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">gitmap-v22 (just the newest)</td>
           </tr>
         </tbody>
       </table>
     </div>
     <p className="text-sm text-muted-foreground mb-2">
-      And remember the TARGET (<code>./gitmap</code>) doesn't have to exist
-      yet — if it's missing, commit-in does <code>mkdir -p ./gitmap && git init</code>{" "}
+      And remember the TARGET (<code>./gitmap-v22</code>) doesn't have to exist
+      yet — if it's missing, commit-in does <code>mkdir -p ./gitmap-v22 && git init</code>{" "}
       first, then appends every sibling's history into the new repo.
       One command takes you from <em>"I have 19 versioned snapshots"</em> to{" "}
       <em>"I have one git repo with 19 versions of history in author order."</em>
@@ -111,10 +111,10 @@ gitmap-v20     <-- newest sibling`}
     <CodeBlock
       language="bash"
       code={`# Every sibling, save the resolved settings as the default profile
-gitmap commit-in ./gitmap all --save-profile Default --set-default
+gitmap-v22 commit-in ./gitmap-v22 all --save-profile Default --set-default
 
 # Just the last 3 siblings, dry-run, with per-language new-function intel
-gitmap cin ./gitmap -3 --dry-run --function-intel on --languages Go,TypeScript`}
+gitmap-v22 cin ./gitmap-v22 -3 --dry-run --function-intel on --languages Go,TypeScript`}
     />
 
     <h3 className="font-semibold text-sm mt-6 mb-2 text-foreground">
@@ -122,11 +122,11 @@ gitmap cin ./gitmap -3 --dry-run --function-intel on --languages Go,TypeScript`}
     </h3>
     <CodeBlock
       language="bash"
-      code={`gitmap cin git@github.com:me/canonical.git \\
+      code={`gitmap-v22 cin git@github.com:me/canonical.git \\
     https://github.com/me/old-fork.git,https://github.com/me/new-fork.git \\
     --author-name "Jane Doe" --author-email jane@example.com \\
     --message-exclude "StartsWith:Signed-off-by:,Contains:[skip ci]" \\
-    --title-suffix " — via gitmap"`}
+    --title-suffix " — via gitmap-v22"`}
     />
 
     <h3 className="font-semibold text-sm mt-6 mb-2 text-foreground">
@@ -134,7 +134,7 @@ gitmap cin ./gitmap -3 --dry-run --function-intel on --languages Go,TypeScript`}
     </h3>
     <CodeBlock
       language="bash"
-      code={`gitmap cin ./canonical all --default \\
+      code={`gitmap-v22 cin ./canonical all --default \\
     --override-messages "Refine implementation,Improve module" \\
     --override-only-weak`}
     />
@@ -142,7 +142,7 @@ gitmap cin ./gitmap -3 --dry-run --function-intel on --languages Go,TypeScript`}
     <h3 className="font-semibold text-sm mt-6 mb-2 text-foreground">
       7 · Headless CI run (fail loudly on any unset value)
     </h3>
-    <CodeBlock language="bash" code={`gitmap cin ./canonical all --profile CI --no-prompt`} />
+    <CodeBlock language="bash" code={`gitmap-v22 cin ./canonical all --profile CI --no-prompt`} />
 
     <h3 className="font-semibold text-sm mt-6 mb-2 text-foreground">
       8 · Mirror tags + auto-create release branches (NEW)
@@ -153,24 +153,24 @@ gitmap cin ./gitmap -3 --dry-run --function-intel on --languages Go,TypeScript`}
       NEW commit SHA produced by the replay (not the original source SHA, which doesn't
       exist in the destination history). If the tag matches the canonical semver shape,
       it ALSO creates a <code>release/&lt;tag&gt;</code> branch at the same new SHA, so
-      it's interchangeable with <code>gitmap release-branch</code> tooling.
+      it's interchangeable with <code>gitmap-v22 release-branch</code> tooling.
     </p>
     <CodeBlock
       language="bash"
       code={`# Default: annotated tags only, auto release branch ON
-gitmap cin ./canonical https://github.com/me/legacy.git
+gitmap-v22 cin ./canonical https://github.com/me/legacy.git
 
 # Mirror EVERY tag including lightweight bookmarks
-gitmap cin ./canonical ./old --tags All
+gitmap-v22 cin ./canonical ./old --tags All
 
 # Mirror tags but skip the auto release branch (you'll cut releases manually)
-gitmap cin ./canonical ./old --no-release-branch
+gitmap-v22 cin ./canonical ./old --no-release-branch
 
 # Custom prefix — branches become 'releases/v1.2.3' instead of 'release/v1.2.3'
-gitmap cin ./canonical ./old --release-branch-prefix releases/
+gitmap-v22 cin ./canonical ./old --release-branch-prefix releases/
 
 # Disable tag mirroring entirely
-gitmap cin ./canonical ./old --tags None`}
+gitmap-v22 cin ./canonical ./old --tags None`}
     />
     <p className="text-sm text-muted-foreground mt-3 mb-2">
       The three-way relationship (old SHA → new SHA → mirrored tag → release branch) is

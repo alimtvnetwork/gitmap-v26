@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // TransportTally collapses ClassifyScheme's seven buckets into the

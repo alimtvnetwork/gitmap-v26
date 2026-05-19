@@ -15,7 +15,7 @@ package startup
 import (
 	"fmt"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // addWindowsRegistry stub: unreachable on non-Windows. Returns the

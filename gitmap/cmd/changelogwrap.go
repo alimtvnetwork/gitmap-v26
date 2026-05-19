@@ -6,8 +6,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/render"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/render"
 )
 
 // changelogWrapWidth resolves the terminal column width used for wrapping

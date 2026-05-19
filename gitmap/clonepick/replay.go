@@ -15,7 +15,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // Loader is the read surface needed by --replay. Split from Persister

@@ -15,7 +15,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // detectRemoteHEAD runs `git ls-remote --symref <url> HEAD` with a

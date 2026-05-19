@@ -22,7 +22,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // expectedSchemaVersionPinned is the version every clone-from JSON

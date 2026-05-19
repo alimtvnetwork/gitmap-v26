@@ -7,8 +7,8 @@ The `changelog-generate` command auto-generates changelog entries by reading com
 ## Command
 
 ```
-gitmap changelog-generate [--from <tag>] [--to <tag>] [--write]
-gitmap cg [--from <tag>] [--to <tag>] [--write]
+gitmap-v22 changelog-generate [--from <tag>] [--to <tag>] [--write]
+gitmap-v22 cg [--from <tag>] [--to <tag>] [--write]
 ```
 
 ## Flags

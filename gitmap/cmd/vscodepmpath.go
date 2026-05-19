@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/vscodepm"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/vscodepm"
 )
 
 // runVSCodePMPath implements `gitmap vscode-pm-path` (alias `vpath`).

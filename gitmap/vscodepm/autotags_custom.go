@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // DetectTagsCustom is the env-aware sibling of DetectTags. It runs

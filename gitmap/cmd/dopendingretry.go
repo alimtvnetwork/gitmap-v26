@@ -7,8 +7,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/store"
 )
 
 // retryPendingTask executes a single pending task based on its type.

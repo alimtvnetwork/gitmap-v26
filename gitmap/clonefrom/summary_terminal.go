@@ -27,7 +27,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // WriteReportJSON persists the result set as a versioned JSON

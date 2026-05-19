@@ -12,8 +12,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/gitutil"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/gitutil"
 )
 
 // ParseArgs builds a Plan from the user-supplied URL, the

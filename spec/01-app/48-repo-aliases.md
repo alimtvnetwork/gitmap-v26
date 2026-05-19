@@ -3,7 +3,7 @@
 ## Overview
 
 Repo aliases let users assign short, memorable names to any tracked
-repository. Once aliased, any `gitmap` command can target the repo by
+repository. Once aliased, any `gitmap-v22` command can target the repo by
 alias instead of requiring `cd` or a full slug/path — enabling remote
 execution from anywhere in the filesystem.
 
@@ -13,7 +13,7 @@ execution from anywhere in the filesystem.
 
 1. **Short names** — replace long slugs or paths with concise aliases
    (e.g., `api`, `web`, `infra`).
-2. **Run from anywhere** — execute any gitmap command against a repo
+2. **Run from anywhere** — execute any gitmap-v22 command against a repo
    using `-A <alias>` without changing directory.
 3. **Auto-suggest** — during `scan`/`rescan`, suggest aliases for newly
    discovered repos based on their slug or repo name.
@@ -23,7 +23,7 @@ execution from anywhere in the filesystem.
 
 ---
 
-## Command: `gitmap alias`
+## Command: `gitmap-v22 alias`
 
 Alias: `a`
 
@@ -42,11 +42,11 @@ Manages repo alias definitions stored in SQLite.
 ### Usage
 
 ```
-gitmap alias set <alias> <slug-or-path>
-gitmap alias remove <alias>
-gitmap alias list
-gitmap alias show <alias>
-gitmap alias suggest [--apply]
+gitmap-v22 alias set <alias> <slug-or-path>
+gitmap-v22 alias remove <alias>
+gitmap-v22 alias list
+gitmap-v22 alias show <alias>
+gitmap-v22 alias suggest [--apply]
 ```
 
 ### Flags
@@ -59,26 +59,26 @@ gitmap alias suggest [--apply]
 
 ## Global Flag: `-A` / `--alias`
 
-Any gitmap command that operates on a repository accepts `-A <alias>`
+Any gitmap-v22 command that operates on a repository accepts `-A <alias>`
 to resolve the target repo by its alias.
 
 ### Usage
 
 ```bash
 # Pull a repo by alias
-gitmap pull -A api
+gitmap-v22 pull -A api
 
 # Run a shell command in the aliased repo directory
-gitmap exec -A web -- npm test
+gitmap-v22 exec -A web -- npm test
 
 # Navigate to the aliased repo
-gitmap cd -A infra
+gitmap-v22 cd -A infra
 
 # Check status of an aliased repo
-gitmap status -A api
+gitmap-v22 status -A api
 
 # Watch an aliased repo
-gitmap watch -A web
+gitmap-v22 watch -A web
 ```
 
 The `-A` flag resolves the alias to the repo's `AbsolutePath` in the
@@ -88,10 +88,10 @@ database, then executes the command as if run from that directory.
 
 ## Auto-Suggestion During Scan
 
-When `gitmap scan` or `gitmap rescan` discovers new repositories, the
+When `gitmap-v22 scan` or `gitmap-v22 rescan` discovers new repositories, the
 system suggests aliases based on:
 
-1. **Repo name** — last segment of the clone URL (e.g., `gitmap`).
+1. **Repo name** — last segment of the clone URL (e.g., `gitmap-v22`).
 2. **Slug suffix** — last segment of the slug if different from repo name.
 3. **Short unique prefix** — shortest unique prefix across all repos.
 
@@ -111,8 +111,8 @@ system suggests aliases based on:
 ### Non-Interactive Mode
 
 ```bash
-gitmap scan --apply-aliases    # Accept all suggestions automatically
-gitmap alias suggest --apply   # Suggest for existing unaliased repos
+gitmap-v22 scan --apply-aliases    # Accept all suggestions automatically
+gitmap-v22 alias suggest --apply   # Suggest for existing unaliased repos
 ```
 
 ---
@@ -189,7 +189,7 @@ The `-A` flag should support tab-completion for alias names. Add a
 `--list-aliases` data flag to the `completion` system:
 
 ```bash
-gitmap completion --list-aliases
+gitmap-v22 completion --list-aliases
 # Output: api web infra libs
 ```
 
@@ -245,23 +245,23 @@ When `--verbose` is active with `-A`:
 - Repo deleted but alias remains → cascade delete handles cleanup.
 - Empty alias name → `alias name cannot be empty` (exit 1).
 - Alias contains spaces or special chars → `alias must be alphanumeric with hyphens` (exit 1).
-- Alias name conflicts with a gitmap subcommand → `alias cannot shadow command: <name>` (exit 1).
+- Alias name conflicts with a gitmap-v22 subcommand → `alias cannot shadow command: <name>` (exit 1).
 
 ---
 
 ## Acceptance Criteria
 
-1. `gitmap alias set api github/user/api-gateway` creates an alias.
-2. `gitmap alias list` displays all aliases with their target slugs.
-3. `gitmap alias show api` shows the linked repo details.
-4. `gitmap alias remove api` deletes the alias.
-5. `gitmap pull -A api` pulls the repo from any working directory.
-6. `gitmap exec -A web -- npm test` runs the command in the repo dir.
-7. `gitmap cd -A infra` navigates to the repo directory.
-8. `gitmap alias suggest` proposes aliases for unaliased repos.
-9. `gitmap alias suggest --apply` auto-accepts all suggestions.
-10. `gitmap scan` suggests aliases for newly discovered repos.
+1. `gitmap-v22 alias set api github/user/api-gateway` creates an alias.
+2. `gitmap-v22 alias list` displays all aliases with their target slugs.
+3. `gitmap-v22 alias show api` shows the linked repo details.
+4. `gitmap-v22 alias remove api` deletes the alias.
+5. `gitmap-v22 pull -A api` pulls the repo from any working directory.
+6. `gitmap-v22 exec -A web -- npm test` runs the command in the repo dir.
+7. `gitmap-v22 cd -A infra` navigates to the repo directory.
+8. `gitmap-v22 alias suggest` proposes aliases for unaliased repos.
+9. `gitmap-v22 alias suggest --apply` auto-accepts all suggestions.
+10. `gitmap-v22 scan` suggests aliases for newly discovered repos.
 11. Duplicate alias → warn and prompt for reassignment.
 12. Deleting a repo cascades to remove its alias.
 13. Tab-completion works for alias names via `--list-aliases`.
-14. Alias names cannot shadow existing gitmap subcommands.
+14. Alias names cannot shadow existing gitmap-v22 subcommands.

@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/release"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/release"
 )
 
 // collectVersionTags reads git tags, parses, sorts descending.

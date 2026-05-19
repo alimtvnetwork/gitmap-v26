@@ -1,17 +1,17 @@
-# `gitmap release` must not leak gitmap-specific content into other repos' releases
+# `gitmap-v22 release` must not leak gitmap-specific content into other repos' releases
 
 ## Symptom
 
-Running `gitmap release` inside a non-gitmap repository (e.g. `img-pdf-v2`,
+Running `gitmap-v22 release` inside a non-gitmap repository (e.g. `img-pdf-v2`,
 `some-tool-v3`, etc.) produced GitHub releases that:
 
 1. **Attached `release-version-vX.Y.Z.ps1` / `release-version-vX.Y.Z.sh`
    snapshot assets** whose body hard-coded
-   `REPO="alimtvnetwork/gitmap-v20"` and `BINARY_NAME="gitmap"`.
+   `REPO="alimtvnetwork/gitmap-v22"` and `BINARY_NAME="gitmap-v22"`.
    A user who copy-pasted that one-liner would download and install the
-   gitmap binary into the wrong repo's release flow.
+   gitmap-v22 binary into the wrong repo's release flow.
 
-2. **Dumped gitmap's `CHANGELOG.md` notes into the release body** because
+2. **Dumped gitmap-v22's `CHANGELOG.md` notes into the release body** because
    `DetectChangelog()` was always called and `AppendPinnedInstallSnippet`
    was the only gated step. The body therefore contained release notes
    for a totally unrelated project.
@@ -26,11 +26,11 @@ changelog-body resolution.
 
 ## Fix (v5.16.0)
 
-- `gitmap/release/workflowfinalize.go::pushAndFinalize` —
+- `gitmap-v22/release/workflowfinalize.go::pushAndFinalize` —
   `buildReleaseVersionSnapshots` is now wrapped in
   `if ShouldPrintInstallHint(getRemoteURL())`. Non-gitmap repos no
   longer receive the `.ps1` / `.sh` snapshot assets.
-- `gitmap/release/workflowgithub.go::uploadToGitHub` — the release body
+- `gitmap-v22/release/workflowgithub.go::uploadToGitHub` — the release body
   is empty by default. Only when `ShouldPrintInstallHint` returns true
   (i.e. the current repo is a `alimtvnetwork/gitmap-v<N>` source repo)
   do we call `DetectChangelog()` and append the pinned install snippet.
@@ -46,15 +46,15 @@ For any repository whose origin remote does NOT match
 - Every other asset (Go cross-compiled binaries, zip groups, ad-hoc
   bundles, checksums, docs-site) is unaffected.
 
-For the canonical gitmap source repos (`gitmap-v20`, `gitmap-v21`, …):
+For the canonical gitmap-v22 source repos (`gitmap-v22`, `gitmap-v22`, …):
 
 - Behavior is unchanged. Body = `DetectChangelog()` +
   `AppendPinnedInstallSnippet`. Snapshot assets are still attached.
 
 ## Related
 
-- `gitmap/release/releaseinstallhint.go::ShouldPrintInstallHint` — the
-  single source of truth for "is this the gitmap source repo?".
+- `gitmap-v22/release/releaseinstallhint.go::ShouldPrintInstallHint` — the
+  single source of truth for "is this the gitmap-v22 source repo?".
 - `spec/01-app/105-release-version-script.md` — the snapshot script spec
   (already gitmap-specific; this gate enforces that scoping at the
   publishing layer).

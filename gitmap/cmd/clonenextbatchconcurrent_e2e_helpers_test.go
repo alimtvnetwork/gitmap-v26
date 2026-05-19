@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // stubProcessor returns a deterministic batchRowResult per repo path

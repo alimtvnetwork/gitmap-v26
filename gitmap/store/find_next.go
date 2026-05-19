@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
 )
 
 // FindNext returns every repo whose latest VersionProbe row reports an

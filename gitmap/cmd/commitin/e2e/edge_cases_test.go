@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/cmd/commitin/workspace"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/cmd/commitin/workspace"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // TestPromptModeOnClobberAbortsRun seeds the destination repo with a

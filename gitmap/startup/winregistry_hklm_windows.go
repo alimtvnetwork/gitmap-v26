@@ -25,7 +25,7 @@ import (
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // addWindowsRegistryHKLM is the HKLM Add path. Validates elevation

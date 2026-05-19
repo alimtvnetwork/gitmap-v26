@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // fixRepoIdentity is the resolved repo identity used by the command.

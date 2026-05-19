@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // printGroupUtilities prints the utility commands.

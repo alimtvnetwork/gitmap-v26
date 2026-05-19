@@ -73,22 +73,22 @@ const HistoryRewritePage = () => (
       <section>
         <h2 className="text-xl font-semibold mb-3">Usage</h2>
         <CodeBlock code={`# Remove leaked credentials from all history
-gitmap history-purge .env secrets/api.key
-gitmap hp            .env secrets/api.key            # short alias
+gitmap-v22 history-purge .env secrets/api.key
+gitmap-v22 hp            .env secrets/api.key            # short alias
 
 # Multi-path: separate args, comma, or comma-space all work
-gitmap hp "secret.env, build/cache.bin"
-gitmap hp secret.env,build/cache.bin
+gitmap-v22 hp "secret.env, build/cache.bin"
+gitmap-v22 hp secret.env,build/cache.bin
 
 # Pin a doc to its current content across every past commit
-gitmap history-pin docs/README.md
-gitmap hpin        docs/README.md
+gitmap-v22 history-pin docs/README.md
+gitmap-v22 hpin        docs/README.md
 
 # Dry run (no push, sandbox kept on disk for inspection)
-gitmap hp .env --dry-run --keep-sandbox
+gitmap-v22 hp .env --dry-run --keep-sandbox
 
 # Hide what was scrubbed by rewriting touched commit messages
-gitmap hp .env --message "history cleanup" --yes`} />
+gitmap-v22 hp .env --message "history cleanup" --yes`} />
       </section>
 
       <section>
@@ -162,7 +162,7 @@ brew install git-filter-repo
 # Windows alternative
 scoop install git-filter-repo`} />
         <p className="text-xs text-muted-foreground mt-2">
-          Missing? gitmap exits <code>3</code> with the install hint.
+          Missing? gitmap-v22 exits <code>3</code> with the install hint.
         </p>
       </section>
 

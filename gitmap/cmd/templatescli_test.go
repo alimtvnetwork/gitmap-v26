@@ -3,7 +3,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/render"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/render"
 )
 
 // TestIsMarkdownTemplatePathRecognizesMarkdownExtensions locks the file-

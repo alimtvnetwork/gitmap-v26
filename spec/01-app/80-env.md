@@ -26,20 +26,20 @@ configuration store.
 
 ## Commands
 
-### `gitmap env` (alias: `ev`)
+### `gitmap-v22 env` (alias: `ev`)
 
 Manage environment variables across platforms.
 
 ```bash
-gitmap env set NAME value
-gitmap env set NAME "value with spaces"
-gitmap env path add /usr/local/go/bin
-gitmap env path add "C:\Program Files\Go\bin"
-gitmap env path list
-gitmap env path remove /old/path
-gitmap env list
-gitmap env get NAME
-gitmap env delete NAME
+gitmap-v22 env set NAME value
+gitmap-v22 env set NAME "value with spaces"
+gitmap-v22 env path add /usr/local/go/bin
+gitmap-v22 env path add "C:\Program Files\Go\bin"
+gitmap-v22 env path list
+gitmap-v22 env path remove /old/path
+gitmap-v22 env list
+gitmap-v22 env get NAME
+gitmap-v22 env delete NAME
 ```
 
 ---
@@ -71,7 +71,7 @@ gitmap env delete NAME
 
 ## Tracking File
 
-gitmap tracks which variables it has set in `.gitmap/env-registry.json`:
+gitmap-v22 tracks which variables it has set in `.gitmap/env-registry.json`:
 
 ```json
 {
@@ -189,23 +189,23 @@ export GOPATH="/Users/alim/go"
 
 ```bash
 # Set a variable
-gitmap env set GOPATH "C:\Users\alim\go"
+gitmap-v22 env set GOPATH "C:\Users\alim\go"
 
 # Set system-level variable (Windows admin)
-gitmap env set JAVA_HOME "C:\Java\jdk-21" --system
+gitmap-v22 env set JAVA_HOME "C:\Java\jdk-21" --system
 
 # Add to PATH
-gitmap env path add "C:\Program Files\Go\bin"
-gitmap env path add /usr/local/go/bin
+gitmap-v22 env path add "C:\Program Files\Go\bin"
+gitmap-v22 env path add /usr/local/go/bin
 
 # List managed variables
-gitmap env list
+gitmap-v22 env list
 
 # Preview changes
-gitmap env set NODE_ENV production --dry-run
+gitmap-v22 env set NODE_ENV production --dry-run
 
 # Remove a PATH entry
-gitmap env path remove /old/path
+gitmap-v22 env path remove /old/path
 ```
 
 ---

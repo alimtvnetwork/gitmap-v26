@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // printInstallHint prints install one-liner commands if the current repo

@@ -3,7 +3,7 @@ package store
 import (
 	"fmt"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // commitInDDL returns the ordered list of CREATE / INDEX / SEED

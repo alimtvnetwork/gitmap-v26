@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/release"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/release"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/store"
 )
 
 // importReleases discovers .gitmap/release/v*.json files and upserts them into the DB.

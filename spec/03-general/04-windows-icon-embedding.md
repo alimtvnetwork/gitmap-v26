@@ -25,7 +25,7 @@ a Go tool that generates Windows resource `.syso` files.
 ## Directory Layout
 
 ```
-gitmap/
+gitmap-v22/
 ├── main.go
 ├── winres/
 │   ├── winres.json      # Metadata manifest
@@ -51,10 +51,10 @@ gitmap/
     "APP": {
       "0000": {
         "identity": {
-          "name": "gitmap",
+          "name": "gitmap-v22",
           "version": "0.0.0.0"
         },
-        "description": "gitmap - Git repository scanner, mapper, and manager",
+        "description": "gitmap-v22 - Git repository scanner, mapper, and manager",
         "minimum-os": "win7",
         "execution-level": "asInvoker",
         "dpi-awareness": "per-monitor-v2",
@@ -72,12 +72,12 @@ gitmap/
         "info": {
           "0409": {
             "CompanyName": "Riseup Asia LLC",
-            "FileDescription": "gitmap CLI",
+            "FileDescription": "gitmap-v22 CLI",
             "FileVersion": "",
-            "InternalName": "gitmap",
+            "InternalName": "gitmap-v22",
             "LegalCopyright": "© 2026 Riseup Asia LLC",
             "OriginalFilename": "gitmap.exe",
-            "ProductName": "gitmap",
+            "ProductName": "gitmap-v22",
             "ProductVersion": ""
           }
         }
@@ -111,7 +111,7 @@ go install github.com/tc-hib/go-winres@latest
 ### Generate `.syso` Files
 
 ```bash
-cd gitmap
+cd gitmap-v22
 go-winres make
 ```
 
@@ -159,7 +159,7 @@ In `.github/workflows/release.yml`, add before cross-compilation:
 - name: Generate Windows resources
   run: |
     go install github.com/tc-hib/go-winres@latest
-    cd gitmap && go-winres make
+    cd gitmap-v22 && go-winres make
 ```
 
 ## Version Stamping at Build Time
@@ -203,10 +203,10 @@ Add to `.gitignore` only if you want to force regeneration every build.
 
 | Context | Before | After |
 |---------|--------|-------|
-| File Explorer | Generic `.exe` icon | Custom gitmap icon |
+| File Explorer | Generic `.exe` icon | Custom gitmap-v22 icon |
 | Properties → Details | Empty metadata | Version, company, description |
 | Taskbar | Generic icon | Branded icon |
-| Task Manager | `gitmap.exe` | `gitmap` with description |
+| Task Manager | `gitmap.exe` | `gitmap-v22` with description |
 
 ## Cross-References
 

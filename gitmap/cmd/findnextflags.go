@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // parseFindNextFlags walks args once, accepting:

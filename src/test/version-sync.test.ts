@@ -9,7 +9,7 @@ import { VERSION } from "@/constants/index";
  * binary version (was stuck at v4.14.0 while the binary was at
  * v4.22.0 for eight releases).
  *
- * Reads `gitmap/constants/constants.go`, extracts the `Version`
+ * Reads `gitmap-v22/constants/constants.go`, extracts the `Version`
  * literal, and asserts that `src/constants/index.ts` exports the
  * same value with a `v` prefix.
  *
@@ -19,7 +19,7 @@ import { VERSION } from "@/constants/index";
  * `.lovable/memory/project/version-bump-procedure.md`.
  */
 describe("VERSION sync between web and Go binary", () => {
-  const goConstantsPath = resolve(__dirname, "../../gitmap/constants/constants.go");
+  const goConstantsPath = resolve(__dirname, "../../gitmap-v22/constants/constants.go");
 
   it("can locate the Go constants file", () => {
     expect(existsSync(goConstantsPath)).toBe(true);

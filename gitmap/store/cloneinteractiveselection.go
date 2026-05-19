@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/clonepick"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/clonepick"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // SaveClonePickSelection inserts one row representing plan and

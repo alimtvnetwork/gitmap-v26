@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // migrateLegacyIDs detects if the legacy Repos table uses TEXT IDs (UUIDs)

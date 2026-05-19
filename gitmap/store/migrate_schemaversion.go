@@ -28,7 +28,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // readSchemaVersion returns the persisted schema version, or 0 when the

@@ -3,7 +3,7 @@ package mapper
 import (
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // TestResolveDefaultBranch_EmptyFallsBackToConstant locks the contract

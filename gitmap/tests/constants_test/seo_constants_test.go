@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // TestSEOSQL_CreateTableContainsColumns verifies table schema (v15: CommitTemplate singular + CommitTemplateId PK).

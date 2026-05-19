@@ -5,8 +5,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/cmd/commitin/profile"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/cmd/commitin/profile"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // maybeSaveProfile persists ctx.Resolved as a named profile when

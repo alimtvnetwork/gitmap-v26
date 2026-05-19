@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // Render writes the dry-run preview: a header echoing the source +

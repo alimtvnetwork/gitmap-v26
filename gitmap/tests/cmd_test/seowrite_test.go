@@ -4,7 +4,7 @@ package cmd_test
 import (
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // TestIsCreateTemplateShorthand_WithCT verifies "ct" is recognized.

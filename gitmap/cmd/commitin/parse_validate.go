@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
 )
 
 // validateConflictMode rejects anything outside the §2.5 enum. Empty

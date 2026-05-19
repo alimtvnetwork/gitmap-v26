@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/cloner"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/cloner"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/model"
 )
 
 // printStatusBanner shows the dashboard header.

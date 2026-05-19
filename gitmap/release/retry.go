@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v20/gitmap/verbose"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v22/gitmap/verbose"
 )
 
 // withRetry executes fn up to maxAttempts times with exponential backoff.
