@@ -123,6 +123,8 @@ func topLevelCmds() map[string]string {
 		"CmdFindNextAlias":         CmdFindNextAlias,
 		"CmdFixRepo":               CmdFixRepo,
 		"CmdFixRepoAlias":          CmdFixRepoAlias,
+		"CmdUndo":                  CmdUndo,
+		"CmdUndoAlias":             CmdUndoAlias,
 		"CmdGoMod":                 CmdGoMod,
 		"CmdGoModAlias":            CmdGoModAlias,
 		"CmdGoRepos":               CmdGoRepos,

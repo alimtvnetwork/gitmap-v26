@@ -185,3 +185,49 @@ Implementation: `applyAllTargetsR` in
 - Constants ownership rule: `spec/12-consolidated-guidelines/02-go-code-style.md`.
 - Strictly-prohibited registry: `spec/03-general/10-strictly-prohibited.md`
   (no time/date in `readme.txt`, no manual edits to `.gitmap/release/`).
+
+## Backup & undo (v5.40.0+)
+
+Every non-dry-run `gitmap fix-repo` invocation that modifies ≥ 1 file
+writes a backup snapshot under the repo root:
+
+```
+<repoRoot>/.gitmap/backup/<repo-name>/v<current>/fix-repo/<UTC-ts>/
+  manifest.json          schemaVersion, repo, currentVersion, timestamp,
+                         gitmapVersion, files[]
+  files/<rel/path>       verbatim pre-rewrite bytes
+```
+
+Rules:
+
+1. **One snapshot per invocation.** Timestamp format
+   `20060102T150405Z` so lexical sort == chronological sort.
+2. **Scoped to `<repo>/v<current>`.** An `undo` inside `gitmap-v4`
+   never sees a `gitmap-v3` snapshot. This prevents cross-version
+   restores that would re-introduce stale `{base}-vN` tokens.
+3. **Lazy + idempotent.** The snapshot directory is created on the
+   FIRST `BackupFile` call so dry-run / no-op sweeps leave no trace.
+   Within one snapshot the first observation of a file wins
+   (subsequent rewrites in the same invocation never overwrite the
+   original backup).
+4. **Manifest-driven restore.** `gitmap undo` reads `manifest.json`
+   and copies each listed `files/<rel>` back to `<repoRoot>/<rel>`.
+
+### `gitmap undo` (alias `ud`)
+
+```
+gitmap undo                       # restore latest snapshot
+gitmap undo --list                # list snapshots, newest first (* = latest)
+gitmap undo --snapshot <UTC-ts>   # restore a specific stamp
+gitmap undo --dry-run             # preview without writing
+```
+
+Exit codes: `0` ok / `6` bad-flag / `7` write-failed / `8` bad-config
+(manifest missing or malformed).
+
+Implementation: `gitmap/cmd/fixrepo_backup.go` (session +
+`BackupFile` / `Finalize`), `gitmap/cmd/undo.go` (list / pick /
+restore). Wired into the sweep by splitting `rewriteOneFile` into a
+pure-compute step plus `persistRewrittenFile`, which calls
+`backup.BackupFile(rel)` strictly BEFORE `os.WriteFile` so the
+snapshot always captures the pre-rewrite bytes.

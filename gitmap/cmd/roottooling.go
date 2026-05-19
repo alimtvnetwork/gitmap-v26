@@ -70,6 +70,7 @@ func toolingDispatchEntries() []dispatchEntry {
 			func() { runAuditLegacy(argsTail()) },
 		},
 		{[]string{constants.CmdFixRepo, constants.CmdFixRepoAlias}, func() { runFixRepo(argsTail()) }},
+		{[]string{constants.CmdUndo, constants.CmdUndoAlias}, func() { runUndo(argsTail()) }},
 		{
 			[]string{constants.CmdHistoryPurge, constants.CmdHistoryPurgeAlias},
 			func() { runHistoryPurge(argsTail()) },
