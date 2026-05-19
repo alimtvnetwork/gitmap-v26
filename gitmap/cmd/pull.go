@@ -32,6 +32,14 @@ type pullOptions struct {
 func runPull(args []string) {
 	checkHelp("pull", args)
 	requireOnline()
+	// Transport flags (--ssh/--sh/--https/--ht) are only meaningful
+	// for the cwd short-circuit; when present we MUST take the cwd
+	// path regardless of other flags so the rewrite actually applies.
+	useSSH, useHTTPS, rest := extractTransportFlags(args)
+	if useSSH || useHTTPS {
+		runPullCWDWithTransport(useSSH, useHTTPS, rest)
+		return
+	}
 	opts := parsePullFlags(args)
 	if opts.verbose {
 		initVerboseLog()
