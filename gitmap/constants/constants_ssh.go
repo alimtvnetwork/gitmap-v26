@@ -19,9 +19,9 @@ const (
 
 // SSH copy messages.
 const (
-	MsgSSHCopied       = "  \u2713 Public key copied to clipboard (%d bytes)\n"
-	MsgSSHCopyFallback = "  \u26a0  Clipboard tool not available — key printed above; copy it manually\n"
-	ErrSSHClipboard    = "Error: clipboard write failed via %s: %v\n"
+	MsgSSHCopied       = "\n  📋 Public key copied to clipboard ✅  (%d bytes) — paste it into your Git provider 🚀\n"
+	MsgSSHCopyFallback = "\n  ⚠️  Clipboard tool not available — key printed above; copy it manually 📎\n"
+	ErrSSHClipboard    = "\n  ❌ Clipboard write failed via %s: %v — copy the key above manually 📎\n"
 )
 
 
