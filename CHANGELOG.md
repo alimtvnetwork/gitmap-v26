@@ -1,5 +1,14 @@
 # Changelog
 
+## v5.33.0 — (2026-05-19) — Pinned-version + README sync rollup
+
+### Notes
+- Routine minor bump rolling up v5.32.0 housekeeping (post-install `gitmap setup` reminder, `gitm` shell-function alias from v5.28.0 wrapper templates). No new commands or behavior changes vs v5.32.0.
+
+### Pinned
+- README pinned-version block + version matrix moved to **v5.33.0**.
+- Synced `gitmap/constants/constants.go` (`Version = "5.33.0"`) and `src/constants/index.ts` (`VERSION = "v5.33.0"`).
+
 ## v5.32.0 — (2026-05-19) — `gitm` shell alias + post-install setup auto-run reminder
 
 ### Notes
