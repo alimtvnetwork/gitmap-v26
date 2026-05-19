@@ -20,11 +20,16 @@ import (
 // replacement count across all targets, or an error on read/write
 // failure.
 func rewriteFixRepoFile(fullPath, base string, current int, targets []int, dryRun bool) (int, error) {
+	return rewriteFixRepoFileR(fullPath, base, current, targets, dryRun, false)
+}
+
+// rewriteFixRepoFileR is the restrict-aware variant (v5.39.0+).
+func rewriteFixRepoFileR(fullPath, base string, current int, targets []int, dryRun, restrictNoVersion bool) (int, error) {
 	original, err := os.ReadFile(fullPath)
 	if err != nil {
 		return 0, err
 	}
-	updated, count := applyAllTargets(string(original), base, current, targets)
+	updated, count := applyAllTargetsR(string(original), base, current, targets, restrictNoVersion)
 	if count == 0 {
 		return 0, nil
 	}
@@ -38,24 +43,28 @@ func rewriteFixRepoFile(fullPath, base string, current int, targets []int, dryRu
 	return count, nil
 }
 
-// applyAllTargets folds every target rewrite over text and returns
-// the cumulative result + total replacement count.
+// applyAllTargets is the unrestricted entry preserved for tests and
+// existing callers. Delegates to applyAllTargetsR with restrict=false.
 func applyAllTargets(text, base string, current int, targets []int) (string, int) {
+	return applyAllTargetsR(text, base, current, targets, false)
+}
+
+// applyAllTargetsR folds every target rewrite over text. When
+// restrictNoVersion is true, the v1→v2 bare-base sweep is skipped so
+// ONLY `{base}-vN` tokens are rewritten — see spec
+// 27-fix-repo-command.md §"Restrict modes".
+func applyAllTargetsR(text, base string, current int, targets []int, restrictNoVersion bool) (string, int) {
 	total := 0
 	for _, n := range targets {
 		updated, added := applyOneTarget(text, base, n, current)
 		text = updated
 		total += added
-		// When the target is v1 AND we are bumping from v1→v2, the
-		// original repo on the remote may have shipped as a BARE
-		// `{base}` (no `-v1` suffix), so downstream references read
-		// `img-pdf` rather than `img-pdf-v1`. Sweep bare-base hits
-		// ONLY in this v1→v2 transition; for v3+ the bare token is
-		// almost certainly an unrelated identifier (binary name,
-		// package, brand) and must NOT be rewritten — clobbering it
-		// silently corrupts the repo. See spec
-		// 27-fix-repo-command.md §"Bare-base scope rule".
-		if n == 1 && current == 2 {
+		// Bare-base sweep is gated on the v1→v2 transition (see the
+		// v5.38.0 scope rule). v5.39.0+ adds a second gate:
+		// `--restrict no-version` suppresses the sweep entirely so the
+		// caller can guarantee bare `{base}` tokens are never touched
+		// even during a v1→v2 bump.
+		if n == 1 && current == 2 && !restrictNoVersion {
 			updated, added = applyBareBase(text, base, current)
 			text = updated
 			total += added
