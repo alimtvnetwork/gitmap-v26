@@ -31,7 +31,9 @@ func runSSHCat(args []string) {
 		os.Exit(1)
 	}
 
-	fmt.Println(strings.TrimSpace(key.PublicKey))
+	pub := strings.TrimSpace(key.PublicKey)
+	fmt.Println(pub)
+	copyPubKeyAndAnnounce(pub)
 }
 
 // printAvailableKeys prints available SSH key names to stderr.
