@@ -43,11 +43,13 @@ func runCloneFixRepoPub(args []string) {
 // runCloneFixRepoPipeline is the shared core. `makePublic` controls
 // whether the optional 3rd step (visibility flip) runs.
 func runCloneFixRepoPipeline(args []string, makePublic bool) {
-	url, folderName, noVSCodeSync, requireVersion := parseCloneFixRepoArgs(args)
+	url, folderName, noVSCodeSync, requireVersion, useSSH, useHTTPS := parseCloneFixRepoArgs(args)
 	if len(url) == 0 {
 		fmt.Fprint(os.Stderr, constants.ErrCloneFixRepoUsage)
 		os.Exit(constants.ExitCloneFixRepoBadFlag)
 	}
+
+	url = applyCloneFixRepoScheme(url, useSSH, useHTTPS)
 
 	absPath := resolveCloneTargetFolder(url, folderName)
 	requireOnline()
@@ -63,6 +65,36 @@ func runCloneFixRepoPipeline(args []string, makePublic bool) {
 		runChainedGitmapStep([]string{constants.CmdMakePublic, "--" + constants.FlagVisYes})
 	}
 	fmt.Printf(constants.MsgCloneFixRepoDone, absPath)
+}
+
+// applyCloneFixRepoScheme honours --ssh / --https (and short aliases
+// --sh / --ht) by rewriting the URL before the in-process clone runs.
+// Mirrors `gitmap clone --ssh` semantics: when both flags are set,
+// --ssh wins and a one-line stderr warning is printed. Unrecognised
+// URL shapes are returned unchanged so non-URL positionals still flow
+// through.
+func applyCloneFixRepoScheme(url string, useSSH, useHTTPS bool) string {
+	if useSSH && useHTTPS {
+		fmt.Fprintln(os.Stderr, "warning: --ssh and --https both set; --ssh wins")
+		useHTTPS = false
+	}
+	if useSSH {
+		if converted, ok := ConvertURLToSSH(url); ok {
+			if converted != url {
+				fmt.Printf("↪ --ssh rewrite: %s → %s\n", url, converted)
+			}
+			return converted
+		}
+	}
+	if useHTTPS {
+		if converted, ok := ConvertURLToHTTPS(url); ok {
+			if converted != url {
+				fmt.Printf("↪ --https rewrite: %s → %s\n", url, converted)
+			}
+			return converted
+		}
+	}
+	return url
 }
 
 // maybeRunFixRepoStep runs `fix-repo --all` only when the cloned repo
