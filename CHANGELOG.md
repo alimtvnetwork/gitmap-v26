@@ -1,5 +1,19 @@
 # Changelog
 
+## v5.30.0 — (2026-05-19) — `gitmap push` auto `pull --rebase` + retry on rejection
+
+### Added
+- `gitmap push` now detects git's non-fast-forward rejection, auto-runs `git pull --rebase`, and retries the push once. Stderr is tee'd so the original git rejection is still shown live.
+- On rebase conflict the original git exit code is propagated and a hint to resolve + re-run `gitmap push` is printed.
+
+### Fixed
+- Registered `CmdPush` / `CmdPushAlias` in `topLevelCmds()` parity registry.
+- Added `gitmap/helptext/push.md` to satisfy `TestEveryCmdIDHasHelpFile`.
+
+### Pinned
+- README pinned-version block + version matrix moved to **v5.30.0**.
+- Synced `gitmap/constants/constants.go` (`Version = "5.30.0"`) and `src/constants/index.ts` (`VERSION = "v5.30.0"`).
+
 ## v5.29.0 — (2026-05-19) — `gitmap push` + `--ssh` / `--https` transport flags
 
 ### Added
