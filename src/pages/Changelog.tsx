@@ -63,6 +63,28 @@ const ChangelogPage = () => {
         </div>
       </div>
 
+      <div className="mb-6 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+        <p className="text-xs font-mono text-foreground/90">
+          <span className="text-primary font-semibold">Tip · Help UX (v5.42.0+):</span>{" "}
+          discover commands fast with{" "}
+          <code className="px-1 py-0.5 rounded bg-muted text-foreground">gitmap help --compact</code>,{" "}
+          <code className="px-1 py-0.5 rounded bg-muted text-foreground">--groups</code>,{" "}
+          <code className="px-1 py-0.5 rounded bg-muted text-foreground">--filter &lt;q&gt;</code> /{" "}
+          <code className="px-1 py-0.5 rounded bg-muted text-foreground">-f</code>, or{" "}
+          <code className="px-1 py-0.5 rounded bg-muted text-foreground">--json</code>{" "}
+          (v5.43.0+, schema:{" "}
+          <a
+            href="https://github.com/alimtvnetwork/gitmap-v23/blob/main/spec/08-json-schemas/help-json.schema.json"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline-offset-2 hover:underline"
+          >
+            help-json.schema.json
+          </a>
+          ).
+        </p>
+      </div>
+
       <div className="mb-8">
         <TerminalDemo title="gitmap-v23 — version history" lines={terminalLines} autoPlay />
       </div>
