@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.43.0 — (2026-05-22) — `gitmap help --json` for scripting + IDE integrations
+
+- **New: `gitmap help --json`.** Emits the full help registry as machine-readable JSON (`version`, `count`, grouped `lines`). Combine with `--filter <q>` to scope to matching rows. ANSI color codes are stripped so consumers get clean text.
+- Updated root help hint to advertise the new `--json` mode alongside `--compact`, `--groups`, and `--filter`.
+- Pinned: README pinned-version block + version matrix moved to **v5.43.0**. Synced `gitmap/constants/constants.go` (`Version = "5.43.0"`) and `src/constants/index.ts` (`VERSION = "v5.43.0"`).
+
 ## v5.42.0 — (2026-05-22) — Help UX overhaul: glyph filter, intent groups, search
 
 - **Universal glyph layer.** New `gitmap/glyphs` package + `--glyphs <auto|rich|safe>` flag and `GITMAP_GLYPHS` env var. Legacy PowerShell 5.1 hosts auto-fall-back to ASCII so emojis no longer render as mojibake.
