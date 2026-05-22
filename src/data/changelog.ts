@@ -8,6 +8,19 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.57.0",
+    date: "2026-05-22",
+    subtitle: "Release automation and terminal rendering improvements",
+    items: [
+      "Added: `gitmap pr <version>` auto-commits uncommitted changes before forwarding to `gitmap release`, matching the existing `-y` / `--yes` bypass behavior.",
+      "Added: `gitmap help --filter <query>` output is now colorized via an ANSI post-processor with tinted headings, magenta inline code, bright bold text, cyan links, and subdued table separators.",
+      "Added: `gitmap render/prettypost.go` — terminal-only cosmetic post-processing layer for `RenderANSI()`.",
+      "Added: `gitmap cliexit.Exit(code)` — deterministic pipe-drain wrapper for non-error exits.",
+      "Changed: `gitmap cmd/fixrepo.go` migrated all `os.Exit(constants.FixRepo*)` call sites to `cliexit.Exit(...)` for reliable Windows output capture.",
+      "Pinned: README pinned-version block + version matrix moved to v5.57.0; synced `gitmap/constants/constants.go` and `src/constants/index.ts`.",
+    ],
+  },
+  {
     version: "v5.56.0",
     date: "2026-05-22",
     subtitle: "fix-repo: pipe drain before exit (Windows CI fix)",
