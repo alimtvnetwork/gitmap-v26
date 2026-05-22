@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/alimtvnetwork/gitmap-v23/gitmap/cliexit"
 	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
 	"github.com/alimtvnetwork/gitmap-v23/gitmap/glyphs"
 	"github.com/alimtvnetwork/gitmap-v23/gitmap/theme"
@@ -32,6 +33,14 @@ func Run() {
 	// ASCII rewrites apply to bytes already past theme's SGR rewrite.
 	os.Args = append(os.Args[:1], stripGlyphsFlag(os.Args[1:])...)
 	glyphs.Install()
+
+	// Register pipe drainers so cliexit.Fail flushes them before
+	// os.Exit. Without this, a failure message written to a
+	// theme- or glyphs-wrapped os.Stderr just before os.Exit can be
+	// lost on Windows (the forwarder goroutine never gets scheduled
+	// to copy bytes from the pipe buffer to the inherited fd).
+	cliexit.RegisterFlusher(theme.Drain)
+	cliexit.RegisterFlusher(glyphs.Drain)
 
 	// Strip the global `--vscode-sync-disabled` kill switch from argv
 	// (and flip the env var) before any subcommand sees its flagset.
