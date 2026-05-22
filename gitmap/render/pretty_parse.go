@@ -56,6 +56,10 @@ func parse(lines []string) []block {
 			items, next := readList(lines, i)
 			out = append(out, block{kind: bkList, lines: items})
 			i = next
+		case isIndentedCode(line):
+			body, next := readIndentedCode(lines, i)
+			out = append(out, block{kind: bkFence, lines: body})
+			i = next
 		default:
 			para, next := readParagraph(lines, i)
 			out = append(out, block{kind: bkParagraph, text: para})
@@ -116,7 +120,8 @@ func readParagraph(lines []string, start int) (string, int) {
 	i := start
 	for i < len(lines) {
 		line := lines[i]
-		if strings.TrimSpace(line) == "" || isHeading(line) || isFence(line) || isListItem(line) {
+		if strings.TrimSpace(line) == "" || isHeading(line) || isFence(line) ||
+			isListItem(line) || isIndentedCode(line) {
 			break
 		}
 		buf = append(buf, line)
@@ -197,4 +202,43 @@ func readList(lines []string, start int) ([]string, int) {
 	}
 
 	return out, i
+}
+
+// isIndentedCode matches a markdown indented code block line: a non-blank
+// line beginning with at least four spaces. Help texts use this to render
+// CLI examples; the parser must capture them as fenced output so each
+// source line stays on its own row instead of being joined into a single
+// paragraph.
+func isIndentedCode(line string) bool {
+	if !strings.HasPrefix(line, "    ") {
+		return false
+	}
+
+	return strings.TrimSpace(line) != ""
+}
+
+// readIndentedCode gathers consecutive indented (and interleaved blank)
+// lines into a code block. Trailing blanks are dropped. The leading four
+// spaces are stripped so emitBlock can apply the standard body indent.
+func readIndentedCode(lines []string, start int) ([]string, int) {
+	var body []string
+	i := start
+	for i < len(lines) {
+		line := lines[i]
+		if isIndentedCode(line) {
+			body = append(body, strings.TrimPrefix(line, "    "))
+			i++
+
+			continue
+		}
+		if strings.TrimSpace(line) == "" && i+1 < len(lines) && isIndentedCode(lines[i+1]) {
+			body = append(body, "")
+			i++
+
+			continue
+		}
+		break
+	}
+
+	return body, i
 }
