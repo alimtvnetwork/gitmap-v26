@@ -10,8 +10,11 @@ export const changelog: ChangelogEntry[] = [
   {
     version: "v5.56.0",
     date: "2026-05-22",
-    subtitle: "Minor version bump",
+    subtitle: "fix-repo: pipe drain before exit (Windows CI fix)",
     items: [
+      "Fixed: TestFixRepoGofmtCleanAfterRewrite failed on windows-latest because the `gofmt:` summary line was lost under the pipe-wrapped os.Stdout installed by the glyphs/theme packages. fix-repo's bare `os.Exit` bypassed the v5.53.0 cliexit drain step, leaving forwarding goroutines unscheduled and the last writes stuck in the pipe buffer.",
+      "Added: `cliexit.Exit(code)` flushes every registered drainer (same set as cliexit.Fail) before calling os.Exit. Use at non-error exit sites that still need pipe-wrapped stdout/stderr drained before process teardown.",
+      "Changed: `gitmap/cmd/fixrepo.go` swapped all five `os.Exit(constants.FixRepo*)` call sites to `cliexit.Exit(...)` so the gofmt + strict + summary lines always make it to the captured stream on Windows.",
       "Pinned: README pinned-version block + version matrix moved to v5.56.0; synced `gitmap/constants/constants.go` and `src/constants/index.ts`.",
     ],
   },
