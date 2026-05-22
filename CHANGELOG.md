@@ -1,4 +1,13 @@
+## v5.46.0 — (2026-05-22) — Help UX banner in Changelog page + `--json` examples in command help
 # Changelog
+
+
+- **Docs UI:** the in-app `/changelog` page now leads with a Help UX tip card that surfaces `gitmap help --compact`, `--groups`, `--filter <q>` / `-f`, and `--json` (v5.43.0+), with a direct link to the published JSON Schema (`spec/08-json-schemas/help-json.schema.json`).
+- **Per-command help backfilled with `--json` scripting examples** — `fix-repo`, `clone`, `push`, `pull`, `undo`, `alias`, `ssh`, `pull-release-cd`, `clone-fix-repo`, `clone-fix-repo-pub`, `setup`. Each now ends with a copy-paste `gitmap help --json --filter <cmd>` recipe so script authors can discover flags without screen-scraping.
+- Pinned: README pinned-version block + version matrix moved to **v5.46.0**. Synced `gitmap/constants/constants.go` (`Version = "5.46.0"`) and `src/constants/index.ts` (`VERSION = "v5.46.0"`).
+
+
+
 
 ## v5.45.0 — (2026-05-22) — `fix-repo` accepts bare digits + flag-list error + post-run tips
 
