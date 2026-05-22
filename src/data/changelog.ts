@@ -8,6 +8,15 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.50.0",
+    date: "2026-05-22",
+    subtitle: "Minor version bump",
+    items: [
+      "Fixed: skip `TestCloneNowCLI_UserCanceledNonTTY` on Windows CI via `skipOnWindowsSubprocess` — same bash-on-windows subprocess stream-capture limitation as the other 4 guarded tests; subprocess stdout/stderr came through empty on the GitHub `windows-latest` runner.",
+      "Pinned: README pinned-version block + version matrix moved to **v5.50.0**. Synced `gitmap/constants/constants.go` (`Version = \"5.50.0\"`) and `src/constants/index.ts` (`VERSION = \"v5.50.0\"`).",
+    ],
+  },
+  {
     version: "v5.49.0",
     date: "2026-05-22",
     subtitle: "Minor version bump",
