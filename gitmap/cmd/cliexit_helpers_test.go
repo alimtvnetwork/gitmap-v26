@@ -119,6 +119,19 @@ func (e *buildError) Error() string {
 // runGitmap executes the prebuilt binary with args + optional stdin
 // and returns (exit code, stdout, stderr). Wraps the awkward parts
 // of os/exec so call sites stay declarative.
+//
+// Windows-CI note (v5.47.0): on the GitHub Actions `windows-latest`
+// runner under `pwsh -command ". '{0}'"`, when `cmd.Stdout`/`Stderr`
+// is set to a `bytes.Buffer`, Go's `os/exec` internally creates an
+// `os.Pipe()` and copies bytes in a goroutine. That pipe inherits
+// from pwsh's already-redirected console handles and the runner has
+// a long-standing bug where the parent end of those pipes reads
+// EOF immediately — even though the child writes correctly. See
+// actions/runner#382 and the StepCodex pwsh-stdio bug report. The
+// documented workaround is to redirect the child to a *file* (real
+// fd inheritance, no Go pipe goroutine in between) and read the
+// file after the process exits. We use this everywhere now so the
+// same code path runs on every OS instead of carving out Windows.
 func runGitmap(t *testing.T, args []string, stdin string) (int, string, string) {
 	t.Helper()
 	bin := ensureGitmapBinary(t)
@@ -126,12 +139,46 @@ func runGitmap(t *testing.T, args []string, stdin string) (int, string, string) 
 	cmd.Dir = t.TempDir()
 	cmd.Env = hermeticEnv()
 	cmd.Stdin = strings.NewReader(stdin)
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	stdoutFile := mustCaptureFile(t, "stdout")
+	stderrFile := mustCaptureFile(t, "stderr")
+	defer func() { _ = stdoutFile.Close() }()
+	defer func() { _ = stderrFile.Close() }()
+	cmd.Stdout = stdoutFile
+	cmd.Stderr = stderrFile
 	err := cmd.Run()
 
-	return extractTestExitCode(err), stdout.String(), stderr.String()
+	return extractTestExitCode(err), mustReadAll(t, stdoutFile), mustReadAll(t, stderrFile)
+}
+
+// mustCaptureFile opens a fresh temp file for child-process output
+// capture. Inheriting a real OS file handle avoids the Go-pipe
+// goroutine path inside `os/exec` that pwsh-on-runner mishandles
+// (see runGitmap doc comment).
+func mustCaptureFile(t *testing.T, label string) *os.File {
+	t.Helper()
+	f, err := os.CreateTemp(t.TempDir(), "gitmap-"+label+"-*.log")
+	if err != nil {
+		t.Fatalf("create %s capture file: %v", label, err)
+	}
+
+	return f
+}
+
+// mustReadAll seeks to start and reads the entire capture file.
+// Tests never need more than a few KB so a single Read pass is
+// sufficient; failures are fatal because they always mean a test
+// infrastructure bug, not a product regression.
+func mustReadAll(t *testing.T, f *os.File) string {
+	t.Helper()
+	if _, err := f.Seek(0, 0); err != nil {
+		t.Fatalf("seek capture file: %v", err)
+	}
+	b, err := io.ReadAll(f)
+	if err != nil {
+		t.Fatalf("read capture file: %v", err)
+	}
+
+	return string(b)
 }
 
 // hermeticEnv strips variables that could change behavior between
