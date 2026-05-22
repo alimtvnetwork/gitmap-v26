@@ -88,7 +88,6 @@ func TestCloneCLI_FailureExitCodes(t *testing.T) {
 // future regression that exits 2 from an unrelated path can't
 // silently satisfy this test.
 func TestCloneNowCLI_UserCanceledNonTTY(t *testing.T) {
-	skipOnWindowsSubprocess(t)
 	t.Parallel()
 	root := t.TempDir()
 	existing := filepath.Join(root, "alpha")
