@@ -72,6 +72,7 @@ func TestCLI_FailureContext_Scan(t *testing.T) {
 // against a manifest path that doesn't exist. Asserts the command
 // label, the manifest path, and an open/read failure phrase.
 func TestCLI_FailureContext_CloneFromMissingManifest(t *testing.T) {
+	skipOnWindowsSubprocess(t)
 	t.Parallel()
 	missing := filepath.Join(t.TempDir(), "no-such-manifest.json")
 	code, stdout, stderr := runGitmap(t,
