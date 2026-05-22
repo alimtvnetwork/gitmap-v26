@@ -111,3 +111,13 @@ printed and a one-line warning is emitted — never fails.
 
 - `gitmap clone` - Clone repositories from structured files
 - `gitmap setup` - Configure Git global settings
+
+## Scripting (JSON)
+
+Discover this command from a script using the machine-readable help payload:
+
+```bash
+gitmap help --json --filter ssh
+```
+
+The JSON schema is published at `spec/08-json-schemas/help-json.schema.json` (v5.43.0+).

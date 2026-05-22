@@ -66,3 +66,13 @@ gitm prc gitmap v5.31.0, https://github.com/me/url-git v3.1.0
 
 - **`gitmap pull-release`** / **`pr`** — single-repo cwd version.
 - **`gitmap release-alias-pull`** / **`rap`** — alias-based pull-then-release.
+
+## Scripting (JSON)
+
+Discover this command from a script using the machine-readable help payload:
+
+```bash
+gitmap help --json --filter pull-release-cd
+```
+
+The JSON schema is published at `spec/08-json-schemas/help-json.schema.json` (v5.43.0+).

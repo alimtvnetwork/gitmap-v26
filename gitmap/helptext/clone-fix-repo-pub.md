@@ -85,3 +85,13 @@ gitmap cfrp git@github.com:acme/myrepo-v13.git myrepo-fresh
 - `gitmap clone` — the underlying clone step (full `--ssh` / `--https` semantics live there).
 - `gitmap make-public` — the visibility step on its own.
 - `gitmap fix-repo` — the rewrite step on its own.
+
+## Scripting (JSON)
+
+Discover this command from a script using the machine-readable help payload:
+
+```bash
+gitmap help --json --filter clone-fix-repo-pub
+```
+
+The JSON schema is published at `spec/08-json-schemas/help-json.schema.json` (v5.43.0+).

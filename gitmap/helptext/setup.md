@@ -92,3 +92,13 @@ Example:
 - [completion](completion.md) — Generate completion scripts manually
 - [scan](scan.md) — Scan directories after setup
 - [doctor](doctor.md) — Diagnose installation issues
+
+## Scripting (JSON)
+
+Discover this command from a script using the machine-readable help payload:
+
+```bash
+gitmap help --json --filter setup
+```
+
+The JSON schema is published at `spec/08-json-schemas/help-json.schema.json` (v5.43.0+).

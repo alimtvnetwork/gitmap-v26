@@ -102,3 +102,13 @@ a
 - [exec](exec.md) — Run commands in a repository (supports -A flag)
 - [pull](pull.md) — Pull a repository (supports -A flag)
 - [list](list.md) — List tracked repositories
+
+## Scripting (JSON)
+
+Discover this command from a script using the machine-readable help payload:
+
+```bash
+gitmap help --json --filter alias
+```
+
+The JSON schema is published at `spec/08-json-schemas/help-json.schema.json` (v5.43.0+).
