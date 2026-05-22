@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.54.0",
+    date: "2026-05-22",
+    subtitle: "verify-cmd-faithful: displayed branch matches argv",
+    items: [
+      "Fixed: clone-now / clone-from rows with an empty `row.Branch` rendered a phantom `-b <detected>` (e.g. `-b main`, `-b develop`) on the displayed `cmd:` line while the executor's argv emitted no `-b` flag at all. `--verify-cmd-faithful` correctly flagged the drift; this bumps fixes the underlying cause.",
+      "Changed: `printCloneNowTermBlockRow` and `printCloneFromTermBlockRow` now pass a non-nil empty `CmdExtraArgsPre` whenever `row.Branch` is empty, opting into `pickCmdBranch`'s explicit \"no -b\" sentinel. The `branch:` info line still shows the detected fallback for user context — only the rendered command is corrected.",
+      "Pinned: README pinned-version block + version matrix moved to v5.54.0; synced `gitmap/constants/constants.go` and `src/constants/index.ts`.",
+    ],
+  },
+  {
     version: "v5.53.0",
     date: "2026-05-22",
     subtitle: "Deterministic pipe drain on exit (Windows CI fix)",
