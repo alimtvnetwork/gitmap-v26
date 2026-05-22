@@ -80,6 +80,11 @@ func consumeOneFixRepoArg(args []string, i int, out *fixRepoOptions,
 
 		return 1, nil
 	}
+	if isFixRepoSpanArg(a) {
+		*modes = append(*modes, normalizeFixRepoSpanArg(a))
+
+		return 1, nil
+	}
 	if isFixRepoDryRunArg(a) {
 		out.isDryRun = true
 
