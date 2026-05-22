@@ -50,11 +50,11 @@ irm https://raw.githubusercontent.com/alimtvnetwork/gitmap-v23/main/install.ps1 
 curl -fsSL https://raw.githubusercontent.com/alimtvnetwork/gitmap-v23/main/install.sh | sh
 ```
 
-### 📌 Pinned version (`v5.46.4`)
+### 📌 Pinned version (`v5.47.0`)
 
 ```powershell
 # Windows · PowerShell
-irm https://github.com/alimtvnetwork/gitmap-v23/releases/download/v5.46.4/release-version-v5.46.4.ps1 | iex
+irm https://github.com/alimtvnetwork/gitmap-v23/releases/download/v5.47.0/release-version-v5.47.0.ps1 | iex
 ```
 
 ```bash
