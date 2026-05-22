@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.43.0",
+    date: "2026-05-22",
+    subtitle: "`gitmap help --json` for scripting + IDE integrations",
+    items: [
+      "**New:** `gitmap help --json` emits the full help registry as machine-readable JSON (`version`, `count`, grouped `lines`). Combine with `--filter <q>` to scope to matching rows. ANSI color codes are stripped so consumers get clean text.",
+      "Updated root help hint to advertise the new `--json` mode alongside `--compact`, `--groups`, and `--filter`.",
+      "Pinned: README pinned-version block + version matrix moved to **v5.43.0**. Synced `gitmap/constants/constants.go` (`Version = \"5.43.0\"`) and `src/constants/index.ts` (`VERSION = \"v5.43.0\"`).",
+    ],
+  },
+  {
     version: "v5.42.0",
     date: "2026-05-22",
     subtitle: "Help UX overhaul: glyph filter, intent groups, search",
@@ -16,7 +26,7 @@ export const changelog: ChangelogEntry[] = [
       "**Redesigned `gitmap help` root.** Commands are bucketed into 5 intent super-categories (GET STARTED · WORK WITH REPOS · RELEASE & HISTORY · PROJECTS & DATA · ADVANCED), each rendered with a bold magenta banner rule above the existing sub-groups.",
       "**New:** `gitmap help --filter <query>` (alias `-f`) — case-insensitive substring search across every help row with yellow ANSI highlighting on matches. Zero-hit queries return up to 5 subsequence-ranked fuzzy suggestions.",
       "**Help-file coverage audit.** Verified every primary `Cmd*` constant in `constants_cli.go` has a matching `helptext/<id>.md` (0 gaps); `TestEveryCmdIDHasHelpFile` continues to enforce drift.",
-      "Pinned: README pinned-version block + version matrix moved to **v5.42.0**. Synced `gitmap/constants/constants.go` (`Version = \"5.42.0\"`) and `src/constants/index.ts` (`VERSION = \"v5.42.0\"`).",
+      "Pinned: README pinned-version block + version matrix moved to **v5.42.0**.",
     ],
   },
   {
