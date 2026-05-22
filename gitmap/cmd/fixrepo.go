@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/alimtvnetwork/gitmap-v23/gitmap/cliexit"
 	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
 )
 
