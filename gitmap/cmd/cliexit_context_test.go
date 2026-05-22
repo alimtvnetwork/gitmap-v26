@@ -2,24 +2,29 @@ package cmd
 
 import (
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 )
 
-// skipOnWindowsSubprocess skips subprocess-stderr-assertion tests on
-// Windows CI. The bash-on-windows runner used by GitHub Actions does
-// not faithfully propagate child-process stdout/stderr back to the
-// parent test process — neither bytes.Buffer pipes nor file-redirect
-// captures reliably return content (verified v5.47.0 → v5.48.0). The
-// production code path is exercised on Linux + macOS runners; this
-// only skips the harness, not the contract.
-func skipOnWindowsSubprocess(t *testing.T) {
-	t.Helper()
-	if runtime.GOOS == "windows" {
-		t.Skip("subprocess stderr capture unreliable on Windows CI; covered on linux/macOS")
-	}
-}
+// skipOnWindowsSubprocess is retained as a no-op so historical
+// references compile. The Windows stderr-capture flakiness it
+// guarded against was fixed in v5.53.0 by:
+//
+//  1. Adding glyphs.Drain / theme.Drain and registering them with
+//     cliexit.RegisterFlusher in cmd/root.go, so cliexit.Fail
+//     flushes the pipe-wrapped os.Stderr before os.Exit instead of
+//     racing the forwarder goroutine.
+//  2. Pinning GITMAP_GLYPHS=rich and GITMAP_THEME=bright in
+//     hermeticEnv so subprocess tests bypass the pipe wrap entirely
+//     (defense in depth — the wrap itself stays correct for
+//     production use cases that do need it).
+//
+// Kept callable (instead of deleted) so any out-of-tree test in
+// the same package can still reference it without a compile break
+// during the next refactor sweep.
+func skipOnWindowsSubprocess(_ *testing.T) {}
+
+
 
 // Integration tests asserting that user-facing failure stderr from
 // scan and clone-family commands carries the standardized context
