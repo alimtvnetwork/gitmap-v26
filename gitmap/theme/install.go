@@ -17,7 +17,22 @@ var (
 	origStderr  = os.Stderr
 	stdoutIsTTY = detectTTY(os.Stdout)
 	stderrIsTTY = detectTTY(os.Stderr)
+
+	// pipeMu guards installedPipes against concurrent Install / Drain.
+	pipeMu         sync.Mutex
+	installedPipes []installedPipe
 )
+
+// installedPipe records one pipe-wrap so Drain can flush it before
+// the process exits. Without Drain, bytes written to os.Stdout /
+// os.Stderr just before os.Exit can be discarded on Windows because
+// the forwarding goroutine never gets to copy them from the pipe
+// buffer to the real fd inherited from the parent. (Same root cause
+// as the glyphs.Drain documented in glyphs/install.go.)
+type installedPipe struct {
+	w    *os.File
+	done chan struct{}
+}
 
 // Install resolves the active mode from the environment and, if it is
 // not ModeBright, replaces os.Stdout and os.Stderr with pipe-backed
@@ -41,6 +56,22 @@ func Active() Mode {
 	return activeMode
 }
 
+// Drain closes every installed pipe writer and waits for the matching
+// forwarder goroutine to flush its buffered bytes to the underlying
+// destination fd. MUST be called before os.Exit when output integrity
+// matters (e.g. cliexit.Fail) — otherwise the last failure message
+// can vanish on Windows.
+func Drain() {
+	pipeMu.Lock()
+	pipes := installedPipes
+	installedPipes = nil
+	pipeMu.Unlock()
+	for _, p := range pipes {
+		_ = p.w.Close()
+		<-p.done
+	}
+}
+
 // IsStdoutTTY reports whether the *original* stdout (before any
 // theme pipe interception) is a real terminal. Callers in
 // gitmap/render gate ANSI pretty-rendering on this so the
@@ -60,7 +91,14 @@ func wrap(dst *os.File, mode Mode) *os.File {
 		// Fall back to the original fd so output isn't lost.
 		return dst
 	}
-	go forward(r, dst, mode)
+	done := make(chan struct{})
+	go func() {
+		forward(r, dst, mode)
+		close(done)
+	}()
+	pipeMu.Lock()
+	installedPipes = append(installedPipes, installedPipe{w: w, done: done})
+	pipeMu.Unlock()
 
 	return w
 }
