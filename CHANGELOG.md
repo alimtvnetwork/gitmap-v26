@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.47.0 — (2026-05-22) — Windows CI: file-based subprocess capture + re-enable all skipped tests
+
+- **Fix:** replaced `bytes.Buffer` pipe capture in `runGitmap` (`gitmap/cmd/cliexit_helpers_test.go`) with temp-file stdout/stderr redirection. On the GitHub Actions `windows-latest` runner under `pwsh -command ". '{0}'"`, Go's `os/exec` pipe goroutine inherits pwsh's already-redirected console handles and reads EOF immediately — even though the child binary writes correctly. Writing to real files avoids the pipe-goroutine entirely, and the same code path now runs on every OS.
+- **Re-enabled on Windows:** removed `skipOnWindowsSubprocess` helper and all carve-outs. `TestCLI_FailureContext_Scan`, `TestCLI_FailureContext_CloneFromMissingManifest`, `TestCLI_FailureContext_CloneNowMissingManifest`, `TestCloneNowCLI_UserCanceledNonTTY`, `TestScanCLI_ExitCodes/failure_missing_dir`, and `TestFixRepoGofmtCleanAfterRewrite` now run on Windows instead of being skipped.
+- Pinned: README pinned-version block + version matrix moved to **v5.47.0**. Synced `gitmap/constants/constants.go` (`Version = "5.47.0"`) and `src/constants/index.ts` (`VERSION = "v5.47.0"`).
+
 ## v5.46.4 — (2026-05-22) — Windows CI: skip fix-repo gofmt e2e (subprocess stdout capture)
 
 - **Fix:** `TestFixRepoGofmtCleanAfterRewrite` (in `gitmap/tests/fixrepo_test`) was failing on `windows-latest` with `"fix-repo output missing 'gofmt:' summary line"` even though every other platform passes. Root cause is the same pwsh-7 subprocess-stdout capture issue tracked in v5.46.2/v5.46.3 (`pwsh -command ". '{0}'"`): the gitmap binary's `fmt.Printf("gofmt:   N .go file(s) reformatted")` line writes correctly to stdout but never lands in `cmd.CombinedOutput()` under the GitHub Actions PowerShell-7 runner. The post-rewrite `gofmt -w` step itself runs fine (Linux/macOS verify it). The test now `t.Skip`s on `runtime.GOOS == "windows"` with a documented carve-out.
