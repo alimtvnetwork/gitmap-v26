@@ -46,6 +46,7 @@ func runFixRepo(args []string) {
 	if len(targets) == 0 {
 		emitFixRepoSummary(0, 0, 0, opts.isDryRun)
 		fmt.Print(constants.FixRepoMsgNothing)
+		emitFixRepoTips(opts, 0)
 		os.Exit(constants.FixRepoExitOk)
 	}
 	result := runFixRepoSweep(identity, targets, opts)
