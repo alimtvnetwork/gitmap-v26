@@ -8,6 +8,19 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.47.0",
+    date: "2026-05-22",
+    subtitle: "pwsh-runner stdout: real fix via temp-file fd inheritance + per-entry `Icon` for install ctx",
+    items: [
+      "**Long-term fix for Windows CI subprocess capture** (replaces the v5.46.2/v5.46.3/v5.46.4 skips). Root cause: when Go's `os/exec` is given a `bytes.Buffer` for `cmd.Stdout`/`Stderr`, it internally creates an `os.Pipe()` and copies bytes via a goroutine. Under the GitHub Actions `windows-latest` runner's `pwsh -command \". '{0}'\"` host, the parent end of that pipe reads EOF immediately even though the child writes correctly — a long-documented pwsh-on-runner stdio bug (see [actions/runner#382](https://github.com/actions/runner/issues/382) and the StepCodex pwsh-stdio case study).",
+      "**Fix:** `runGitmap` now writes child stdout/stderr to a real OS temp file (true fd inheritance, no Go-pipe goroutine in between) and reads it back after `cmd.Run()`. Works uniformly on Linux/macOS/Windows. The previously-skipped tests (`TestCLI_FailureContext_Scan`, `TestCLI_FailureContext_CloneFromMissingManifest`, `TestCLI_FailureContext_CloneNowMissingManifest`, `TestCloneNowCLI_UserCanceledNonTTY`, `TestScanCLI_ExitCodes/failure_missing_dir`, `TestFixRepoGofmtCleanAfterRewrite`) now run on Windows again.",
+      "**`install ctx` — per-entry `Icon` field** (Windows). `ctxEntry` gains an optional `Icon` string; when set, `categoryCommands` and `leafCommands` emit `reg add <key> /v Icon /d <path> /f` alongside the existing `/ve` write. Applies to both leaves and category cascades. Empty `Icon` (the default) preserves the v5.46.x behavior.",
+      "**`install ctx` — root-menu de-dupe**: removed the residual duplicate registrations of `90_terminal` and `91_docs` in `ctxMenu()` (the v5.46.1 fix had only deduped the *registration* path; the entry list itself still listed them twice).",
+      "**Tag-mirroring status:** persistence (migration 006 columns + `RecordTagReplay` / `LookupTagReplay` / `ClassifyVersionTag`) is complete and unit-tested. Stage-14 orchestrator wiring (walk source tags per commit → `git tag` on dest → optional `release/<tag>` branch → record) is the next milestone and tracked separately under `spec/03-commit-in/08-tag-mirroring-and-release-branches.md`.",
+      "Pinned: README pinned-version block + version matrix moved to **v5.47.0**. Synced `gitmap/constants/constants.go` (`Version = \"5.47.0\"`) and `src/constants/index.ts` (`VERSION = \"v5.47.0\"`).",
+    ],
+  },
+  {
     version: "v5.46.4",
     date: "2026-05-22",
     subtitle: "Windows CI: skip fix-repo gofmt e2e (pwsh subprocess stdout capture)",
