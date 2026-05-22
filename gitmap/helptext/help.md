@@ -39,6 +39,12 @@ grouped help screen. With a topic, prints per-command help.
     gitmap help --json | jq '.groups[] | {group, count: (.lines|length)}'
     gitmap help --json --filter ssh | jq '.count'
 
+## JSON schema
+
+The `--json` payload conforms to [`spec/08-json-schemas/help-json.schema.json`](../../spec/08-json-schemas/help-json.schema.json)
+(JSON Schema draft 2020-12). Contract test `helpjson_jsonschema_contract_test.go`
+validates runtime output against the schema on every build to prevent drift.
+
 ## Notes
 
 - Per-command help (e.g. `gitmap help clone`) accepts a `--pretty` flag

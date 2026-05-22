@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.43.1",
+    date: "2026-05-22",
+    subtitle: "Published `help --json` JSON Schema",
+    items: [
+      "**New:** `spec/08-json-schemas/help-json.schema.json` formally defines the `gitmap help --json` payload. Contract test `helpjson_jsonschema_contract_test.go` validates runtime output against the schema to prevent drift.",
+      "Cross-linked the schema from `gitmap/helptext/help.md` so integrators can discover it from `gitmap help help`.",
+      "Pinned: README pinned-version block + version matrix moved to **v5.43.1**. Synced `gitmap/constants/constants.go` (`Version = \"5.43.1\"`) and `src/constants/index.ts` (`VERSION = \"v5.43.1\"`).",
+    ],
+  },
+  {
     version: "v5.43.0",
     date: "2026-05-22",
     subtitle: "`gitmap help --json` for scripting + IDE integrations",

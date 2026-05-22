@@ -1,5 +1,13 @@
 # Changelog
 
+## v5.43.1 — (2026-05-22) — Published `help --json` JSON Schema
+
+- **New:** `spec/08-json-schemas/help-json.schema.json` formally defines the `gitmap help --json` payload (`version`, `count`, grouped `lines`). Contract test `helpjson_jsonschema_contract_test.go` validates runtime output against the schema to prevent drift.
+- Cross-linked the schema from `gitmap/helptext/help.md` so integrators can discover it from `gitmap help help`.
+- Pinned: README pinned-version block + version matrix moved to **v5.43.1**. Synced `gitmap/constants/constants.go` (`Version = "5.43.1"`) and `src/constants/index.ts` (`VERSION = "v5.43.1"`).
+
+
+
 ## v5.43.0 — (2026-05-22) — `gitmap help --json` for scripting + IDE integrations
 
 - **New: `gitmap help --json`.** Emits the full help registry as machine-readable JSON (`version`, `count`, grouped `lines`). Combine with `--filter <q>` to scope to matching rows. ANSI color codes are stripped so consumers get clean text.
