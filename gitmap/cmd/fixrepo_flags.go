@@ -7,10 +7,39 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
 )
+
+// isFixRepoSpanArg reports whether a is a span-style argument: a bare
+// positive integer like "4" or a dash-prefixed integer like "-4" /
+// "-7". v5.45.0+ accepts these as a generalization of the canonical
+// -2/-3/-5 modes so `gitmap fix-repo 4` and `gitmap fix-repo -4` are
+// no longer rejected with E_BAD_FLAG. The span value is the integer
+// itself; computeFixRepoSpan handles it as a raw "-N" mode token.
+func isFixRepoSpanArg(a string) bool {
+	s := a
+	if strings.HasPrefix(s, "-") {
+		s = s[1:]
+	}
+	if s == "" {
+		return false
+	}
+	n, err := strconv.Atoi(s)
+	return err == nil && n > 0
+}
+
+// normalizeFixRepoSpanArg coerces a bare digit ("4") into the
+// canonical dash form ("-4") so downstream span computation has a
+// single shape to switch on.
+func normalizeFixRepoSpanArg(a string) string {
+	if strings.HasPrefix(a, "-") {
+		return a
+	}
+	return "-" + a
+}
 
 // fixRepoModeFlags lists every accepted mode-token in lower case.
 // `--all` is also accepted via the long-flag branch below.
