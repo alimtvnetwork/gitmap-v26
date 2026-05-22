@@ -126,7 +126,7 @@ func finalizeFixRepoOpts(out fixRepoOptions, modes, unknown []string) (fixRepoOp
 		return out, fmt.Errorf("multiple mode flags: %s", strings.Join(modes, " "))
 	}
 	if len(unknown) > 0 {
-		return out, fmt.Errorf("unknown flag(s): %s", strings.Join(unknown, " "))
+		return out, fmt.Errorf("unknown flag(s): %s\n%s", strings.Join(unknown, " "), fixRepoFlagHint())
 	}
 	if len(modes) == 1 {
 		out.mode = modes[0]
