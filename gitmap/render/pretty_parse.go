@@ -120,7 +120,8 @@ func readParagraph(lines []string, start int) (string, int) {
 	i := start
 	for i < len(lines) {
 		line := lines[i]
-		if strings.TrimSpace(line) == "" || isHeading(line) || isFence(line) || isListItem(line) {
+		if strings.TrimSpace(line) == "" || isHeading(line) || isFence(line) ||
+			isListItem(line) || isIndentedCode(line) {
 			break
 		}
 		buf = append(buf, line)
