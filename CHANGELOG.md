@@ -1,7 +1,8 @@
 # Changelog
 
 ## v5.46.0 — (2026-05-22) — Help UX banner in Changelog page + `--json` examples in command help
-# Changelog
+
+
 
 
 - **Docs UI:** the in-app `/changelog` page now leads with a Help UX tip card that surfaces `gitmap help --compact`, `--groups`, `--filter <q>` / `-f`, and `--json` (v5.43.0+), with a direct link to the published JSON Schema (`spec/08-json-schemas/help-json.schema.json`).
