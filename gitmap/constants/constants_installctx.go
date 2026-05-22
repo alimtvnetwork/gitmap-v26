@@ -28,6 +28,19 @@ const (
 	CtxModePrefill  CtxMode = "prefill"  // pwsh -NoExit + writes "gitmap " prompt, no command run
 )
 
+// CtxIconExeToken is the placeholder swapped for the resolved gitmap
+// binary path when an entry's Icon field is rendered into a registry
+// value. Lets ctxMenu() declare Icons without knowing the exe path.
+const CtxIconExeToken = "{exe}"
+
+// Common per-entry Icon values for Windows context-menu entries.
+// Format: "<path>,<index>" — Windows shell uses the indexed icon
+// resource inside the binary/DLL. Index 0 picks the default icon.
+const (
+	CtxIconGitmap = CtxIconExeToken + ",0"
+	CtxIconPwsh   = `C:\Program Files\PowerShell\7\pwsh.exe,0`
+)
+
 // User-facing labels and exec messages.
 const (
 	MsgCtxInstallStart    = "  Adding gitmap to Windows context menu...\n"
