@@ -1,5 +1,15 @@
 # Changelog
 
+## v5.53.0 — (2026-05-22) — Deterministic pipe drain on exit (Windows CI fix)
+
+- Fixed: bytes written to `os.Stdout` / `os.Stderr` just before `os.Exit` could be silently dropped on Windows when `glyphs` or `theme` had wrapped the fds with a pipe-backed forwarder goroutine. Root cause: `os.Exit` terminates the process before the forwarder is scheduled to copy the pipe buffer to the inherited fd. This was the source of the long-running cliexit subprocess-test flakiness on the `windows-latest` GHA runner.
+- Added: `glyphs.Drain()` and `theme.Drain()` — close every installed pipe writer and wait for the matching forwarder goroutine to finish flushing.
+- Added: `cliexit.RegisterFlusher(func())` — registry of drainers invoked in order before `os.Exit` inside `cliexit.Fail`. Wired in `cmd/root.go` immediately after `theme.Install()` / `glyphs.Install()` so every failure path is covered automatically.
+- Changed: `hermeticEnv` (subprocess test harness) now pins `GITMAP_GLYPHS=rich` and `GITMAP_THEME=bright`, bypassing the pipe wrap entirely under test. Belt-and-suspenders with the production drain fix.
+- Removed: per-test `skipOnWindowsSubprocess(t)` guards in `cliexit_context_test.go`, `cliexit_scan_test.go`, and `cliexit_clone_test.go`. The helper is kept as a no-op shim so any external references still compile.
+- Pinned: README pinned-version block + version matrix moved to **v5.53.0**. Synced `gitmap/constants/constants.go` (`Version = "5.53.0"`) and `src/constants/index.ts` (`VERSION = "v5.53.0"`).
+
+
 ## v5.51.0 — (2026-05-22) — Help filter shortcut, footer SHA, remote-installer update
 
 - Added: `gitmap help <name>` now falls back to the filter engine when `<name>` is not a known help topic — typing `gitmap help ssh` is equivalent to `gitmap help --filter ssh`, with the same group context, highlighting, and fuzzy suggestions as `-f`.
