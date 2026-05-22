@@ -41,7 +41,51 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sync"
 )
+
+// flushers holds best-effort drainers run before os.Exit in Fail.
+// Registered at startup by cmd.Run (one per pipe-installing package
+// such as glyphs and theme). Without these, bytes written to a
+// pipe-wrapped os.Stderr just before os.Exit can be lost on Windows
+// because the forwarding goroutine never gets scheduled to drain
+// the pipe — the documented root cause of the cliexit subprocess-
+// test flakiness on Windows CI.
+var (
+	flushMu  sync.Mutex
+	flushers []func()
+)
+
+// RegisterFlusher records a drain function to invoke before os.Exit
+// in Fail. Order of registration is preserved; each flusher runs in
+// the calling goroutine (Fail's). Idempotent flushers are encouraged.
+func RegisterFlusher(f func()) {
+	if f == nil {
+		return
+	}
+	flushMu.Lock()
+	flushers = append(flushers, f)
+	flushMu.Unlock()
+}
+
+// runFlushers invokes every registered flusher in order. Recovers
+// per-flusher so a panicking drainer can't swallow the exit code —
+// we still want Fail to reach os.Exit with the documented code.
+func runFlushers() {
+	flushMu.Lock()
+	fs := append([]func(){}, flushers...)
+	flushMu.Unlock()
+	for _, f := range fs {
+		safeFlush(f)
+	}
+}
+
+// safeFlush runs f under a recover() so a buggy drainer never
+// prevents the exit-code transition the caller asked for.
+func safeFlush(f func()) {
+	defer func() { _ = recover() }()
+	f()
+}
 
 // Reportf writes a uniformly-formatted failure line to os.Stderr.
 // Returns nothing — callers that need the exit-code transition use
@@ -60,12 +104,13 @@ func Reportf(command, op, subject string, err error) {
 	writeReport(os.Stderr, command, op, subject, err)
 }
 
-// Fail prints the standardized failure line and exits with the given
-// code. Use this at every cmd entry-point error path so the
-// (message, exit-code) pair stays atomic and impossible to forget
-// to pair correctly.
+// Fail prints the standardized failure line, flushes any registered
+// output pipes, and exits with the given code. Use this at every cmd
+// entry-point error path so the (message, exit-code) pair stays
+// atomic and impossible to forget to pair correctly.
 func Fail(command, op, subject string, err error, code int) {
 	Reportf(command, op, subject, err)
+	runFlushers()
 	os.Exit(code)
 }
 
