@@ -57,9 +57,13 @@ func Render(md string) string {
 	return strings.TrimRight(out.String(), "\n") + "\n"
 }
 
-// RenderANSI is Render with ANSI codes substituted for the token sentinels.
+// RenderANSI is Render with ANSI codes substituted for the token sentinels
+// and the cosmetic post-processor (headings/bold/backticks/links/tables)
+// applied so terminal output looks like a polished help screen, not raw
+// markdown. The post pass runs only here — Render() stays token-pure so
+// the fixture suite is unaffected.
 func RenderANSI(md string) string {
-	return tokenToANSI().Replace(Render(md))
+	return applyANSIPost(tokenToANSI().Replace(Render(md)))
 }
 
 // HighlightQuotesANSI applies the cyan double-quote rule (rule 2 of the
