@@ -59,6 +59,11 @@ func runHelpDispatch() {
 
 		return
 	}
+	if q := resolveFilterQuery(); len(q) > 0 || hasFlag(constants.FlagFilter) || hasFlag(constants.FlagFilterShort) {
+		printUsageFiltered(q)
+
+		return
+	}
 	if hasFlag(constants.FlagGroups) {
 		printHelpGroups()
 
