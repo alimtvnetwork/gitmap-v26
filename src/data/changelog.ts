@@ -8,11 +8,11 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
-    version: "v5.55.0",
+    version: "v5.56.0",
     date: "2026-05-22",
     subtitle: "Minor version bump",
     items: [
-      "Pinned: README pinned-version block + version matrix moved to v5.55.0; synced `gitmap/constants/constants.go` and `src/constants/index.ts`.",
+      "Pinned: README pinned-version block + version matrix moved to v5.56.0; synced `gitmap/constants/constants.go` and `src/constants/index.ts`.",
     ],
   },
   {

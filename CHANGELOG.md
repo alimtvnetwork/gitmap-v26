@@ -1,8 +1,8 @@
 # Changelog
 
-## v5.55.0 — (2026-05-22) — Minor version bump
+## v5.56.0 — (2026-05-22) — Minor version bump
 
-- Pinned: README pinned-version block + version matrix moved to **v5.55.0**. Synced `gitmap/constants/constants.go` (`Version = "5.55.0"`) and `src/constants/index.ts` (`VERSION = "v5.55.0"`).
+- Pinned: README pinned-version block + version matrix moved to **v5.56.0**. Synced `gitmap/constants/constants.go` (`Version = "5.55.0"`) and `src/constants/index.ts` (`VERSION = "v5.56.0"`).
 
 
 ## v5.54.0 — (2026-05-22) — verify-cmd-faithful: displayed branch matches argv
