@@ -125,7 +125,34 @@ func printUsageFiltered(query string) {
 	}
 
 	renderFilteredGroups(hits, query)
+	printFilterRecapBanner(hits, query)
 	printUsageFooter()
+}
+
+// printFilterRecapBanner repeats the matched command lines in a tight
+// block at the very bottom of filtered help so the user sees the hits
+// without scrolling back up. Capped at 10 rows to stay terminal-sized.
+func printFilterRecapBanner(hits []helpRow, query string) {
+	if len(hits) == 0 {
+		return
+	}
+	const cap = 10
+	bar := strings.Repeat("─", 12)
+	fmt.Println()
+	fmt.Printf("  %s%s matches for %q %s%s\n",
+		constants.ColorMagenta, bar, query, bar, constants.ColorReset)
+	shown := hits
+	if len(shown) > cap {
+		shown = shown[:cap]
+	}
+	for _, r := range shown {
+		fmt.Println(highlight(strings.TrimRight(r.Line, "\n"), query))
+	}
+	if len(hits) > cap {
+		fmt.Printf("  %s… +%d more (refine with a tighter --filter)%s\n",
+			constants.ColorDim, len(hits)-cap, constants.ColorReset)
+	}
+	fmt.Println()
 }
 
 func filterRows(rows []helpRow, query string) []helpRow {
