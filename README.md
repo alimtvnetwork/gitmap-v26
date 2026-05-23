@@ -104,7 +104,7 @@ Pass an explicit install path on the one-liner — no prompts, no auto-detection
 curl -fsSL https://raw.githubusercontent.com/alimtvnetwork/gitmap-v23/main/install.sh | sh -s -- --dir /opt/gitmap
 ```
 
-> Add `-Version v5.57.0` (PowerShell) or `--version v5.57.0` (Bash) before the closing quote / end of line to pin a specific release into your custom directory.
+> Add `-Version v5.58.0` (PowerShell) or `--version v5.58.0` (Bash) before the closing quote / end of line to pin a specific release into your custom directory.
 
 ---
 
