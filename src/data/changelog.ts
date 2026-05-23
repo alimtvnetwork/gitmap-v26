@@ -8,6 +8,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.58.0",
+    date: "2026-05-23",
+    subtitle: "CLI polish: colorful help, filter recap, and --pub alias",
+    items: [
+      "Added: `gitmap push --pub` and `gitmap pull --pub` as aliases for `--https` (public HTTPS clone URL).",
+      "Added: `gitmap render/prettypost.go` — four new regex-based colorizers for command names, aliases, flags, placeholders, and default trailers.",
+      "Added: `gitmap cmd/rootusagefilter.go` — `--filter <q>` end-of-help match-recap banner listing up to 10 matched rows with overflow hint.",
+      "Pinned: README pinned-version block + version matrix moved to v5.58.0; synced `gitmap/constants/constants.go` and `src/constants/index.ts`.",
+    ],
+  },
+  {
     version: "v5.57.0",
     date: "2026-05-22",
     subtitle: "Release automation and terminal rendering improvements",

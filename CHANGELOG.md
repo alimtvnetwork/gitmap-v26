@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.58.0 — (2026-05-23) — CLI polish: colorful help, filter recap, and `--pub` alias
+
+- Added: `gitmap push --pub` and `gitmap pull --pub` as aliases for `--https` (public HTTPS clone URL).
+- Added: `gitmap render/prettypost.go` — four new regex-based colorizers: command names in green, aliases in yellow, bare `--flag` / `-f` tokens in cyan, `<value>` placeholders in green, and `(default: ...)` trailers in dim gray.
+- Added: `gitmap cmd/rootusagefilter.go` — `--filter <q>` end-of-help match-recap banner listing up to 10 matched rows with overflow hint (`… +N more`).
+- Pinned: README pinned-version block + version matrix moved to **v5.58.0**. Synced `gitmap/constants/constants.go` (`Version = "5.58.0"`) and `src/constants/index.ts` (`VERSION = "v5.58.0"`).
+
 ## v5.57.0 — (2026-05-22) — Release automation and terminal rendering improvements
 
 - Added: `gitmap pr <version>` now auto-commits any uncommitted changes before forwarding to `gitmap release`, matching the existing `-y` / `--yes` bypass behavior.
