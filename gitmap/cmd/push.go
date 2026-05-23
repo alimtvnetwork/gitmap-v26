@@ -29,6 +29,7 @@ func parseTransportFlags(cmdName string, args []string) transportFlags {
 	fs.BoolVar(sshFlag, "sh", false, "Short alias for --ssh")
 	httpsFlag := fs.Bool("https", false, "Rewrite remote.origin.url to HTTPS and persist via `git remote set-url`")
 	fs.BoolVar(httpsFlag, "ht", false, "Short alias for --https")
+	fs.BoolVar(httpsFlag, "pub", false, "Alias for --https (public HTTPS clone URL)")
 
 	fs.Parse(reorderFlagsBeforeArgs(args))
 
