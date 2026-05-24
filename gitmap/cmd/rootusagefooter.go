@@ -78,14 +78,14 @@ func printCurrentRepoIdentityBlock(cwd string) {
 // emitIdentityRows prints Repo/Branch/Last commit/Commit SHA rows for dir,
 // preferring the supplied build-time overrides when non-empty.
 func emitIdentityRows(dir, repoOverride, branchOverride, shaOverride string) {
-	repo := firstNonEmpty(repoOverride, captureGit(dir, "config", "--get", "remote.origin.url"))
+	repo := firstNonEmptyVar(repoOverride, captureGit(dir, "config", "--get", "remote.origin.url"))
 	if len(repo) > 0 {
 		fmt.Printf("  %s● Repo:%s        %s%s%s\n",
 			constants.ColorCyan, constants.ColorReset,
 			constants.ColorCyan, repo, constants.ColorReset)
 	}
 
-	branch := firstNonEmpty(branchOverride, captureGit(dir, "rev-parse", "--abbrev-ref", "HEAD"))
+	branch := firstNonEmptyVar(branchOverride, captureGit(dir, "rev-parse", "--abbrev-ref", "HEAD"))
 	if len(branch) > 0 {
 		fmt.Printf("  %s● Branch:%s      %s%s%s\n",
 			constants.ColorCyan, constants.ColorReset,
@@ -98,7 +98,7 @@ func emitIdentityRows(dir, repoOverride, branchOverride, shaOverride string) {
 			constants.ColorYellow, commit, constants.ColorReset)
 	}
 
-	sha := firstNonEmpty(shaOverride, captureGit(dir, "rev-parse", "HEAD"))
+	sha := firstNonEmptyVar(shaOverride, captureGit(dir, "rev-parse", "HEAD"))
 	if len(sha) > 0 {
 		fmt.Printf("  %s● Commit SHA:%s  %s%s%s\n",
 			constants.ColorCyan, constants.ColorReset,
