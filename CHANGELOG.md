@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.59.0 — (2026-05-24) — `gitmap pr` never stalls on auto-commit prompt
+
+- Fixed: `gitmap pr` / `pull-release` now sets a process-level `forceYesOverride` in addition to injecting `-y` into the forwarded args, so the post-release auto-commit `[y/N]` prompt is skipped unconditionally. Defense-in-depth against any future flag-parsing regression that could drop the appended `-y`.
+- Pinned: README + `gitmap/constants/constants.go` + `src/constants/index.ts` synced to **v5.59.0**.
+
 ## v5.58.0 — (2026-05-23) — CLI polish: colorful help, filter recap, and `--pub` alias
 
 - Added: `gitmap push --pub` and `gitmap pull --pub` as aliases for `--https` (public HTTPS clone URL).

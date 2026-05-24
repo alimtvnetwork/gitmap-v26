@@ -170,8 +170,21 @@ func parseReleaseFlags(args []string) (version, assets, commit, branch, bump, no
 	if fs.NArg() > 0 {
 		version = fs.Arg(0)
 	}
+	// Process-level override set by pull-release / prc / similar
+	// wrappers so the auto-commit prompt is never asked even when
+	// the user did not type -y. Belt-and-suspenders with the
+	// ensureYesForward arg injection.
+	if forceYesOverride {
+		*yesFlag = true
+	}
 	return version, *assetsFlag, *commitFlag, *branchFlag, *bumpFlag, *notesFlag, *targetsFlag, []string(zgGroups), []string(zgItems), *bundleFlag, *draftFlag, *dryRunFlag, *verboseFlag, *compressFlag, *checksumsFlag, *binFlag, *listTargetsFlag, *noCommitFlag, *yesFlag
 }
+
+// forceYesOverride, when true, forces parseReleaseFlags to return
+// yes=true regardless of CLI args. Set by `gitmap pr` / `gitmap prc`
+// before delegating to runRelease so the post-release auto-commit
+// prompt cannot stall the pipeline.
+var forceYesOverride bool
 
 // printListTargets resolves and prints the target matrix, then returns.
 func printListTargets(flagTargets string) {

@@ -8,6 +8,15 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.59.0",
+    date: "2026-05-24",
+    subtitle: "`gitmap pr` never stalls on auto-commit prompt",
+    items: [
+      "Fixed: `gitmap pr` / `pull-release` sets a process-level `forceYesOverride` in addition to injecting `-y`, so the post-release auto-commit `[y/N]` prompt is skipped unconditionally.",
+      "Pinned: README + `gitmap/constants/constants.go` + `src/constants/index.ts` synced to v5.59.0.",
+    ],
+  },
+  {
     version: "v5.58.0",
     date: "2026-05-23",
     subtitle: "CLI polish: colorful help, filter recap, and --pub alias",
