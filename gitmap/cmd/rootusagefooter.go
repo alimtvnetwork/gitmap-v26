@@ -40,7 +40,7 @@ func printUsageFooter() {
 	printGitmapIdentityBlock()
 
 	cwd, err := os.Getwd()
-	if err != nil || !isInsideGitRepo(cwd) {
+	if err != nil || !isFooterGitRepo(cwd) {
 		return
 	}
 	if sameRepo(cwd, gitmapSourceDir()) {
@@ -78,14 +78,14 @@ func printCurrentRepoIdentityBlock(cwd string) {
 // emitIdentityRows prints Repo/Branch/Last commit/Commit SHA rows for dir,
 // preferring the supplied build-time overrides when non-empty.
 func emitIdentityRows(dir, repoOverride, branchOverride, shaOverride string) {
-	repo := firstNonEmpty(repoOverride, captureGit(dir, "config", "--get", "remote.origin.url"))
+	repo := firstNonEmptyVar(repoOverride, captureGit(dir, "config", "--get", "remote.origin.url"))
 	if len(repo) > 0 {
 		fmt.Printf("  %s● Repo:%s        %s%s%s\n",
 			constants.ColorCyan, constants.ColorReset,
 			constants.ColorCyan, repo, constants.ColorReset)
 	}
 
-	branch := firstNonEmpty(branchOverride, captureGit(dir, "rev-parse", "--abbrev-ref", "HEAD"))
+	branch := firstNonEmptyVar(branchOverride, captureGit(dir, "rev-parse", "--abbrev-ref", "HEAD"))
 	if len(branch) > 0 {
 		fmt.Printf("  %s● Branch:%s      %s%s%s\n",
 			constants.ColorCyan, constants.ColorReset,
@@ -98,7 +98,7 @@ func emitIdentityRows(dir, repoOverride, branchOverride, shaOverride string) {
 			constants.ColorYellow, commit, constants.ColorReset)
 	}
 
-	sha := firstNonEmpty(shaOverride, captureGit(dir, "rev-parse", "HEAD"))
+	sha := firstNonEmptyVar(shaOverride, captureGit(dir, "rev-parse", "HEAD"))
 	if len(sha) > 0 {
 		fmt.Printf("  %s● Commit SHA:%s  %s%s%s\n",
 			constants.ColorCyan, constants.ColorReset,
@@ -118,8 +118,8 @@ func gitmapSourceDir() string {
 	return constants.RepoPath
 }
 
-// isInsideGitRepo reports whether dir (or any ancestor) is a git repo.
-func isInsideGitRepo(dir string) bool {
+// isFooterGitRepo reports whether dir (or any ancestor) is a git repo.
+func isFooterGitRepo(dir string) bool {
 	out := captureGit(dir, "rev-parse", "--is-inside-work-tree")
 
 	return out == "true"
@@ -136,7 +136,7 @@ func sameRepo(a, b string) bool {
 	return len(ta) > 0 && filepath.Clean(ta) == filepath.Clean(tb)
 }
 
-func firstNonEmpty(values ...string) string {
+func firstNonEmptyVar(values ...string) string {
 	for _, v := range values {
 		if len(v) > 0 {
 			return v
