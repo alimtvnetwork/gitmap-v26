@@ -44,7 +44,7 @@ func runCloneFixRepoPub(args []string) {
 // runCloneFixRepoPipeline is the shared core. `makePublic` controls
 // whether the optional 3rd step (visibility flip) runs.
 func runCloneFixRepoPipeline(args []string, makePublic bool) {
-	url, folderName, noVSCodeSync, requireVersion, useSSH, useHTTPS := parseCloneFixRepoArgs(args)
+	url, folderName, noVSCodeSync, requireVersion, useSSH, useHTTPS, autoYes := parseCloneFixRepoArgs(args)
 	if len(url) == 0 {
 		fmt.Fprint(os.Stderr, constants.ErrCloneFixRepoUsage)
 		os.Exit(constants.ExitCloneFixRepoBadFlag)
@@ -64,6 +64,8 @@ func runCloneFixRepoPipeline(args []string, makePublic bool) {
 	maybeRunFixRepoStep(absPath, requireVersion)
 	if makePublic {
 		runChainedGitmapStep([]string{constants.CmdMakePublic, "--" + constants.FlagVisYes})
+		// Spec 113 §2.3 — offer to privatize prior public versions.
+		runCFRPPriorVersionPrivatize(absPath, autoYes)
 	}
 	fmt.Printf(constants.MsgCloneFixRepoDone, absPath)
 }
