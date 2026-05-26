@@ -1,6 +1,6 @@
 # Changelog
 
-## v5.76.0 — (2026-05-26) — `version-history --json` migrated to `stablejson` + published JSON schema
+## v5.77.0 — (2026-05-26) — `temp-releaselist --json` migrated to `stablejson` + published JSON schema
 
 - Migrated: `gitmap version-history --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/versionhistoryrender.go`). Key order (`fromVersionTag`, `fromVersionNum`, `toVersionTag`, `toVersionNum`, `flattenedPath`, `createdAt`, `id`, `repoId`) is now a compile-time decision via package-level wire-key constants instead of a reflection accident on `model.RepoVersionHistoryRecord`. Optional `flattenedPath` and `createdAt` are conditionally appended so the legacy omitempty wire shape is preserved (absent rather than null/empty).
 - Removed: legacy `json.MarshalIndent(records, ...)` path in `versionhistory.go`; routed through the new stable encoder.
