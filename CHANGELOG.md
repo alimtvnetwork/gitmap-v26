@@ -2,6 +2,18 @@
 
 ## v5.66.0 — (2026-05-26) — `probe --json` migrated to `stablejson` + published JSON schema
 
+- Migrated: `gitmap probe --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/proberender.go`). Key order (`repoId`, `slug`, `absolutePath`, `nextVersionTag`, `nextVersionNum`, `method`, `isAvailable`, `error`) is now a compile-time decision via package-level wire-key constants instead of a reflection accident on `probeJSONEntry`.
+- Added: `spec/08-json-schemas/probe-report.schema.json` — published JSON Schema for downstream consumers.
+- Added: `gitmap/cmd/proberepor_jsonschema_contract_test.go` — schema drift detection (top-level array shape, required key set, encoder-keys ⊂ schema.properties).
+- Added: `gitmap/cmd/probereporjson_contract_test.go` — golden fixture + key-order contract for the stablejson output.
+- Added: `gitmap/cmd/testdata/schemas/probe-report.v1.json` — schema registry entry for key-order drift detection.
+- Updated: `spec/08-json-schemas/_TODO.md` — `probe-report` flipped from `high` to `done`.
+- Pinned: README + `gitmap/constants/constants.go` + `src/constants/index.ts` synced to **v5.66.0**.
+
+
+
+## v5.65.0 — (2026-05-26) — `watch --json` migrated to `stablejson` + published JSON schema
+
 - Migrated: `gitmap watch --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/watchrender.go`). Top-level key order (`timestamp`, `repos`, `summary`) and nested repo/summary key orders are now compile-time decisions via package-level wire-key constants instead of reflection accidents. Nested repos array and summary object are pre-rendered in compact mode and embedded as `json.RawMessage` so key-order stability propagates through the entire document.
 - Added: `spec/08-json-schemas/watch.schema.json` — published JSON Schema for downstream consumers.
 - Added: `gitmap/cmd/watch_jsonschema_contract_test.go` — schema drift detection (top-level shape, repo item shape, summary shape, encoder-keys ⊂ schema.properties).
