@@ -8,6 +8,19 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.65.0",
+    date: "2026-05-26",
+    subtitle: "`watch --json` migrated to `stablejson` + published JSON schema",
+    items: [
+      "Migrated: `gitmap watch --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/watchrender.go`). Top-level and nested repo/summary key orders are now compile-time decisions via wire-key constants.",
+      "Added: `spec/08-json-schemas/watch.schema.json` — published JSON Schema for downstream consumers.",
+      "Added: `gitmap/cmd/watch_jsonschema_contract_test.go` + `watchjson_contract_test.go` — schema drift detection + golden fixture + key-order contract.",
+      "Added: `stablejson.WriteObject` / `WriteObjectIndent` — extends the package to top-level single-object outputs.",
+      "Updated: `spec/08-json-schemas/_TODO.md` — `watch` flipped from `high` to `done`.",
+      "Pinned: README + `gitmap/constants/constants.go` + `src/constants/index.ts` synced to v5.65.0.",
+    ],
+  },
+  {
     version: "v5.64.0",
     date: "2026-05-26",
     subtitle: "`history --json` migrated to `stablejson` + published JSON schema",
