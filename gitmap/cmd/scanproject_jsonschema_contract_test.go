@@ -103,14 +103,3 @@ func TestScanProject_RecordKeysSubsetOfSchema(t *testing.T) {
 	}
 }
 
-// containsString is a tiny local helper kept out of the shared
-// helpers file to avoid bloating its surface area.
-func containsString(haystack []string, needle string) bool {
-	for _, s := range haystack {
-		if s == needle {
-			return true
-		}
-	}
-
-	return false
-}
