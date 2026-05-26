@@ -87,7 +87,6 @@ const (
 // Commit-transfer messages and errors.
 const (
 	MsgCTUsageFmt          = "Usage: gitmap %s LEFT RIGHT [flags]\n\nSee 'gitmap help %s' for the full flag table.\n"
-	ErrCTNotImplementedFmt = "Error: '%s' is scaffolded but the replay engine is not yet implemented.\n  → Spec: spec/01-app/106-commit-left-right-both.md\n  → Track progress: gitmap reinstall once v3.75 lands.\n"
 	ErrCTArgCountFmt       = "Error: %s requires exactly two endpoints (LEFT and RIGHT). Got %d.\n"
 	ErrCTSourceCheckoutFmt = "Error: failed to checkout %s in source: %v (operation: git checkout)\n"
 	ErrCTReplayFailedFmt   = "Error: replay failed at source commit %s: %v (operation: %s)\n"
