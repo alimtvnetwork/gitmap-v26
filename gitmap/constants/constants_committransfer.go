@@ -4,11 +4,8 @@
 //
 // Spec: spec/01-app/106-commit-left-right-both.md
 //
-// **Status:** SCAFFOLD ONLY (v3.74.0). Constants, dispatch wiring, and
-// helptext are in place; the actual replay engine in
-// `gitmap/committransfer/` is deferred to its own session per the spec's
-// phasing plan (§18). Running these commands today prints a clear
-// "not yet implemented — see spec 106" message and exits 2.
+// **Status:** LIVE (v3.76.0+). All three directions run through the
+// replay engine in `gitmap/committransfer/`.
 //
 // **Alias note:** Spec §13 reserves `cl`, `cr`, `cb`. Two of those are
 // already taken at the top-level alias namespace
