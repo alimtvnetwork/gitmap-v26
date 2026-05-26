@@ -36,6 +36,7 @@ gitmap cfrp               <url> [folder] [flags]
 | 🔐 `--ssh` / `-ssh` / `--sh` | false | Force the URL into `git@host:owner/repo.git` SSH-shorthand form before clone runs. Auto-converts `https://…` and `ssh://git@…` URLs. Mutually exclusive with `--https` (`--ssh` wins with a one-line stderr warning). |
 | 🌐 `--https` / `-https` / `--ht` | false | Force the URL into `https://host/owner/repo.git` form. Converts SSH-shorthand and `ssh://…` URLs. Useful in CI where the SSH agent isn't unlocked. |
 | 🚫 `--no-vscode-sync` | false | Forwarded to the `clone` step — skips writing the resolved folder into VS Code Project Manager `projects.json`. The `fix-repo` and `make-public` steps are unaffected. |
+| 🤐 `--yes` / `-y` | false | Non-interactive: skip the prior-version privatize prompt (see §Behavior step 5) and auto-confirm any chained `make-public` confirmation. |
 | 🔒 `--require-version` | false | Strict mode: fail (exit 4) when the cloned repo identity has no `-vN` suffix instead of skipping the `fix-repo` step. |
 
 Path canonicalization (Clean + EvalSymlinks for Windows 8.3 short
