@@ -9,7 +9,6 @@ package cmd
 // each call, so this file does not import sync.
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -64,11 +63,9 @@ func makeProbeEntry(repo model.ScanRecord, r probe.Result) probeJSONEntry {
 	}
 }
 
-// emitProbeJSON dumps the collected entries as indented JSON to stdout.
+// emitProbeJSON dumps the collected entries as stable JSON to stdout.
 func emitProbeJSON(entries []probeJSONEntry) {
-	enc := json.NewEncoder(os.Stdout)
-	enc.SetIndent("", "  ")
-	if err := enc.Encode(entries); err != nil {
+	if err := encodeProbeJSON(os.Stdout, entries); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
