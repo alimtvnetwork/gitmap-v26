@@ -35,40 +35,29 @@ const scanProjectSchemaFilename = "scan-project.schema.json"
 // filenames against the schema-registry copy so silent additions
 // or renames break CI.
 func TestScanProject_FileMapMatchesRegistry(t *testing.T) {
-	raw, err := json.Marshal(struct {
-		Files []string `json:"files"`
-	}{Files: []string{
+	got := []string{
 		constants.JSONFileGoProjects,
 		constants.JSONFileNodeProjects,
 		constants.JSONFileReactProjects,
 		constants.JSONFileCppProjects,
 		constants.JSONFileCsharpProjects,
-	}})
-	if err != nil {
-		t.Fatalf("marshal: %v", err)
 	}
 
-	regBytes := loadRegistryRaw(t, "scan-project.v1.json")
+	regPath := filepath.Join(schemaDir, "scan-project.v1.json")
+	raw, err := os.ReadFile(regPath)
+	if err != nil {
+		t.Fatalf("read registry %s: %v", regPath, err)
+	}
 	var reg struct {
 		Files []string `json:"files"`
 	}
-	if err := json.Unmarshal(regBytes, &reg); err != nil {
+	if err := json.Unmarshal(raw, &reg); err != nil {
 		t.Fatalf("parse registry: %v", err)
 	}
 
-	var got struct {
-		Files []string `json:"files"`
-	}
-	_ = json.Unmarshal(raw, &got)
-	if !equalStringSlices(got.Files, reg.Files) {
-		t.Errorf("scan-project files drift:\n got=%v\nwant=%v", got.Files, reg.Files)
-	}
-
-	// Defensive: the map MUST contain every advertised filename.
-	for _, want := range reg.Files {
-		if !containsString(got.Files, want) {
-			t.Errorf("registry advertises %q but projectTypeJSONMap omits it", want)
-		}
+	if !equalStringSlices(got, reg.Files) {
+		t.Errorf("scan-project files drift:\n got=%v\nwant=%v\nupdate %s if intentional",
+			got, reg.Files, regPath)
 	}
 }
 
