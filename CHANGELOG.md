@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.84.0 — (2026-05-26) — `scan-project` JSON-schema contract: per-type file shape pinned
+
+- Added: `spec/08-json-schemas/scan-project.schema.json` — draft-07 schema for the per-type JSON files emitted by `gitmap scan-project` (`go-projects.json`, `node-projects.json`, `react-projects.json`, `cpp-projects.json`, `csharp-projects.json`). Top-level is a JSON array; each record has PascalCase top-level keys (`Project`, `GoMeta`, `Csharp`) because `detector.DetectionResult` has no `json:` tags — pinned verbatim as the v1 on-the-wire contract. Nested objects use lowerCamel from the `model.*` struct tags. `GoMeta`/`Csharp` use `oneOf [null, object]` to capture the metadata-optional shape.
+- Added: `gitmap/cmd/testdata/schemas/scan-project.v1.json` — registry entry listing the 5 advertised filenames and the 3 top-level record keys.
+- Added: `gitmap/cmd/scanproject_jsonschema_contract_test.go` — two tests: `TestScanProject_FileMapMatchesRegistry` asserts `projectTypeJSONMap` produces exactly the 5 filenames in registry order; `TestScanProject_RecordKeysSubsetOfSchema` runs the live `buildJSONRecords` over both shape variants (bare result + metadata-wrapped) and asserts every emitted top-level key is declared in `items.properties` — catches struct-tag drift or accidental key-name churn on every CI run.
+- Updated: `spec/08-json-schemas/_TODO.md` — `scan-project` row marked ✅ done.
+
 ## v5.83.0 — (2026-05-26) — Spec 114 Gap A follow-up: `--max-history-scan` escape hatch
 
 - Added: `Options.MaxHistoryScan int` in `gitmap/committransfer/types.go` — opt-in cap on the target-history scan used by the idempotence check. Default `0` preserves the v5.78.0 unbounded behaviour; positive values cap the `git log` query at N commits for operators running against pathologically large targets (mirrored monorepos, tens of millions of commits) where the full log is prohibitive.
