@@ -112,6 +112,7 @@ func parseCommitTransferArgs(spec commitTransferSpec, args []string,
 	fs := flag.NewFlagSet(spec.Name, flag.ExitOnError)
 	opts := committransfer.Options{
 		CommandName: spec.Name, LogPrefix: spec.LogPrefix,
+		IncludeMerges: true, // v6.0.0 default — merge commits preserved
 		Message: committransfer.MessagePolicy{
 			DropPatterns: committransfer.DefaultDropPatterns,
 			Conventional: true, Provenance: true,
