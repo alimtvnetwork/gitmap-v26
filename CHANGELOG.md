@@ -1,6 +1,6 @@
 # Changelog
 
-## v5.66.0 — (2026-05-26) — `probe --json` migrated to `stablejson` + published JSON schema
+## v5.67.0 — (2026-05-26) — `amend list --json` migrated to `stablejson` + published JSON schema
 
 - Migrated: `gitmap probe --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/proberender.go`). Key order (`repoId`, `slug`, `absolutePath`, `nextVersionTag`, `nextVersionNum`, `method`, `isAvailable`, `error`) is now a compile-time decision via package-level wire-key constants instead of a reflection accident on `probeJSONEntry`.
 - Added: `spec/08-json-schemas/probe-report.schema.json` — published JSON Schema for downstream consumers.
