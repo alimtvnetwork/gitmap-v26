@@ -4,9 +4,8 @@ package cmd
 //
 // Same two-tier strictness as startuplistjson_contract_test.go:
 // byte-exact for canonical fixtures, structural for variable data.
-// Covers BOTH the top-level latestBranchJSON object AND the nested
-// latestBranchTopItem objects inside `top`, since `omitempty` makes
-// `top` a sometimes-present field — both states must be pinned.
+// Covers BOTH the top-level object without `top` AND the nested
+// top-N array inside `top`, since the key is conditionally emitted.
 //
 // Regenerate fixtures with:
 //
@@ -60,8 +59,8 @@ func TestLatestBranchJSONContract_NoTopOmitsKey(t *testing.T) {
 
 // TestLatestBranchJSONContract_WithTopIncludesKey verifies the
 // `top` key is present and the nested object's key order matches
-// the latestBranchTopItem declaration. Structural-only (no
-// byte-exact golden) because buildTopItems calls
+// the lbTopKey* constants in latestbranchrender.go. Structural-only
+// (no byte-exact golden) because renderLatestBranchTopRaw calls
 // gitutil.FormatDisplayDate which uses the LOCAL timezone — bytes
 // would drift across CI machines.
 func TestLatestBranchJSONContract_WithTopIncludesKey(t *testing.T) {
