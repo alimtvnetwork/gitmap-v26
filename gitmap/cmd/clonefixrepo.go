@@ -142,12 +142,13 @@ func resolveCloneFixRepoName(absPath string) string {
 // --no-vscode-sync, --require-version, --ssh/-ssh/--sh,
 // --https/-https/--ht. Single-dash forms are accepted to match Go's
 // stdlib `flag` package behaviour the user expects from `-ssh`.
-func parseCloneFixRepoArgs(args []string) (string, string, bool, bool, bool, bool) {
+func parseCloneFixRepoArgs(args []string) (string, string, bool, bool, bool, bool, bool) {
 	positional := make([]string, 0, len(args))
 	noVSCodeSync := false
 	requireVersion := false
 	useSSH := false
 	useHTTPS := false
+	autoYes := false
 	syncFlag := constants.FlagNoVSCodeSync
 	reqFlag := constants.FlagRequireVersion
 	for _, a := range args {
@@ -165,6 +166,9 @@ func parseCloneFixRepoArgs(args []string) (string, string, bool, bool, bool, boo
 		case "https", "ht":
 			useHTTPS = true
 			continue
+		case "y", "yes":
+			autoYes = true
+			continue
 		}
 		if len(a) > 0 && a[0] != '-' {
 			positional = append(positional, a)
@@ -179,7 +183,7 @@ func parseCloneFixRepoArgs(args []string) (string, string, bool, bool, bool, boo
 		folder = positional[1]
 	}
 
-	return url, folder, noVSCodeSync, requireVersion, useSSH, useHTTPS
+	return url, folder, noVSCodeSync, requireVersion, useSSH, useHTTPS, autoYes
 }
 
 // resolveCloneTargetFolder mirrors the folder-naming logic in
