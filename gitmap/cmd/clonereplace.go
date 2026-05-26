@@ -25,6 +25,13 @@ type cloneReplaceResult struct {
 func cloneReplacing(url, target string) (cloneReplaceResult, error) {
 	res := cloneReplaceResult{}
 
+	// Spec 113: if the user's shell cwd is inside the target folder,
+	// chdir to the parent so the upcoming os.RemoveAll can succeed
+	// on Windows. No-op when cwd is elsewhere.
+	if _, escErr := escapeCwdIfInside(target); escErr != nil {
+		return res, escErr
+	}
+
 	if _, statErr := os.Stat(target); errors.Is(statErr, fs.ErrNotExist) {
 		fmt.Printf(constants.MsgCloneReplaceFree, target)
 

@@ -118,52 +118,28 @@ func runCloneNext(args []string) {
 		fmt.Printf(constants.MsgCNStagePrepare, currentFolder, flattenedFolder)
 	}
 
-	// Force-flatten pre-step: if the user passed -f / --force AND their
-	// shell cwd is exactly the target folder (the "already flattened"
-	// case from a previous cn run), Windows holds an open handle on
-	// the cwd that prevents os.RemoveAll. Chdir-to-parent here releases
-	// that handle BEFORE the existence check below tries to remove it.
-	// Linux/macOS don't strictly need this, but doing it unconditionally
-	// keeps the code path simple and gives the same UX everywhere.
-	if cnFlags.Force && samePath(cwd, targetPath) {
-		fmt.Printf(constants.MsgForceReleasing, cwd)
-		if chErr := os.Chdir(parentDir); chErr != nil {
-			fmt.Fprintf(os.Stderr, constants.ErrCloneNextForceFailed,
-				flattenedFolder, chErr, flattenedFolder)
-			exitWith(1)
-		}
+	// Spec 113 (v5.61.0+): always escape cwd when it's inside the
+	// target. Previously this required -f / --force; now it's the
+	// default for `cn`, `clone`, `cfr`, `cfrp` alike. Releases the
+	// Windows cwd handle so the upcoming RemoveAll can succeed.
+	if _, escErr := escapeCwdIfInside(targetPath); escErr != nil {
+		fmt.Fprintf(os.Stderr, constants.ErrCloneNextForceFailed,
+			flattenedFolder, escErr, flattenedFolder)
+		exitWith(1)
 	}
 
-	// If the flattened folder already exists, try to remove it for a fresh clone.
-	// On Windows, the current shell's working directory is locked and cannot be
-	// removed by this process. In that case, fall back to a versioned folder name
-	// (e.g. scripts-fixer-v2) and warn — UNLESS -f was passed, which refuses the
-	// fallback and aborts so the user gets either a flat layout or a clear error.
+	// If the flattened folder already exists, remove it for a fresh clone.
+	// Spec 113: no versioned fallback — `cn v++` always writes into the
+	// base-name folder. If removal still fails after the cwd escape,
+	// abort with a clear error instead of silently degrading to
+	// `foo-vN+1/` (the old behavior was a footgun: the user asked for a
+	// flat layout and got two siblings instead).
 	if _, statErr := os.Stat(targetPath); statErr == nil {
 		fmt.Printf(constants.MsgFlattenRemoving, flattenedFolder)
 		if removeErr := os.RemoveAll(targetPath); removeErr != nil {
-			if cnFlags.Force {
-				// Strict force contract: do NOT silently rename to
-				// macro-ahk-v22/. The whole point of -f is "I want flat
-				// or nothing" — degrading would be a footgun.
-				fmt.Fprintf(os.Stderr, constants.ErrCloneNextForceFailed,
-					flattenedFolder, removeErr, flattenedFolder)
-				exitWith(1)
-			}
-			fmt.Fprintf(os.Stderr, constants.WarnCloneNextRemoveFailed, flattenedFolder, removeErr)
-			fallbackFolder := targetName
-			fallbackPath := filepath.Join(parentDir, fallbackFolder)
-			fmt.Printf(constants.MsgFlattenFallback, fallbackFolder)
-			fmt.Printf(constants.MsgFlattenLockedHint, flattenedFolder)
-			// If the versioned fallback also exists, attempt to remove it; if that
-			// fails too, warn but continue — git clone will surface a clear error.
-			if _, fbStat := os.Stat(fallbackPath); fbStat == nil {
-				if fbErr := os.RemoveAll(fallbackPath); fbErr != nil {
-					fmt.Fprintf(os.Stderr, constants.WarnCloneNextRemoveFailed, fallbackFolder, fbErr)
-				}
-			}
-			flattenedFolder = fallbackFolder
-			targetPath = fallbackPath
+			fmt.Fprintf(os.Stderr, constants.ErrCloneNextForceFailed,
+				flattenedFolder, removeErr, flattenedFolder)
+			exitWith(1)
 		}
 	}
 
