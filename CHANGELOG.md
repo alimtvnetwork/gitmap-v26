@@ -1,5 +1,15 @@
 # Changelog
 
+## v5.63.0 — (2026-05-26) — `find-next --json` migrated to `stablejson` + published JSON schema
+
+- Migrated: `gitmap find-next --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/findnextrender.go`). Top-level key order (`repo`, `nextVersionTag`, `nextVersionNum`, `method`, `probedAt`) is now a compile-time decision via package-level wire-key constants instead of a reflection accident on `model.FindNextRow`. Byte output is unchanged thanks to the stablejson byte-compat contract with `json.Encoder.SetIndent("", "  ")`.
+- Added: `spec/08-json-schemas/find-next.schema.json` — published JSON Schema for downstream consumers. Nested `repo` allows passthrough so future `model.ScanRecord` column additions don't ripple-break every find-next consumer.
+- Added: `gitmap/cmd/findnext_jsonschema_contract_test.go` — pairs the runtime encoder with the published schema so drift in either side fails the build (top-level array shape, required key set, encoder-keys ⊂ schema.properties).
+- Updated: `spec/08-json-schemas/_TODO.md` — `find-next` flipped from `med` to `done` with cross-links.
+- Pinned: README + `gitmap/constants/constants.go` + `src/constants/index.ts` synced to **v5.63.0**.
+
+
+
 ## v5.62.0 — (2026-05-26) — commit-transfer idempotence beyond 200 commits (spec 114 Gap A)
 
 - Fixed: `gitmap/committransfer/plan.go` now scans the **entire target history** for the idempotence check, not just the last 200 commits. Source commits cherry-picked into long-history targets are no longer mis-classified as fresh and re-applied. (Spec 114 Gap A — `recentLogSubjectsAndBodies(dir, 0)` sentinel.)
