@@ -1,12 +1,13 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v23/gitmap/model"
 )
+
 
 // runSSHList displays all stored SSH keys as an aligned table or JSON.
 func runSSHList(args ...string) {
