@@ -173,8 +173,14 @@ func pushHEAD(dir string) (string, error) {
 	return gitOut(dir, "push")
 }
 
-// recentLogSubjectsAndBodies returns up to n recent commits' full
-// subject + body concatenated, used by the idempotence check (§10).
+// recentLogSubjectsAndBodies returns recent commits' full subject + body
+// concatenated, used by the idempotence check (§10). When n <= 0 the
+// entire target history is returned — required to avoid false-negative
+// "fresh commit" classification on long-history targets (spec 114 Gap A).
 func recentLogSubjectsAndBodies(dir string, n int) (string, error) {
+	if n <= 0 {
+		return gitOut(dir, "log", "--format=%B%n---commit-sep---")
+	}
+
 	return gitOut(dir, "log", fmt.Sprintf("-n%d", n), "--format=%B%n---commit-sep---")
 }
