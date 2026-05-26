@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -87,22 +86,12 @@ func runWatchLoop(records []model.ScanRecord, interval int, noFetch bool) {
 	}
 }
 
-// printWatchJSON outputs a single snapshot as JSON and exits.
+// printWatchJSON outputs a single snapshot as stable JSON and exits.
 func printWatchJSON(records []model.ScanRecord, noFetch bool) {
 	snapshots := collectAllStatuses(records, noFetch)
 	summary := buildWatchSummary(snapshots)
 
-	out := map[string]any{
-		"timestamp": time.Now().UTC().Format(time.RFC3339),
-		"repos":     snapshots,
-		"summary":   summary,
+	if err := encodeWatchJSON(os.Stdout, snapshots, summary, time.Now().UTC().Format(time.RFC3339)); err != nil {
+		fmt.Fprintf(os.Stderr, "  ✗ Failed to encode watch result to JSON: %v\n", err)
 	}
-
-	data, err := json.MarshalIndent(out, "", "  ")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "  ✗ Failed to marshal watch result to JSON: %v\n", err)
-
-		return
-	}
-	fmt.Println(string(data))
 }

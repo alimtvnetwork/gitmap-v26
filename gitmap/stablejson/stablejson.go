@@ -114,6 +114,62 @@ func WriteArrayIndent(w io.Writer, items [][]Field, indent string) error {
 
 // writeArrayPretty / writeArrayMinified live in writers.go.
 
+// WriteObject writes a single pretty-printed JSON object with 2-space
+// indentation. Empty fields emits `{}\n`. A trailing `\n` is always added
+// to match json.Encoder.Encode behavior.
+//
+// WriteObject is intended for TOP-LEVEL single-object outputs (e.g.
+// `gitmap watch --json`). Nested objects should be pre-rendered to a
+// buffer and passed as json.RawMessage values so their key order is
+// also stable; the indentation of such pre-rendered values reflects
+// their own buffer context, not the parent depth. This is an accepted
+// trade-off — the headline guarantee of the package is key-order
+// stability, not byte-identical indentation with json.MarshalIndent
+// for arbitrarily nested structures.
+func WriteObject(w io.Writer, fields []Field) error {
+	return WriteObjectIndent(w, fields, "  ")
+}
+
+// WriteObjectIndent writes a single JSON object with caller-controlled
+// indentation. Two modes:
+//
+//   - indent == ""   → compact single-line: `{"k":v,"k2":v2}\n`
+//   - indent != ""   → pretty-printed: `{` at column 0, each field at
+//     one indent depth (matching json.Encoder.SetIndent("", indent)
+//     for a top-level object).
+//
+// A trailing `\n` is always added.
+func WriteObjectIndent(w io.Writer, fields []Field, indent string) error {
+	if len(fields) == 0 {
+		_, err := io.WriteString(w, "{}\n")
+
+		return err
+	}
+	var buf bytes.Buffer
+	if indent == "" {
+		if err := writeCompactObject(&buf, fields); err != nil {
+			return err
+		}
+		buf.WriteByte('\n')
+	} else {
+		buf.WriteString("{\n")
+		for i, f := range fields {
+			buf.WriteString(indent)
+			if err := writeKeyValue(&buf, f, " "); err != nil {
+				return err
+			}
+			if i < len(fields)-1 {
+				buf.WriteByte(',')
+			}
+			buf.WriteByte('\n')
+		}
+		buf.WriteString("}\n")
+	}
+	_, err := w.Write(buf.Bytes())
+
+	return err
+}
+
 // WriteJSONLines writes `items` as JSON Lines: one compact object
 // per line, terminated by `\n` (the de-facto `jsonl` format consumed
 // by jq, fluentd, BigQuery, DuckDB).

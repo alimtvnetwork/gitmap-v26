@@ -1,5 +1,18 @@
 # Changelog
 
+## v5.65.0 — (2026-05-26) — `watch --json` migrated to `stablejson` + published JSON schema
+
+- Migrated: `gitmap watch --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/watchrender.go`). Top-level key order (`timestamp`, `repos`, `summary`) and nested repo/summary key orders are now compile-time decisions via package-level wire-key constants instead of reflection accidents. Nested repos array and summary object are pre-rendered in compact mode and embedded as `json.RawMessage` so key-order stability propagates through the entire document.
+- Added: `spec/08-json-schemas/watch.schema.json` — published JSON Schema for downstream consumers.
+- Added: `gitmap/cmd/watch_jsonschema_contract_test.go` — schema drift detection (top-level shape, repo item shape, summary shape, encoder-keys ⊂ schema.properties).
+- Added: `gitmap/cmd/watchjson_contract_test.go` — golden fixture + key-order contract for the stablejson output.
+- Added: `gitmap/cmd/testdata/schemas/watch.v1.json` — schema registry entry for key-order drift detection.
+- Added: `stablejson.WriteObject` / `WriteObjectIndent` — extends the package to top-level single-object outputs (previously only arrays were supported).
+- Updated: `spec/08-json-schemas/_TODO.md` — `watch` flipped from `high` to `done`.
+- Pinned: README + `gitmap/constants/constants.go` + `src/constants/index.ts` synced to **v5.65.0**.
+
+
+
 ## v5.64.0 — (2026-05-26) — `history --json` migrated to `stablejson` + published JSON schema
 
 - Migrated: `gitmap history --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/historyrender.go`). Key order (`id`, `command`, `alias`, `args`, `flags`, `startedAt`, `finishedAt`, `durationMs`, `exitCode`, `summary`, `repoCount`, `createdAt`) is now a compile-time decision via package-level wire-key constants instead of a reflection accident on `model.CommandHistoryRecord`.
