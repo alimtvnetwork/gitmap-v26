@@ -1,6 +1,6 @@
 # Changelog
 
-## v5.65.0 — (2026-05-26) — `watch --json` migrated to `stablejson` + published JSON schema
+## v5.66.0 — (2026-05-26) — `probe --json` migrated to `stablejson` + published JSON schema
 
 - Migrated: `gitmap watch --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/watchrender.go`). Top-level key order (`timestamp`, `repos`, `summary`) and nested repo/summary key orders are now compile-time decisions via package-level wire-key constants instead of reflection accidents. Nested repos array and summary object are pre-rendered in compact mode and embedded as `json.RawMessage` so key-order stability propagates through the entire document.
 - Added: `spec/08-json-schemas/watch.schema.json` — published JSON Schema for downstream consumers.
