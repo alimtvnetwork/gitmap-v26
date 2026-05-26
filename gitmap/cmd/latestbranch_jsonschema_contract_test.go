@@ -68,7 +68,7 @@ func TestLatestBranchJSONSchema_EncoderMatchesSchema(t *testing.T) {
 	if err := encodeLatestBranchJSON(&buf, result, nil, 0); err != nil {
 		t.Fatalf("encode: %v", err)
 	}
-	gotKeys := extractFirstObjectKeyOrder(t, buf.Bytes())
+	gotKeys := readFirstObjectKeys(t, buf.Bytes())
 	for _, key := range gotKeys {
 		if _, allowed := props[key]; !allowed {
 			t.Errorf("encoder emitted %q not declared in schema properties", key)
