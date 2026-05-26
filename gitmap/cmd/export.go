@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"os"
 
@@ -50,16 +50,16 @@ func loadExportData() model.DatabaseExport {
 	return export
 }
 
-// writeExportFile marshals the export data to a JSON file.
+// writeExportFile marshals the export data to a JSON file using the
+// stablejson-backed encoder so the top-level key order is contractual.
 func writeExportFile(path string, export model.DatabaseExport) {
-	data, err := json.MarshalIndent(export, "", "  ")
-	if err != nil {
+	var buf bytes.Buffer
+	if err := encodeDatabaseExportJSON(&buf, export); err != nil {
 		fmt.Fprintf(os.Stderr, constants.MsgExportFailed, err)
 		os.Exit(1)
 	}
 
-	err = os.WriteFile(path, data, constants.DirPermission)
-	if err != nil {
+	if err := os.WriteFile(path, buf.Bytes(), constants.DirPermission); err != nil {
 		fmt.Fprintf(os.Stderr, constants.MsgExportFailed, err)
 		os.Exit(1)
 	}
