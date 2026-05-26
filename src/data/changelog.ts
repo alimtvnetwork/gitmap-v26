@@ -8,6 +8,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: "v5.66.0",
+    date: "2026-05-26",
+    subtitle: "`probe --json` migrated to `stablejson` + published JSON schema",
+    items: [
+      "Migrated: `gitmap probe --json` encoder onto `gitmap/stablejson` (new `gitmap/cmd/proberender.go`). Key order is now a compile-time decision via package-level wire-key constants instead of a reflection accident on `probeJSONEntry`.",
+      "Added: `spec/08-json-schemas/probe-report.schema.json` — published JSON Schema for downstream consumers.",
+      "Added: `gitmap/cmd/proberepor_jsonschema_contract_test.go` + `probereporjson_contract_test.go` — schema drift detection + golden fixture + key-order contract.",
+      "Updated: `spec/08-json-schemas/_TODO.md` — `probe-report` flipped from `high` to `done`.",
+      "Pinned: README + `gitmap/constants/constants.go` + `src/constants/index.ts` synced to v5.66.0.",
+    ],
+  },
+  {
     version: "v5.65.0",
     date: "2026-05-26",
     subtitle: "`watch --json` migrated to `stablejson` + published JSON schema",
