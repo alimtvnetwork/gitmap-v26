@@ -61,7 +61,7 @@ func TestLLMDocsJSONContract_CommandGroupKeyOrder(t *testing.T) {
 		t.Fatalf("expected non-empty commands array")
 	}
 
-	groupKeys := extractEveryObjectKeyOrder(t, doc.Commands)
+	groupKeys := readEveryObjectKeys(t, doc.Commands)
 	if len(groupKeys) == 0 {
 		t.Fatalf("expected at least one command group")
 	}
@@ -86,7 +86,7 @@ func TestLLMDocsJSONContract_CommandGroupKeyOrder(t *testing.T) {
 	if err := json.Unmarshal(groupsArr[0], &firstGroup); err != nil {
 		t.Fatalf("unmarshal first group: %v", err)
 	}
-	cmdKeys := extractEveryObjectKeyOrder(t, firstGroup.Commands)
+	cmdKeys := readEveryObjectKeys(t, firstGroup.Commands)
 	wantPrefix := []string{"name", "alias", "description"}
 	for i, got := range cmdKeys {
 		if len(got) < len(wantPrefix) {
