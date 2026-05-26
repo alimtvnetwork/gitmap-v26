@@ -81,6 +81,7 @@ func TestEscapeCwdIfInside_EscapesWhenInside(t *testing.T) {
 	if err != nil {
 		t.Fatalf("evalsymlinks: %v", err)
 	}
+	restoreCwd(t)
 
 	if err := os.Chdir(target); err != nil {
 		t.Fatalf("chdir target: %v", err)
