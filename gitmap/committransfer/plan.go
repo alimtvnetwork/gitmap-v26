@@ -27,6 +27,7 @@ func BuildPlan(sourceDir, targetDir string, opts Options) (ReplayPlan, error) {
 	// Unbounded: 0 = scan full target history (spec 114 Gap A — prevents
 	// false-fresh classification on targets with >200 commits since the
 	// already-applied source commit).
+	recentTargetLog, _ := recentLogSubjectsAndBodies(targetDir, 0)
 	replayedSet := BuildReplayedSet(recentTargetLog)
 
 	plan, err := assemblePlan(sourceDir, targetDir, sourceHead, base, shas, replayedSet, opts)
