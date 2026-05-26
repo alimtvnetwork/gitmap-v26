@@ -126,6 +126,10 @@ type ReplayPlan struct {
 	// in PrintPlan / PrintSummary so the user can reconcile the plan
 	// count against `git log` (which includes merges by default).
 	MergeExcluded int
+
+	// IncludeMerges mirrors the option that produced this plan so
+	// PrintPlan can emit the correct notice (v6.0.0+).
+	IncludeMerges bool
 }
 
 // ReplayResult is the outcome after the replay loop runs.
