@@ -8,7 +8,7 @@ import (
 )
 
 func TestExtractBaseAndVersionFromArg_URL(t *testing.T) {
-	base, ver := extractBaseAndVersionFromArg("https://github.com/alimtvnetwork/gitmap-v24")
+	base, ver := extractBaseAndVersionFromArg("https://github.com/alimtvnetwork/gitmap-v25")
 	if base != "gitmap" || ver != 23 {
 		t.Fatalf("expected (gitmap, 23), got (%s, %d)", base, ver)
 	}

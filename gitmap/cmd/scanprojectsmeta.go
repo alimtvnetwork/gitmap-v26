@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/detector"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/detector"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/store"
 )
 
 // upsertGoProjectMeta persists Go metadata and runnables.

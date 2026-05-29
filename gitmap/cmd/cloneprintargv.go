@@ -44,7 +44,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
 )
 
 // cmdPrintArgv is the request-scoped flag flipped by each

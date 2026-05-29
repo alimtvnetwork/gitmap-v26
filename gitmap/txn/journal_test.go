@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/store"
 )
 
 // TestBeginCommitRevertEdit exercises the full snapshot-edit → revert path

@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/errreport"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/probe"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/errreport"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/probe"
 )
 
 // newScanCollector returns a ready-to-use Collector when reportErrors

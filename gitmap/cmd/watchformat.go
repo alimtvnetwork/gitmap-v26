@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/model"
 )
 
 // printWatchDashboard clears the screen and prints one refresh cycle.

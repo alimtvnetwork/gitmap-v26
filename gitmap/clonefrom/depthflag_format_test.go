@@ -18,7 +18,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
 )
 
 // TestDepthFlagFormat_Locked pins the constant itself. A typo here

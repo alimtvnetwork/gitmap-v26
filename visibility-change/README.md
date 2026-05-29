@@ -1,8 +1,8 @@
 # visibility-change scripts
 
-Script-only fallback for the Go-native `gitmap-v24 make-public` /
-`gitmap-v24 make-private` commands. Use these when you can't ship the
-`gitmap-v24` binary (CI runners, ad-hoc remotes, etc.).
+Script-only fallback for the Go-native `gitmap-v25 make-public` /
+`gitmap-v25 make-private` commands. Use these when you can't ship the
+`gitmap-v25` binary (CI runners, ad-hoc remotes, etc.).
 
 ## Layout
 
@@ -54,5 +54,5 @@ Bash:
 | 7 | Confirmation required (re-run with `--yes` / `-Yes`) |
 | 8 | Verification failed (visibility did not change) |
 
-These match the exit codes emitted by `gitmap-v24 make-public` /
-`gitmap-v24 make-private` so wrappers can branch on the same numbers.
+These match the exit codes emitted by `gitmap-v25 make-public` /
+`gitmap-v25 make-private` so wrappers can branch on the same numbers.

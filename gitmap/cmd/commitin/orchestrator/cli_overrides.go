@@ -1,9 +1,9 @@
 package orchestrator
 
 import (
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/cmd/commitin"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/cmd/commitin/profile"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/cmd/commitin"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/cmd/commitin/profile"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
 )
 
 // buildCliOverrides projects the parser's RawArgs onto the

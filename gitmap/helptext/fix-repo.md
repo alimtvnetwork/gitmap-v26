@@ -62,13 +62,13 @@ mode:    dry-run
 The bare-base sweep only fires on the v1→v2 bump. Use `--restrict no-version`
 (`-r nv`) to suppress it even there.
 
-### Inside `gitmap-v24` (current=v2, target includes v1) — bare sweep ACTIVE
+### Inside `gitmap-v25` (current=v2, target includes v1) — bare sweep ACTIVE
 
 ```
 BEFORE                                      AFTER (gitmap fix-repo)
-gitmap          → script body                gitmap-v24
-gitmap-v24       → install URL                gitmap-v24
-gitmap-v24       → already current            gitmap-v24  (no-op)
+gitmap          → script body                gitmap-v25
+gitmap-v25       → install URL                gitmap-v25
+gitmap-v25       → already current            gitmap-v25  (no-op)
 gitmap.js       → filename, word-boundary    gitmap.js  (skipped)
 ```
 
@@ -77,18 +77,18 @@ With `--restrict no-version` (`-r nv`):
 ```
 BEFORE                                      AFTER (gitmap fr -r nv)
 gitmap          → bare token                 gitmap     (PRESERVED)
-gitmap-v24       → versioned                  gitmap-v24
+gitmap-v25       → versioned                  gitmap-v25
 ```
 
-### Inside `gitmap-v24` or higher (current≥v3) — bare sweep SKIPPED
+### Inside `gitmap-v25` or higher (current≥v3) — bare sweep SKIPPED
 
 ```
 BEFORE                                      AFTER (gitmap fix-repo --all)
 gitmap                  → binary / brand     gitmap         (PRESERVED)
 https://…/owner/gitmap  → upstream URL       …/owner/gitmap (PRESERVED)
-gitmap-v24               → prior version      gitmap-v<cur>
-gitmap-v24               → prior version      gitmap-v<cur>
-gitmap-v24              → unrelated future   gitmap-v24     (negative-lookahead)
+gitmap-v25               → prior version      gitmap-v<cur>
+gitmap-v25               → prior version      gitmap-v<cur>
+gitmap-v25              → unrelated future   gitmap-v25     (negative-lookahead)
 ```
 
 Rule of thumb: once you've shipped past v2, bare `{base}` is almost always

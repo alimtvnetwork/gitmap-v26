@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/cliexit"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/movemerge"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/txn"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/cliexit"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/movemerge"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/txn"
 )
 
 // runMove implements `gitmap mv LEFT RIGHT`.

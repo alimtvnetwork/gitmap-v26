@@ -8,8 +8,8 @@ package mapper
 import (
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/clonefrom"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/clonefrom"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
 )
 
 // TestClassifyTransport_Buckets pins one URL per documented case

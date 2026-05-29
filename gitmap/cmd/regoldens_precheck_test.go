@@ -8,7 +8,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
 )
 
 func TestPrecheckFoundNonDeterminism_DetectsMarker(t *testing.T) {

@@ -13,9 +13,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/cliexit"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/vscodepm"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/cliexit"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/vscodepm"
 )
 
 // runVSCodePMSync is the entry point wired into the dispatcher.

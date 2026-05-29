@@ -6,10 +6,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/release"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/release"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/store"
 )
 
 // loadReleasesFromRepo reads .gitmap/release/v*.json files and converts to records.

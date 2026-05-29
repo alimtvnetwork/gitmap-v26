@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/scanner"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/scanner"
 )
 
 // TestBuildRecordsWithRoot_PinsBaseToProvidedRoot verifies that passing a

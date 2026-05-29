@@ -19,9 +19,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/downloaderconfig"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/downloaderconfig"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/store"
 )
 
 // runDownloaderConfig is the dispatch entrypoint.

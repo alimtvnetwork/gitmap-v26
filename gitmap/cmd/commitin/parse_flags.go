@@ -4,7 +4,7 @@ import (
 	"flag"
 	"io"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
 )
 
 // csvHolder collects every CSV-shaped flag so finalizeFlagFanout can

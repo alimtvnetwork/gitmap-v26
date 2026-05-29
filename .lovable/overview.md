@@ -21,7 +21,7 @@
 
 ## Repository
 
-`https://github.com/alimtvnetwork/gitmap-v24`
+`https://github.com/alimtvnetwork/gitmap-v25`
 
 ## Key Directories
 

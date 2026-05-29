@@ -3,8 +3,8 @@ package cmd
 import (
 	"strconv"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/release"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/release"
 )
 
 // versionEntry pairs a parsed version with its changelog notes and source.

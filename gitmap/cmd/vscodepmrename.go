@@ -4,7 +4,7 @@
 package cmd
 
 import (
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/vscodepm"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/vscodepm"
 )
 
 // renameVSCodePMByPath updates the projects.json entry whose rootPath

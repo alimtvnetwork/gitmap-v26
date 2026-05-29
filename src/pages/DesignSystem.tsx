@@ -87,14 +87,14 @@ func main() {
     }
 }`;
 
-const bashExample = `# Install gitmap-v24
-curl -fsSL https://raw.githubusercontent.com/alimtvnetwork/gitmap-v24/main/gitmap-v24/scripts/install.sh | bash
+const bashExample = `# Install gitmap-v25
+curl -fsSL https://raw.githubusercontent.com/alimtvnetwork/gitmap-v25/main/gitmap-v25/scripts/install.sh | bash
 
 # Scan all repos
-gitmap-v24 scan ~/projects --format table
+gitmap-v25 scan ~/projects --format table
 
 # Watch for changes
-gitmap-v24 watch ~/projects --interval 5s`;
+gitmap-v25 watch ~/projects --interval 5s`;
 
 const jsonExample = `{
   "scan_paths": ["~/projects", "~/work"],
@@ -233,7 +233,7 @@ const DesignSystemPage = () => {
             </div>
             <div>
               <span className="text-xs font-mono text-muted-foreground block mb-1">Inline code</span>
-              <p className="text-foreground">Use <code className="docs-inline-code">gitmap-v24 scan</code> to discover repositories.</p>
+              <p className="text-foreground">Use <code className="docs-inline-code">gitmap-v25 scan</code> to discover repositories.</p>
             </div>
           </div>
 

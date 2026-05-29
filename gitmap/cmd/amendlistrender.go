@@ -14,8 +14,8 @@ package cmd
 import (
 	"io"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/stablejson"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/stablejson"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/store"
 )
 
 // amend-list wire keys. Names + order are the contract.

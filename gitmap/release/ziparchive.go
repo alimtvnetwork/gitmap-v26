@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/verbose"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/verbose"
 )
 
 // ZipGroupArchive holds the result of archiving a zip group.

@@ -8,9 +8,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/render"
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/templates"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/render"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/templates"
 )
 
 const (

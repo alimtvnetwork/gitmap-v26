@@ -17,7 +17,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/model"
 )
 
 // TestHistoryJSONContract_EmptyIsArrayNotNull is the jq-compat

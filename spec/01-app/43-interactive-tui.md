@@ -11,8 +11,8 @@ rich, keyboard-driven experience.
 ## Command
 
 ```
-gitmap-v24 interactive
-gitmap-v24 i
+gitmap-v25 interactive
+gitmap-v25 i
 ```
 
 Launches the full-screen TUI with four views accessible via tab
@@ -83,7 +83,7 @@ Browse recent command history from the database:
 ## Package Structure
 
 ```
-gitmap-v24/tui/
+gitmap-v25/tui/
 ├── tui.go           # Entry point, root model, tab switching
 ├── browser.go       # Repo list with fuzzy search
 ├── actions.go       # Batch action executor

@@ -25,7 +25,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v24/gitmap/vscodepm"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/vscodepm"
 )
 
 // TestVSCodePMSyncDedupesGitmapBrandTag asserts that when the seed
