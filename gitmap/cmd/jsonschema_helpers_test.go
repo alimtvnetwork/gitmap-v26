@@ -18,7 +18,6 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
-	"os"
 	"path/filepath"
 	"testing"
 )
@@ -30,10 +29,7 @@ import (
 // to read project-relative fixtures.
 func findSchemaFile(t *testing.T, filename string) string {
 	t.Helper()
-	dir, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("getwd: %v", err)
-	}
+	dir := filepath.Dir(cmdPackageDir())
 	for i := 0; i < 8; i++ {
 		candidate := filepath.Join(dir, "spec", "08-json-schemas", filename)
 		if _, err := os.Stat(candidate); err == nil {
