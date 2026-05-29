@@ -24,13 +24,15 @@ func escapeCwdIfInside(target string) (string, error) {
 	if err != nil {
 		return "", nil
 	}
-
-	cwdClean := cleanExistingPath(cwd)
-	tgtClean := cleanExistingPath(target)
-	if !isPathInside(cwdClean, tgtClean) {
-		return cwd, nil
+	if isPathInside(cleanExistingPath(cwd), cleanExistingPath(target)) {
+		return escapeCwdToParent(cwd, target)
 	}
 
+	return cwd, nil
+}
+
+func escapeCwdToParent(cwd, target string) (string, error) {
+	tgtClean := cleanExistingPath(target)
 	parent := filepath.Dir(tgtClean)
 	fmt.Printf("↪ cwd is inside %q; chdir → %q to release handle\n",
 		tgtClean, parent)
