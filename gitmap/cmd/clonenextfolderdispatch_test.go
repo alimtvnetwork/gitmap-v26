@@ -67,8 +67,6 @@ func TestHasFolderHint(t *testing.T) {
 }
 
 func TestResolveCloneNextFolder(t *testing.T) {
-	t.Parallel()
-
 	tmp := t.TempDir()
 	subdir := filepath.Join(tmp, "macro-ahk-v11")
 	if err := os.Mkdir(subdir, 0o755); err != nil {
@@ -93,7 +91,6 @@ func TestResolveCloneNextFolder(t *testing.T) {
 		// t.Chdir auto-restores in the correct order relative to any t.TempDir
 		// cleanups in this subtest, avoiding "/" cwd fallbacks on macOS.
 		t.Chdir(tmp)
-
 
 		got, err := resolveCloneNextFolder("macro-ahk-v11")
 		if err != nil {
