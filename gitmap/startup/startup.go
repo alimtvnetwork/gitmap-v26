@@ -34,7 +34,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
 )
 
 // Entry is one gitmap-managed autostart record. Path is the absolute

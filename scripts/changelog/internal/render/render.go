@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v23/scripts/changelog/internal/group"
+	"github.com/alimtvnetwork/gitmap-v24/scripts/changelog/internal/group"
 )
 
 // Entry is the per-release payload rendered into both formats.

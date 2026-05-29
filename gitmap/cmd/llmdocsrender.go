@@ -21,7 +21,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/stablejson"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/stablejson"
 )
 
 // llm-docs top-level wire keys. Names + order are the contract.

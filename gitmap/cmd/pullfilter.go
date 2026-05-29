@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
 )
 
 // filterByAvailableUpdates keeps only records whose latest VersionProbe row

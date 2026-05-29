@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
 )
 
 // historyOpts is the parsed flag bundle for both history-* commands.

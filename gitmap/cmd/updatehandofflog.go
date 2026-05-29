@@ -31,7 +31,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
 )
 
 var handoffLogMu sync.Mutex

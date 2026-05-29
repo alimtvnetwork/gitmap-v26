@@ -18,7 +18,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
 )
 
 // addWindowsStartupFolder writes a .lnk via PowerShell, then

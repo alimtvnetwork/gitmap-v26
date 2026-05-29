@@ -24,8 +24,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/vscodepm"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/vscodepm"
 )
 
 // vscodePMSyncOpts is the parsed CLI surface for one runner invocation.

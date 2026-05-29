@@ -106,9 +106,9 @@ import (
 
 // 3. Internal packages
 import (
-    "gitmap-v23/constants"
-    "gitmap-v23/model"
-    "gitmap-v23/store"
+    "gitmap-v24/constants"
+    "gitmap-v24/model"
+    "gitmap-v24/store"
 )
 ```
 

@@ -14,8 +14,8 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/gitutil"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/stablejson"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/gitutil"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/stablejson"
 )
 
 // latest-branch top-level wire keys. Names + order are the contract.

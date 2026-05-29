@@ -16,9 +16,9 @@ func TestParseCurrentRepoSlug(t *testing.T) {
 		wantN    int
 		wantErr  bool
 	}{
-		{"gitmap-v23", "gitmap", 23, false},
+		{"gitmap-v24", "gitmap", 23, false},
 		{"gitmap-v100", "gitmap", 100, false},
-		{"gitmap-v1", "gitmap", 1, false},
+		{"gitmap-v24", "gitmap", 1, false},
 		{"gitmap", "", 0, true},
 		{"gitmap-v", "", 0, true},
 		{"-v5", "", 0, true},

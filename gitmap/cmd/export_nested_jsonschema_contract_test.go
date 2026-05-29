@@ -11,7 +11,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
 )
 
 // canonicalNonEmptyExport builds a deterministic export with one row

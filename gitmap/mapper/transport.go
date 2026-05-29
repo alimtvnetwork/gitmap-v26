@@ -22,7 +22,7 @@ package mapper
 import (
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
 )
 
 // classifyTransport buckets `url` into the three labels documented

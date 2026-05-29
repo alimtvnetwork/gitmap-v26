@@ -14,7 +14,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
 )
 
 // canonicalAmendmentRecord builds a deterministic single audit record.

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/startup"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/startup"
 )
 
 // expectedStartupStatusKeys is the wire-order list every emitted

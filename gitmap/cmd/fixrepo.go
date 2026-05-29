@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/cliexit"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/cliexit"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
 )
 
 // fixRepoOptions captures parsed CLI inputs for one invocation.

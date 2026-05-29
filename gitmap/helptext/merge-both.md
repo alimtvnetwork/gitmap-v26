@@ -59,7 +59,7 @@ For every conflicting file:
 
 ### Example 1: Interactive two-way merge
 
-    gitmap merge-both ./gitmap-v23 ./gitmap-v23
+    gitmap merge-both ./gitmap-v24 ./gitmap-v24
 
 **Output:**
 

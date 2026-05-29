@@ -60,8 +60,8 @@ const MergeLeftPage = () => (
 
       <section>
         <h2 className="text-xl font-semibold mb-3">Usage</h2>
-        <CodeBlock code={`gitmap-v23 merge-left LEFT RIGHT [flags]
-gitmap-v23 ml         LEFT RIGHT [flags]`} />
+        <CodeBlock code={`gitmap-v24 merge-left LEFT RIGHT [flags]
+gitmap-v24 ml         LEFT RIGHT [flags]`} />
       </section>
 
       <section>
@@ -91,13 +91,13 @@ gitmap-v23 ml         LEFT RIGHT [flags]`} />
       <section>
         <h2 className="text-xl font-semibold mb-3">Examples</h2>
         <CodeBlock code={`# Pull RIGHT's changes into LEFT (interactive prompt)
-gitmap-v23 merge-left ./gitmap-v23 ./gitmap-v23
+gitmap-v24 merge-left ./gitmap-v24 ./gitmap-v24
 
 # Non-interactive (RIGHT wins by default for merge-left)
-gitmap-v23 ml ./local https://github.com/owner/upstream -y
+gitmap-v24 ml ./local https://github.com/owner/upstream -y
 
 # Bypass + keep LEFT everywhere on conflict
-gitmap-v23 merge-left ./mine ./theirs -y --prefer-left`} />
+gitmap-v24 merge-left ./mine ./theirs -y --prefer-left`} />
       </section>
 
       <section>

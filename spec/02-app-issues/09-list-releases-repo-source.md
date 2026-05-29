@@ -2,9 +2,9 @@
 
 ## Problem
 
-Running `gitmap-v23 lr` inside a git repo with `.gitmap/release/v*.json` files would
-ignore those files and query only the gitmap-v23 SQLite database. This meant
-releases created in the current repo were invisible unless a `gitmap-v23 scan`
+Running `gitmap-v24 lr` inside a git repo with `.gitmap/release/v*.json` files would
+ignore those files and query only the gitmap-v24 SQLite database. This meant
+releases created in the current repo were invisible unless a `gitmap-v24 scan`
 had been run to import them.
 
 ## Root Cause

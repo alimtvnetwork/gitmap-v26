@@ -730,11 +730,11 @@ function Build-Binary {
         if ($null -eq $buildRepo)   { $buildRepo   = "" }
         $buildDate = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
-        $ldflags = "-X 'github.com/alimtvnetwork/gitmap-v23/gitmap/constants.RepoPath=$absRepoRoot'" +
-                   " -X 'github.com/alimtvnetwork/gitmap-v23/gitmap/cmd.BuildCommit=$buildCommit'" +
-                   " -X 'github.com/alimtvnetwork/gitmap-v23/gitmap/cmd.BuildBranch=$buildBranch'" +
-                   " -X 'github.com/alimtvnetwork/gitmap-v23/gitmap/cmd.BuildRepo=$buildRepo'" +
-                   " -X 'github.com/alimtvnetwork/gitmap-v23/gitmap/cmd.BuildDate=$buildDate'"
+        $ldflags = "-X 'github.com/alimtvnetwork/gitmap-v24/gitmap/constants.RepoPath=$absRepoRoot'" +
+                   " -X 'github.com/alimtvnetwork/gitmap-v24/gitmap/cmd.BuildCommit=$buildCommit'" +
+                   " -X 'github.com/alimtvnetwork/gitmap-v24/gitmap/cmd.BuildBranch=$buildBranch'" +
+                   " -X 'github.com/alimtvnetwork/gitmap-v24/gitmap/cmd.BuildRepo=$buildRepo'" +
+                   " -X 'github.com/alimtvnetwork/gitmap-v24/gitmap/cmd.BuildDate=$buildDate'"
 
         # Pre-build provenance stamp — prints commit SHA, branch, declared
         # version, and a fingerprint of the historically-problematic cmd/

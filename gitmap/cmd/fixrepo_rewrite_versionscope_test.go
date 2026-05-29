@@ -22,32 +22,32 @@ func TestApplyAllTargets_VersionScopeMatrix(t *testing.T) {
 			name:    "v1_no_rewrite",
 			current: 1,
 			targets: []int{},
-			in:      "gitmap and gitmap-v1 stay put",
-			want:    "gitmap and gitmap-v1 stay put",
+			in:      "gitmap and gitmap-v24 stay put",
+			want:    "gitmap and gitmap-v24 stay put",
 		},
 		{
 			// v1→v2: the ONLY case where bare base is rewritten.
 			name:    "v2_bare_base_rewritten",
 			current: 2,
 			targets: []int{1},
-			in:      "url=https://github.com/x/gitmap plus gitmap-v1 token",
-			want:    "url=https://github.com/x/gitmap-v2 plus gitmap-v2 token",
+			in:      "url=https://github.com/x/gitmap plus gitmap-v24 token",
+			want:    "url=https://github.com/x/gitmap-v24 plus gitmap-v24 token",
 		},
 		{
 			// v3: bare base preserved even with v1 in targets.
 			name:    "v3_bare_base_preserved",
 			current: 3,
 			targets: []int{1, 2},
-			in:      "gitmap binary and gitmap-v1 and gitmap-v2",
-			want:    "gitmap binary and gitmap-v3 and gitmap-v3",
+			in:      "gitmap binary and gitmap-v24 and gitmap-v24",
+			want:    "gitmap binary and gitmap-v24 and gitmap-v24",
 		},
 		{
 			// v4: bare base preserved across full target sweep.
 			name:    "v4_bare_base_preserved",
 			current: 4,
 			targets: []int{1, 2, 3},
-			in:      "gitmap binary, gitmap-v1, gitmap-v2, gitmap-v3",
-			want:    "gitmap binary, gitmap-v4, gitmap-v4, gitmap-v4",
+			in:      "gitmap binary, gitmap-v24, gitmap-v24, gitmap-v24",
+			want:    "gitmap binary, gitmap-v24, gitmap-v24, gitmap-v24",
 		},
 	}
 	for _, c := range cases {

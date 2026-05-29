@@ -7,10 +7,10 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/detector"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/model"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/detector"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
 )
 
 // detectionWorkerCap bounds concurrent per-repo detection walks. Detection

@@ -16,7 +16,7 @@ mechanical role: fetch + place the binary for the slug Go hands it.
 `resolveLatestRepoSlug()` returns `(slug, source, err)` where `source` is
 one of `"sibling-probe"`, `"current-release"`, `"current-main"`.
 
-1. **Sibling probe** — parse current slug (`gitmap-v23`) → base
+1. **Sibling probe** — parse current slug (`gitmap-v24`) → base
    (`gitmap`) + `N=23`. Fire `UpdateProbeMaxSiblings` (20) parallel
    `HEAD https://github.com/<owner>/gitmap-v<N+i>` requests with a
    per-request timeout of `UpdateProbeTimeoutSec` (5s). Any 2xx counts as

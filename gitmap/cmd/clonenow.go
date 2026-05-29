@@ -22,11 +22,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/cliexit"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/cloneconcurrency"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/clonenow"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/vscodepm"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/cliexit"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/cloneconcurrency"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/clonenow"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/vscodepm"
 )
 
 // cloneNowFlags holds parsed CLI inputs. Grouped in a struct so

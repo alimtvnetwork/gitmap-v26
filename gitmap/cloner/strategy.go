@@ -8,8 +8,8 @@
 package cloner
 
 import (
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/gitutil"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/gitutil"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/model"
 )
 
 // cloneStrategy describes how a clone should be invoked.

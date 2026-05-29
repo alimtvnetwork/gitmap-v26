@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/gitutil"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/gitutil"
 )
 
 const latestBranchSchemaFilename = "latest-branch.schema.json"

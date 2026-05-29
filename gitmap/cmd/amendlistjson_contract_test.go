@@ -18,7 +18,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/store"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/store"
 )
 
 // TestAmendListJSONContract_EmptyIsArrayNotNull is the jq-compat

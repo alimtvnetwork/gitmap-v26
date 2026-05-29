@@ -29,7 +29,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/startup"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/startup"
 )
 
 // startupListSchemaFilename is the on-disk name under

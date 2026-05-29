@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/cloneconcurrency"
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/cloneconcurrency"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
 )
 
 // parseCloneFromFlags wires flags + extracts the positional file

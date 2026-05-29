@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimtvnetwork/gitmap-v23/gitmap/constants"
+	"github.com/alimtvnetwork/gitmap-v24/gitmap/constants"
 )
 
 // ownerFromSlug splits "owner/repo[-vN]" → "owner". Returns the slug

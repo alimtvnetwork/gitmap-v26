@@ -1,28 +1,28 @@
-# `gitmap-v23 cd` prints the path but does not change the current shell directory
+# `gitmap-v24 cd` prints the path but does not change the current shell directory
 
 ## Ticket
 
-Users run `gitmap-v23 cd <repo>` in an interactive shell and expect the terminal
+Users run `gitmap-v24 cd <repo>` in an interactive shell and expect the terminal
 itself to move into that repository, but the command only prints the absolute
 path.
 
 ## Symptoms
 
-1. User runs `gitmap-v23 cd gitmap-v23`.
+1. User runs `gitmap-v24 cd gitmap-v24`.
 2. The command resolves the repo from the SQLite database correctly.
 3. The terminal prints the absolute path.
 4. The prompt stays in the original working directory.
 
 ## Root Cause
 
-`gitmap-v23 cd` is implemented as a normal CLI subcommand. A child process can
+`gitmap-v24 cd` is implemented as a normal CLI subcommand. A child process can
 print the destination path, but it cannot mutate the working directory of the
 parent shell process that launched it.
 
 The original implementation documented this limitation and installed only a
-separate `gcd` shell helper during `gitmap-v23 setup`. That left a behavioral gap:
+separate `gcd` shell helper during `gitmap-v24 setup`. That left a behavioral gap:
 
-- `gitmap-v23 cd <repo>` still executed the real binary directly.
+- `gitmap-v24 cd <repo>` still executed the real binary directly.
 - The binary correctly printed the destination path.
 - No shell-level wrapper intercepted that output and called `cd` /
   `Set-Location` in the parent shell.
@@ -32,17 +32,17 @@ So the lookup logic was working; the shell integration contract was incomplete.
 ## Fix
 
 Upgrade the setup-installed shell integration so supported shells receive a
-managed wrapper for **both** `gitmap-v23` and `gcd`:
+managed wrapper for **both** `gitmap-v24` and `gcd`:
 
-1. Install a shell function named `gitmap-v23`.
-2. Intercept `gitmap-v23 cd ...` and `gitmap-v23 go ...`.
-3. Delegate to the real executable (`command gitmap-v23` on Bash/Zsh,
+1. Install a shell function named `gitmap-v24`.
+2. Intercept `gitmap-v24 cd ...` and `gitmap-v24 go ...`.
+3. Delegate to the real executable (`command gitmap-v24` on Bash/Zsh,
    `gitmap.exe`/application lookup on PowerShell).
 4. Capture the emitted path.
 5. Change the parent shell directory with `cd` / `Set-Location`.
 6. Pass all non-`cd` commands through unchanged.
 
-The wrapper uses a new managed marker so rerunning `gitmap-v23 setup` appends the
+The wrapper uses a new managed marker so rerunning `gitmap-v24 setup` appends the
 new shell integration even when older `gcd`-only profile entries already exist.
 
 ## Prevention
@@ -57,5 +57,5 @@ new shell integration even when older `gcd`-only profile entries already exist.
 ## Related
 
 - `spec/01-app/31-cd.md`
-- `gitmap-v23/completion/cdfunction.go`
-- `gitmap-v23/constants/constants_cd.go`
+- `gitmap-v24/completion/cdfunction.go`
+- `gitmap-v24/constants/constants_cd.go`
