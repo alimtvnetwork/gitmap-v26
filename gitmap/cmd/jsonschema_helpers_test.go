@@ -93,11 +93,8 @@ func stringSliceFromAny(v any) []string {
 func extractFirstObjectKeyOrder(t *testing.T, data []byte) []string {
 	t.Helper()
 	dec := json.NewDecoder(bytes.NewReader(data))
-	if err := expectDelim(dec, '['); err != nil {
-		t.Fatalf("opening array: %v", err)
-	}
-	if err := expectDelim(dec, '{'); err != nil {
-		t.Fatalf("opening object: %v", err)
+	if err := skipUntilFirstObjectStart(dec); err != nil {
+		t.Fatalf("opening first object: %v", err)
 	}
 
 	return collectObjectKeys(t, dec)
