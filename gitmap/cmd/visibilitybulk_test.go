@@ -4,6 +4,7 @@
 package cmd
 
 import (
+	"fmt"
 	"testing"
 )
 
