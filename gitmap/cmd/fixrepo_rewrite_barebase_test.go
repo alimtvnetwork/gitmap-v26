@@ -24,10 +24,10 @@ func TestApplyAllTargets_BareBase_V1To2(t *testing.T) {
 func TestApplyBareBase_WordBoundaryGuards(t *testing.T) {
 	// None of these should be rewritten — each fails a boundary check.
 	cases := []string{
-		"myimg-pdf trailing-word",   // prev byte is letter
-		"img-pdfx trailing-word",    // next byte is letter
-		"img-pdf.js extension",      // next byte is '.'
-		"img-pdf_alt underscore",    // next byte is '_'
+		"myimg-pdf trailing-word", // prev byte is letter
+		"img-pdfx trailing-word",  // next byte is letter
+		"img-pdf.js extension",    // next byte is '.'
+		"img-pdf_alt underscore",  // next byte is '_'
 		"img-pdf-v2 already-versioned",
 		"img-pdf-tools dashed",
 	}
