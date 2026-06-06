@@ -720,7 +720,7 @@ function Install-DocsSite([string]$version, [string]$installDir) {
         Invoke-WebRequest -Uri $assetUrl -OutFile $tmpZip -UseBasicParsing -ErrorAction Stop
     }
     catch {
-        Write-Step "  docs-site.zip not available for $version - skipping (gitmap hd may not work)"
+        Write-Step "  docs-site.zip not available for $version - skipping (gitmap hd will fall back to hosted docs)"
         Remove-Item $tmpZip -Force -ErrorAction SilentlyContinue
         return
     }

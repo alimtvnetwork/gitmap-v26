@@ -688,7 +688,7 @@ install_docs_site() {
     step "Downloading docs-site.zip (${version})..."
 
     if ! download "${asset_url}" "${tmp_zip}" 2>/dev/null; then
-        step "  docs-site.zip not available for ${version} - skipping (gitmap hd may not work)"
+        step "  docs-site.zip not available for ${version} - skipping (gitmap hd will fall back to hosted docs)"
         rm -f "${tmp_zip}" 2>/dev/null || true
         return 0
     fi
