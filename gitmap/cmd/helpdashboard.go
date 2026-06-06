@@ -14,7 +14,6 @@ import (
 	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
 )
 
-
 // maxDocsSiteSize is the maximum total extraction size for docs-site.zip (100 MB).
 const maxDocsSiteSize = 100 * 1024 * 1024
 
