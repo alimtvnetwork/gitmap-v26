@@ -312,6 +312,36 @@ erDiagram
         TEXT CreatedAt
     }
 
+    MakeAllVisibilityRun {
+        INTEGER MakeAllVisibilityRunId PK
+        TEXT CommandKind
+        TEXT TargetVisibility
+        TEXT Provider
+        TEXT Owner
+        TEXT TargetRaw
+        TEXT PatternList
+        INTEGER MatchedCount
+        INTEGER OkCount
+        INTEGER SkippedCount
+        INTEGER FailedCount
+        INTEGER ExcludedCount
+        INTEGER ExitCode
+        TEXT StartedAt
+        TEXT FinishedAt
+    }
+
+    MakeAllVisibilityResult {
+        INTEGER MakeAllVisibilityResultId PK
+        INTEGER MakeAllVisibilityRunId FK
+        TEXT RepoName
+        TEXT MatchedPattern
+        TEXT Status
+        TEXT PrevVisibility
+        TEXT NewVisibility
+        TEXT FailureMessage
+        INTEGER DurationMs
+    }
+
     %% ============================================================
     %% RELATIONSHIPS
     %% ============================================================
@@ -347,6 +377,8 @@ erDiagram
     %% Standalone (no FK relationships):
     %%   Release, TempRelease, CommandHistory, Amendment, Bookmark,
     %%   Setting, SshKey, InstalledTool, CommitTemplate
+
+    MakeAllVisibilityRun ||--o{ MakeAllVisibilityResult : "records"
 
     %% ============================================================
     %% COMMIT-IN PIPELINE (added v4.24.1 — parity stubs, columns TBD)
