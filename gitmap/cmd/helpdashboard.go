@@ -66,8 +66,6 @@ func runHelpDashboard(args []string) {
 	}
 }
 
-
-
 // parseHelpDashboardFlags parses the --port flag.
 func parseHelpDashboardFlags(args []string) int {
 	fs := flag.NewFlagSet(constants.CmdHelpDashboard, flag.ExitOnError)
