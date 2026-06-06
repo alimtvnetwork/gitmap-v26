@@ -182,6 +182,9 @@ func (db *DB) Migrate() error {
 		constants.SQLCreateTransactionAction,
 		constants.SQLCreateTransactionActionTxnSeqIndex,
 		constants.SQLCreateTransactionActionKindIndex,
+		constants.SQLCreateMakeAllVisibilityRun,
+		constants.SQLCreateMakeAllVisibilityResult,
+		constants.SQLCreateMakeAllVisibilityResultRunIndex,
 	}
 
 	for _, stmt := range statements {
