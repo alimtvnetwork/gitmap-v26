@@ -43,50 +43,8 @@ func runVisibilityUndo(args []string) {
 	reverseRunAndExit(run, results, flags, constants.CmdVisibilityUndo)
 }
 
-// parseUndoArgs accepts --verbose, --dry-run, and --run <id>.
-func parseUndoArgs(args []string) undoFlags {
-	flags := undoFlags{}
-	for i := 0; i < len(args); i++ {
-		switch args[i] {
-		case "--verbose":
-			flags.Verbose = true
-		case "--dry-run":
-			flags.DryRun = true
-		case "--run":
-			flags.RunID = mustParseRunID(args, i)
-			i++
-		}
-	}
-
-	return flags
-}
-
-// printDryRun lists the planned per-repo reversals without mutating.
-func printDryRun(cmdName string, run model.MakeAllVisibilityRunRecord, rs []model.MakeAllVisibilityResultRecord) {
-	fmt.Fprintf(os.Stdout, constants.MsgDryRunHeaderFmt, cmdName, run.ID, run.Provider, run.Owner, len(rs))
-	total := len(rs)
-	for i, r := range rs {
-		fmt.Fprintf(os.Stdout, constants.MsgDryRunRowFmt, i+1, total, r.RepoName, r.PrevVisibility)
-	}
-	fmt.Fprintf(os.Stdout, constants.MsgDryRunFooterFmt, cmdName)
-}
-
-// mustParseRunID validates the `--run <id>` pairing and exits on bad
-// input (zero-swallow — a typo here would silently undo the wrong run).
-func mustParseRunID(args []string, i int) int64 {
-	if i+1 >= len(args) {
-		fmt.Fprintf(os.Stderr, constants.ErrUndoBadRunFlagFmt, "", fmt.Errorf("missing value"), "no value after --run")
-		os.Exit(constants.ExitVisBadFlag)
-	}
-	raw := args[i+1]
-	id, err := strconv.ParseInt(raw, 10, 64)
-	if err != nil || id <= 0 {
-		fmt.Fprintf(os.Stderr, constants.ErrUndoBadRunFlagFmt, raw, err, "must be positive integer")
-		os.Exit(constants.ExitVisBadFlag)
-	}
-
-	return id
-}
+// parseUndoArgs + mustParseRunID + printDryRun live in
+// visibilityundoflags.go to keep this file under the 200-line cap.
 
 // loadReversible resolves the target run for either undo or redo.
 // When runID > 0 it loads that exact row; otherwise it picks the
