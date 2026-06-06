@@ -172,6 +172,18 @@ const (
 	// spec-authoring/23-visibility-change/01-spec.md.
 	CmdMakePublic  = "make-public"
 	CmdMakePrivate = "make-private"
+	// CmdMakeAllPublic / CmdMakeAllPrivate flip visibility for every
+	// repo under an owner/org that matches a comma-separated wildcard
+	// pattern list (exact, prefix*, *contains*, prefix*suffix). Short
+	// uppercase aliases CmdMAPUB / CmdMAPRI are spec-mandated muscle-
+	// memory shortcuts. Interactive numbered list with per-index
+	// exclusion; -Y/--yes bypasses both prompts. Persists a GitMapRun
+	// row plus one GitMapRepoResult per repo. Spec:
+	// spec/01-app/116-bulk-visibility-mapub-mapri.md.
+	CmdMakeAllPublic  = "make-all-public"
+	CmdMakeAllPrivate = "make-all-private"
+	CmdMAPUB          = "MAPUB"
+	CmdMAPRI          = "MAPRI"
 	// CmdHistoryPurge / CmdHistoryPin wrap `git filter-repo` in a
 	// mirror-clone sandbox. Spec: spec/04-generic-cli/16-history-rewrite.md.
 	// The user's working repo is never rewritten in place.
