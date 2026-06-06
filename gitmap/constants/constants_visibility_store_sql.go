@@ -79,3 +79,27 @@ const (
 	ErrUndoSelectResultsFmt = "Error: select undoable results failed: %v (operation: SQLSelectUndoableResultsForRun, reason: %s)"
 	ErrUndoNoRunFound       = "Error: no undoable make-all-* run found (operation: visibility-undo, reason: MakeAllVisibilityRun has no row with OkCount>0)"
 )
+
+// SQLSelectLatestRunByKind — most recent run with the given CommandKind
+// that still has reversible Ok rows. Used by `visibility-redo` (kind=
+// 'VisibilityUndo') and by `--run latest` selectors.
+const SQLSelectLatestRunByKind = `SELECT
+	MakeAllVisibilityRunId, CommandKind, TargetVisibility, Provider,
+	Owner, TargetRaw, OkCount
+	FROM MakeAllVisibilityRun
+	WHERE CommandKind = ? AND OkCount > 0
+	ORDER BY MakeAllVisibilityRunId DESC
+	LIMIT 1`
+
+// SQLSelectRunByID — exact lookup for the --run <id> selector.
+const SQLSelectRunByID = `SELECT
+	MakeAllVisibilityRunId, CommandKind, TargetVisibility, Provider,
+	Owner, TargetRaw, OkCount
+	FROM MakeAllVisibilityRun
+	WHERE MakeAllVisibilityRunId = ?`
+
+const (
+	ErrUndoBadRunFlagFmt = "Error: invalid --run value %q: %v (operation: parse-run-flag, reason: %s)"
+	ErrUndoRunNotFoundFmt = "Error: run id %d not found in MakeAllVisibilityRun (operation: SQLSelectRunByID, reason: no row)"
+	ErrRedoNoRunFound = "Error: no undoable VisibilityUndo run found (operation: visibility-redo, reason: MakeAllVisibilityRun has no VisibilityUndo row with OkCount>0)"
+)
