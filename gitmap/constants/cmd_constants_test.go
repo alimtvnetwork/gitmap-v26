@@ -247,7 +247,7 @@ func topLevelCmds() map[string]string {
 		"CmdVisibilityUndoAlias":  CmdVisibilityUndoAlias,
 		"CmdVisibilityRedo":       CmdVisibilityRedo,
 		"CmdVisibilityRedoAlias":  CmdVisibilityRedoAlias,
-		"CmdVisibilityHistory":    CmdVisibilityHistory,
+		"CmdVisibilityHistory":      CmdVisibilityHistory,
 		"CmdVisibilityHistoryAlias": CmdVisibilityHistoryAlias,
 		"CmdCloneFixRepo":         CmdCloneFixRepo,
 		"CmdCloneFixRepoAlias":    CmdCloneFixRepoAlias,
