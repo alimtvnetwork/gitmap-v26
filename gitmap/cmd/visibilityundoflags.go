@@ -14,9 +14,9 @@ import (
 	"github.com/alimtvnetwork/gitmap-v25/gitmap/model"
 )
 
-// parseUndoArgs accepts --verbose, --dry-run, --force, --json, and --run <id>.
+// parseVisUndoArgs accepts --verbose, --dry-run, --force, --json, and --run <id>.
 // Unknown tokens are tolerated (mirrors parseBulkArgs).
-func parseUndoArgs(args []string) undoFlags {
+func parseVisUndoArgs(args []string) undoFlags {
 	flags := undoFlags{}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
@@ -54,8 +54,8 @@ func mustParseRunID(args []string, i int) int64 {
 	return id
 }
 
-// printDryRun lists the planned per-repo reversals without mutating.
-func printDryRun(cmdName string, run model.MakeAllVisibilityRunRecord, rs []model.MakeAllVisibilityResultRecord) {
+// printVisDryRun lists the planned per-repo reversals without mutating.
+func printVisDryRun(cmdName string, run model.MakeAllVisibilityRunRecord, rs []model.MakeAllVisibilityResultRecord) {
 	fmt.Fprintf(os.Stdout, constants.MsgDryRunHeaderFmt, cmdName, run.ID, run.Provider, run.Owner, len(rs))
 	total := len(rs)
 	for i, r := range rs {

@@ -1,5 +1,5 @@
 // Package cmd — visibilityundoflags_test.go: unit coverage for
-// parseUndoArgs (the `vu` / `vr` flag parser shipped in v6.7-v6.9),
+// parseVisUndoArgs (the `vu` / `vr` flag parser shipped in v6.7-v6.9),
 // matchesFromResults (adapter feeding the shared audit pipeline),
 // and bulkExitCode (collapsed-tally → exit code matrix). These guard
 // against silent demotion of --force to a no-op, mis-routing of
@@ -14,28 +14,28 @@ import (
 )
 
 func TestParseUndoArgsDefaults(t *testing.T) {
-	f := parseUndoArgs(nil)
+	f := parseVisUndoArgs(nil)
 	if f.Verbose || f.DryRun || f.Force || f.RunID != 0 {
 		t.Fatalf("expected zero-valued undoFlags, got %+v", f)
 	}
 }
 
 func TestParseUndoArgsAllFlags(t *testing.T) {
-	f := parseUndoArgs([]string{"--verbose", "--dry-run", "--force", "--run", "42"})
+	f := parseVisUndoArgs([]string{"--verbose", "--dry-run", "--force", "--run", "42"})
 	if !f.Verbose || !f.DryRun || !f.Force || f.RunID != 42 {
 		t.Fatalf("expected all flags set + RunID=42, got %+v", f)
 	}
 }
 
 func TestParseUndoArgsForceWithoutOtherFlags(t *testing.T) {
-	f := parseUndoArgs([]string{"--force"})
+	f := parseVisUndoArgs([]string{"--force"})
 	if !f.Force || f.DryRun || f.Verbose || f.RunID != 0 {
 		t.Fatalf("expected only Force=true, got %+v", f)
 	}
 }
 
 func TestParseUndoArgsIgnoresUnknownTokens(t *testing.T) {
-	f := parseUndoArgs([]string{"garbage", "--force", "extra"})
+	f := parseVisUndoArgs([]string{"garbage", "--force", "extra"})
 	if !f.Force {
 		t.Fatalf("expected Force=true despite unknown tokens, got %+v", f)
 	}

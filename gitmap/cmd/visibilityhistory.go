@@ -79,16 +79,16 @@ func parseHistoryLimit(args []string) int {
 func printHistory(runs []model.MakeAllVisibilityRunRecord) {
 	fmt.Fprint(os.Stdout, constants.MsgVisHistoryHeader)
 	for _, r := range runs {
-		owner := truncate(r.Provider+"/"+r.Owner, 21)
+		owner := truncateCell(r.Provider+"/"+r.Owner, 21)
 		fmt.Fprintf(os.Stdout, constants.MsgVisHistoryRowFmt,
-			r.ID, truncate(r.CommandKind, 16), owner,
+			r.ID, truncateCell(r.CommandKind, 16), owner,
 			r.MatchedCount, r.OkCount, r.SkippedCount, r.FailedCount,
 			r.ExcludedCount, r.ExitCode, r.StartedAt)
 	}
 }
 
 // truncate clips overflowing cells to keep the table aligned.
-func truncate(s string, n int) string {
+func truncateCell(s string, n int) string {
 	if len(s) <= n {
 		return s
 	}

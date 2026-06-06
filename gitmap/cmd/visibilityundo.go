@@ -37,16 +37,16 @@ type undoFlags struct {
 
 // runVisibilityUndo is the dispatcher entry point.
 func runVisibilityUndo(args []string) {
-	flags := parseUndoArgs(args)
+	flags := parseVisUndoArgs(args)
 	run, results := loadReversible(flags.RunID, "", constants.ErrUndoNoRunFound)
 	if flags.DryRun {
-		printDryRun(constants.CmdVisibilityUndo, run, results)
+		printVisDryRun(constants.CmdVisibilityUndo, run, results)
 		os.Exit(constants.ExitVisOK)
 	}
 	reverseRunAndExit(run, results, flags, constants.CmdVisibilityUndo)
 }
 
-// parseUndoArgs + mustParseRunID + printDryRun live in
+// parseVisUndoArgs + mustParseRunID + printVisDryRun live in
 // visibilityundoflags.go to keep this file under the 200-line cap.
 
 // loadReversible resolves the target run for either undo or redo.
