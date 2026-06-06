@@ -104,8 +104,9 @@ func resolveOwnerOrExit(arg string) ownerContext {
 }
 
 // matchOrExitEmpty lists owner repos, matches patterns, exits 0 with
-// a friendly message when nothing matched.
-func matchOrExitEmpty(ctx ownerContext, patterns []visibility.Pattern, verbose bool) []visibility.MatchedRepo {
+// a friendly message when nothing matched. Returns the matched subset
+// AND the owner-wide total so the audit layer can persist OwnerRepoTotal.
+func matchOrExitEmpty(ctx ownerContext, patterns []visibility.Pattern, verbose bool) ([]visibility.MatchedRepo, int) {
 	names, err := listOwnerRepos(ctx.Provider, ctx.Owner, verbose)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "make-all-*: %v\n", err)
@@ -119,7 +120,7 @@ func matchOrExitEmpty(ctx ownerContext, patterns []visibility.Pattern, verbose b
 		os.Exit(constants.ExitVisOK)
 	}
 
-	return matches
+	return matches, len(names)
 }
 
 // confirmOrAbort runs the interactive prompt unless -Y was passed.
@@ -135,15 +136,17 @@ func confirmOrAbort(matches []visibility.MatchedRepo, yes bool) []visibility.Mat
 	return final
 }
 
-// applyBulkLoop walks the matched set, applying target visibility to
-// each repo. Continues past per-repo failures and returns the tallied
-// (changed, skipped, failed) counts for summary + exit-code logic.
-func applyBulkLoop(ctx ownerContext, target string, matches []visibility.MatchedRepo, verbose bool) (int, int, int) {
+// applyBulkLoop walks the matched set, applying target visibility +
+// streaming results to the audit layer (timed per repo). Continues
+// past per-repo failures and returns (changed, skipped, failed).
+func applyBulkLoop(ctx ownerContext, target string, matches []visibility.MatchedRepo, verbose bool, audit *runAudit) (int, int, int) {
 	changed, skipped, failed := 0, 0, 0
 	total := len(matches)
 	for i, m := range matches {
 		fmt.Fprintf(os.Stdout, constants.MsgBulkApplyItemFmt, i+1, total, m.RepoName)
+		start := time.Now()
 		status := applyOneRepo(ctx, m.RepoName, target, verbose)
+		audit.updateResult(m.RepoName, status, status.prev, status.next, start)
 		switch status.outcome {
 		case "skip":
 			skipped++
