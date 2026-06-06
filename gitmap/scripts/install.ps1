@@ -1419,12 +1419,18 @@ try {
     if (Test-Path -LiteralPath $binPath) {
         Write-Host ""
         Write-Host "  -> Running 'gitmap setup' to install shell wrapper + completions..." -ForegroundColor Cyan
-        try { & $binPath setup } catch { Write-Host "  (setup auto-run skipped: $_)" -ForegroundColor Yellow }
+        try {
+            & $binPath setup
+            if ($LASTEXITCODE -ne 0) {
+                Write-Host "  (setup auto-run exited $LASTEXITCODE; install already succeeded)" -ForegroundColor Yellow
+            }
+        } catch { Write-Host "  (setup auto-run skipped: $_)" -ForegroundColor Yellow }
     }
 
     Write-Host ""
     Write-OK "Done! Run 'gitmap --help' to get started."
     Write-Host ""
+    Set-InstallerExitCode 0
 }
 catch {
     Write-FatalError $_ 1
