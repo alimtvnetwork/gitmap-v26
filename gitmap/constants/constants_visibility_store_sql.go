@@ -113,6 +113,25 @@ const SQLSelectRecentRuns = `SELECT
 	ORDER BY MakeAllVisibilityRunId DESC
 	LIMIT ?`
 
+// SQLSelectRecentRunsBase — column projection + FROM for the
+// filtered builder. WHERE / ORDER / LIMIT are appended dynamically
+// by `BuildRecentRunsQuery` based on caller-supplied filters.
+const SQLSelectRecentRunsBase = `SELECT
+	MakeAllVisibilityRunId, CommandKind, TargetVisibility, Provider,
+	Owner, MatchedCount, OkCount, SkippedCount, FailedCount,
+	ExcludedCount, ExitCode, StartedAt, FinishedAt
+	FROM MakeAllVisibilityRun`
+
+// SQL fragments composed by BuildRecentRunsQuery. Centralized so
+// the per-clause SQL never sits inline in store code (no magic strings).
+const (
+	SQLWhereCommandKindEq = " CommandKind = ?"
+	SQLWhereStartedAtGTE  = " StartedAt >= ?"
+	SQLOrderRunIDDescLimit = " ORDER BY MakeAllVisibilityRunId DESC LIMIT ?"
+	SQLKeywordWHERE        = " WHERE"
+	SQLKeywordAND          = " AND"
+)
+
 const (
 	ErrHistorySelectFmt  = "Error: select recent runs failed: %v (operation: SQLSelectRecentRuns, reason: %s)"
 	MsgHistoryEmpty      = "visibility-history: no make-all-* runs recorded yet\n"
