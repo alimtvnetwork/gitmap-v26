@@ -24,9 +24,11 @@ import (
 )
 
 // undoFlags is parseBulkArgs's sibling for the undo/redo path.
-// RunID == 0 means "pick latest".
+// RunID == 0 means "pick latest". DryRun prints the plan without
+// touching the provider.
 type undoFlags struct {
 	Verbose bool
+	DryRun  bool
 	RunID   int64
 }
 
@@ -34,17 +36,22 @@ type undoFlags struct {
 func runVisibilityUndo(args []string) {
 	flags := parseUndoArgs(args)
 	run, results := loadReversible(flags.RunID, "", constants.ErrUndoNoRunFound)
+	if flags.DryRun {
+		printDryRun(constants.CmdVisibilityUndo, run, results)
+		os.Exit(constants.ExitVisOK)
+	}
 	reverseRunAndExit(run, results, flags, constants.CmdVisibilityUndo)
 }
 
-// parseUndoArgs accepts --verbose and --run <id>. Unknown tokens are
-// ignored (mirrors parseBulkArgs's tolerant style).
+// parseUndoArgs accepts --verbose, --dry-run, and --run <id>.
 func parseUndoArgs(args []string) undoFlags {
 	flags := undoFlags{}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--verbose":
 			flags.Verbose = true
+		case "--dry-run":
+			flags.DryRun = true
 		case "--run":
 			flags.RunID = mustParseRunID(args, i)
 			i++
@@ -52,6 +59,16 @@ func parseUndoArgs(args []string) undoFlags {
 	}
 
 	return flags
+}
+
+// printDryRun lists the planned per-repo reversals without mutating.
+func printDryRun(cmdName string, run model.MakeAllVisibilityRunRecord, rs []model.MakeAllVisibilityResultRecord) {
+	fmt.Fprintf(os.Stdout, constants.MsgDryRunHeaderFmt, cmdName, run.ID, run.Provider, run.Owner, len(rs))
+	total := len(rs)
+	for i, r := range rs {
+		fmt.Fprintf(os.Stdout, constants.MsgDryRunRowFmt, i+1, total, r.RepoName, r.PrevVisibility)
+	}
+	fmt.Fprintf(os.Stdout, constants.MsgDryRunFooterFmt, cmdName)
 }
 
 // mustParseRunID validates the `--run <id>` pairing and exits on bad
