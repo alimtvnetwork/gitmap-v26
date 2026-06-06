@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"os"
-	"os/exec"
 	"path/filepath"
 	"testing"
 )
+
 
 // TestSplitRepoRecloneArgs covers every spelling of the -y flag and
 // ensures unknown tokens pass through as positionals.
@@ -87,5 +87,27 @@ func TestIsGitRepoDirHelper(t *testing.T) {
 	}
 }
 
-// silence unused-import linter when go build runs without exec usage:
-var _ = exec.Command
+// TestTryRunRepoRecloneFallthrough is the explicit non-regression
+// guard for the v6.5.0 overlay: any arg shape that the manifest
+// pipeline owns MUST cause tryRunRepoReclone to return false
+// WITHOUT touching disk. Documented in the spec as the
+// "manifest behavior is unchanged" promise — this test makes that
+// promise executable.
+func TestTryRunRepoRecloneFallthrough(t *testing.T) {
+	tmp := t.TempDir()
+	if err := os.Chdir(tmp); err != nil {
+		t.Fatal(err)
+	}
+	cases := [][]string{
+		{".gitmap/output/gitmap.json"},                  // manifest path, no .git
+		{"--manifest", ".gitmap/output/gitmap.json"},    // flag form
+		{"file1.json", "file2.json"},                    // multi-positional
+		{"/definitely/not/a/real/path/xyz123"},          // missing path
+	}
+	for _, args := range cases {
+		if tryRunRepoReclone(args) {
+			t.Fatalf("manifest-shaped args must fall through: %#v", args)
+		}
+	}
+}
+
