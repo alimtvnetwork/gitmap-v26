@@ -1,5 +1,12 @@
 # Changelog
 
+## v6.7.0 — (2026-06-06) — `gitmap visibility-redo` / `vr` + `--run <id>` selector on undo/redo
+
+- New command `gitmap visibility-redo` (alias `vr`) reverses the most recent `VisibilityUndo` run, restoring the visibility state the undo reverted. The redo is itself persisted as a fresh `MakeAllVisibilityRun` with `CommandKind='VisibilityRedo'` and `PatternList='visibility-redo:source-run=<id>'`, keeping the audit chain (apply → undo → redo → undo → …) intact.
+- Both `vu` and `vr` now accept `--run <id>` to target an exact historical run instead of the latest one — required substrate for the upcoming `visibility-history` (`vh`) command. A missing or non-numeric `--run` value exits with `ExitVisBadFlag` and a Code Red error pinpointing the bad token (zero-swallow).
+- Internal refactor: `visibilityundo.go` now exports a single shared `reverseRunAndExit` helper that both `vu` and `vr` consume; `visibilityredo.go` is a 9-line dispatcher that only changes the source-run filter (`CommandKind='VisibilityUndo'`) and the cmdName under which the new audit run is logged. No duplicate loop bodies.
+- Files: `gitmap/cmd/visibilityredo.go` (new, 21 lines), `gitmap/cmd/visibilityundo.go` (rewritten — shared helpers, `undoFlags` with `RunID`), `gitmap/store/makeallvisibility_undo.go` (+`SelectMakeAllVisibilityRunByID`, `SelectLatestMakeAllVisibilityRunByKind`, shared `scanRunRow`), `gitmap/constants/constants_visibility_store_sql.go` (+`SQLSelectLatestRunByKind`, `SQLSelectRunByID`, three new `ErrUndo*` formats), `gitmap/constants/constants_visibility_store.go` (`CommandKindVisibilityRedo`), `gitmap/constants/constants_cli.go` (`CmdVisibilityRedo` + `vr` alias), `gitmap/cmd/rootcore.go` (dispatch), `gitmap/cmd/visibilityallbulkaudit.go` (`commandKindFor` extended).
+
 ## v6.6.0 — (2026-06-06) — `gitmap visibility-undo` / `vu` reverses the last bulk make-all-* run
 
 Bulk visibility flips (`make-all-public` / `make-all-private` / `MAPUB` / `MAPRI`) are now reversible from the same audit trail they already write.
