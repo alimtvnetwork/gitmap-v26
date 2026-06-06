@@ -60,7 +60,6 @@ Manifest mode is unchanged: any other arg shape (a `<file>` path,
 `--manifest`, `--scan-root`, etc.) falls through to the manifest
 pipeline byte-for-byte.
 
-```text
 
 ## Source resolution
 
