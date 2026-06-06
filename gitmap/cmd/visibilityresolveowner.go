@@ -34,6 +34,9 @@ type ownerContext struct {
 // path/operation/reason context per Code Red rule on failure.
 func ResolveOwnerOnly(arg string) (ownerContext, error) {
 	trimmed := strings.TrimSpace(arg)
+	for strings.HasSuffix(trimmed, "/") {
+		trimmed = strings.TrimSuffix(trimmed, "/")
+	}
 	if len(trimmed) == 0 {
 		return ownerContext{}, fmt.Errorf("Error: empty target (operation: resolve-owner, reason: arg is blank)")
 	}
