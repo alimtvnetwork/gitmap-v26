@@ -31,6 +31,7 @@ type undoFlags struct {
 	Verbose bool
 	DryRun  bool
 	Force   bool
+	JSON    bool
 	RunID   int64
 }
 
