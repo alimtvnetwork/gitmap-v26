@@ -80,6 +80,8 @@ import ReplacePage from "./pages/Replace";
 import FixRepoPage from "./pages/FixRepo";
 import CloneFixRepoPage from "./pages/CloneFixRepo";
 import MakePublicPage from "./pages/MakePublic";
+import MakeAllPublicPage from "./pages/MakeAllPublic";
+import MakeAllPrivatePage from "./pages/MakeAllPrivate";
 import CommitInPage from "./pages/CommitIn";
 
 const queryClient = new QueryClient();
@@ -168,6 +170,10 @@ const App = () => (
           <Route path="/fix-repo" element={<FixRepoPage />} />
           <Route path="/clone-fix-repo" element={<CloneFixRepoPage />} />
           <Route path="/make-public" element={<MakePublicPage />} />
+          <Route path="/make-all-public" element={<MakeAllPublicPage />} />
+          <Route path="/mapub" element={<MakeAllPublicPage />} />
+          <Route path="/make-all-private" element={<MakeAllPrivatePage />} />
+          <Route path="/mapri" element={<MakeAllPrivatePage />} />
           <Route path="/commit-in" element={<CommitInPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

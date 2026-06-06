@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.17.0 — (2026-06-06) — Docs site pages for `make-all-public` / `make-all-private`
+
+- **Docs:** Added standalone documentation pages for `make-all-public` (alias `MAPUB`) and `make-all-private` (alias `MAPRI`) to the React docs site. Each page covers overview, usage, flags, pattern syntax (exact / `prefix*` / `*contains*` / `prefix*suffix` / `!negation`), copy-pasteable examples for both long form and uppercase shorthand, exit codes (0/4/5/6/7/9), and cross-links to the sibling command. Routes: `/make-all-public`, `/mapub`, `/make-all-private`, `/mapri`. Sidebar entries added under the visibility section.
+- **Sync:** `src/constants/index.ts` was stale at `6.5.0` (CI version-sync gate would have tripped on the next bump). Resynced to `v6.17.0` alongside the Go-side bump.
+- Files: `src/pages/MakeAllPublic.tsx` (new), `src/pages/MakeAllPrivate.tsx` (new), `src/App.tsx` (4 routes), `src/components/docs/DocsSidebar.tsx` (2 sidebar entries), `src/constants/index.ts` (`v6.17.0`), `gitmap/constants/constants.go` (`6.17.0`), `README.md` (pin → v6.17.0), `CHANGELOG.md`.
+
 ## v6.16.0 — (2026-06-06) — `make-all-public` / `make-all-private` honor `--help` / `-h`
 
 - **Fix:** `gitmap make-all-public --help` and `gitmap make-all-private --help` (plus aliases `MAPUB`/`MAPRI`) previously fell straight into the arg-count guard and printed the one-line usage stub instead of the embedded help. Root cause: `runMakeAllVisibility` checked `len(args) < 2` before consulting `checkHelp`, so `--help` counted as a single positional and tripped `ErrMakeAllMissingArgFmt`. Now `runMakeAllVisibility` calls `checkHelp(cmdName, args)` as its first statement — same pattern every other top-level handler uses — so `--help` / `-h` render `helptext/make-all-public.md` / `helptext/make-all-private.md` (already shipped in v6.x) and exit 0 before any flag parsing runs. Aliases inherit the fix because the dispatcher passes the canonical `cmdName` (`make-all-public` / `make-all-private`) into `runMakeAllVisibility`.
