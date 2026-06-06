@@ -172,6 +172,8 @@ func commandKindFor(cmdName string) string {
 		return constants.CommandKindMakeAllPrivate
 	case constants.CmdVisibilityUndo:
 		return constants.CommandKindVisibilityUndo
+	case constants.CmdVisibilityRedo:
+		return constants.CommandKindVisibilityRedo
 	}
 
 	return constants.CommandKindMakeAllPublic
