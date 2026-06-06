@@ -701,6 +701,44 @@ export const commands: CommandDef[] = [
   },
   {
     category: "tools",
+    name: "make-all-public", alias: "MAPUB", description: "Bulk-flip every matching repo on an owner to public in one call. Resolves the owner from `<owner-or-url>`, lists every repo under the owner (≤1000 per call) via `gh`/`glab`, matches comma-separated wildcard patterns (`prefix*`, `*contains*`, `prefix*suffix`, `!negation`) and prints a numbered match table. Prompts for confirmation (`y`/`n` or exclusion expressions like `1,3-5`) unless `-Y` is passed. Each flip is persisted in the audit DB so `vu`/`vr`/`vish` can replay or inspect the run later. Idempotent: already-public repos are skipped.",
+    usage: "gitmap-v25 make-all-public <owner-or-url> <patterns> [-Y|--yes] [--verbose]",
+    flags: [
+      { flag: "-Y, --yes", description: "Skip the interactive confirmation prompt." },
+      { flag: "--verbose", description: "Echo every shell command to stderr before running it." },
+    ],
+    examples: [
+      { command: "gitmap-v25 make-all-public alice \"demo-*\"", description: "Flip every `demo-*` repo on owner `alice` to public" },
+      { command: "gitmap-v25 make-all-public alice \"demo-*,proto-*,!proto-secret\"", description: "Multi-pattern with negation exclusion" },
+      { command: "gitmap-v25 MAPUB https://github.com/alice \"*\" -Y --verbose", description: "Shorthand alias, every repo, no prompt" },
+    ],
+    seeAlso: [
+      { name: "make-all-private", description: "Opposite direction, same machinery" },
+      { name: "visibility-undo", description: "Reverse the most recent run (alias `vu`)" },
+      { name: "visibility-history", description: "List past runs and their IDs (alias `vish`)" },
+    ],
+  },
+  {
+    category: "tools",
+    name: "make-all-private", alias: "MAPRI", description: "Bulk-flip every matching repo on an owner to private in one call. Mirror image of `make-all-public` — same flags, exit codes, audit trail, and undo/redo/history wiring. Resolves the owner, lists every repo under it, matches comma-separated wildcard patterns (`prefix*`, `*contains*`, `prefix*suffix`, `!negation`), prints a numbered match table, and prompts for confirmation (`y`/`n` or exclusion ranges like `1,3-5`) unless `-Y`. Idempotent: already-private repos are skipped.",
+    usage: "gitmap-v25 make-all-private <owner-or-url> <patterns> [-Y|--yes] [--verbose]",
+    flags: [
+      { flag: "-Y, --yes", description: "Skip the interactive confirmation prompt." },
+      { flag: "--verbose", description: "Echo every shell command to stderr before running it." },
+    ],
+    examples: [
+      { command: "gitmap-v25 make-all-private alice \"archive-*\"", description: "Hide every `archive-*` repo on owner `alice`" },
+      { command: "gitmap-v25 make-all-private alice \"old-*,!old-keep\" -Y", description: "Negation excludes `old-keep`, no prompt" },
+      { command: "gitmap-v25 MAPRI https://gitlab.com/alice \"*\" --verbose", description: "Shorthand alias, every repo, debug shell" },
+    ],
+    seeAlso: [
+      { name: "make-all-public", description: "Opposite direction, same machinery" },
+      { name: "visibility-undo", description: "Reverse the most recent run (alias `vu`)" },
+      { name: "visibility-history", description: "List past runs and their IDs (alias `vish`)" },
+    ],
+  },
+  {
+    category: "tools",
     name: "clone-fix-repo", alias: "cfr", description: "Clone a repo, then immediately run `fix-repo --all` inside the new folder. One-shot replacement for the manual sequence `gitmap-v25 clone <url>` → `cd <folder>` → `gitmap-v25 fix-repo --all`. Versioned URLs auto-flatten to the base name (e.g. `myrepo-v13.git` → `myrepo/`). Internally re-execs the gitmap-v25 binary for the fix-repo step so each step's exit code is propagated as-is; the pipeline halts on first failure.",
     usage: "gitmap-v25 clone-fix-repo <url> [folder]",
     examples: [
