@@ -100,6 +100,7 @@ try {
 
 $Repo = "alimtvnetwork/gitmap-v25"
 $BinaryName = "gitmap.exe"
+$BinaryAlias = "gm.exe"
 $InstallerVersion = "1.0.0"
 
 class InstallerFailure : System.Exception {
