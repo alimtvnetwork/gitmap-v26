@@ -117,6 +117,8 @@ const navItems = [
   { title: "Fix Repo (fr)", url: "/fix-repo", icon: Wrench },
   { title: "Clone + Fix Repo (cfr)", url: "/clone-fix-repo", icon: Wrench },
   { title: "Make Public Repo", url: "/make-public", icon: Globe },
+  { title: "Make All Public (MAPUB)", url: "/make-all-public", icon: Globe },
+  { title: "Make All Private (MAPRI)", url: "/make-all-private", icon: Globe },
   { title: "History Rewrite (purge/pin)", url: "/history-rewrite", icon: Trash2 },
   { title: "Register (as)", url: "/as", icon: Tag },
   { title: "Release Alias", url: "/release-alias", icon: Rocket },
