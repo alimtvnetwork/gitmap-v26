@@ -3,7 +3,10 @@
 // the persisted MakeAllVisibilityResult rows and re-applying each
 // repo's PrevVisibility. The undo itself is logged as a new run with
 // CommandKind=VisibilityUndo, so a follow-up `vu` reverses the undo
-// (this is also how redo will be wired in step 23).
+// (this is also how `vr` / visibility-redo is wired in step 23).
+//
+// Accepts `--run <id>` to target a specific historical run instead
+// of the latest one (step 24).
 //
 // Spec: spec/01-app/116-bulk-visibility-mapub-mapri.md §undo-redo.
 package cmd
@@ -11,64 +14,69 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/alimtvnetwork/gitmap-v25/gitmap/constants"
 	"github.com/alimtvnetwork/gitmap-v25/gitmap/model"
+	"github.com/alimtvnetwork/gitmap-v25/gitmap/store"
 	"github.com/alimtvnetwork/gitmap-v25/gitmap/visibility"
 )
 
-// runVisibilityUndo is the dispatcher entry point.
-func runVisibilityUndo(args []string) {
-	flags := parseUndoFlags(args)
-	run, results := loadUndoTargets()
-	mustEnsureProviderCLI(run.Provider, flags.Verbose)
-
-	ctx := ownerContext{Provider: run.Provider, Owner: run.Owner, TargetRaw: run.TargetRaw}
-	matches := matchesFromResults(results)
-	audit := beginUndoAudit(ctx, flags, run.ID, matches)
-
-	fmt.Fprintf(os.Stdout, "visibility-undo: reversing run #%d (%s/%s) — %d repo(s)\n",
-		run.ID, run.Provider, run.Owner, len(results))
-	changed, skipped, failed := applyUndoLoop(ctx, results, flags.Verbose, audit)
-	fmt.Fprintf(os.Stdout, constants.MsgBulkSummaryFmt, changed, skipped, failed, len(results))
-	exit := bulkExitCode(changed, failed)
-	audit.finalize(0, changed, skipped, failed, exit)
-	os.Exit(exit)
+// undoFlags is parseBulkArgs's sibling for the undo/redo path.
+// RunID == 0 means "pick latest".
+type undoFlags struct {
+	Verbose bool
+	RunID   int64
 }
 
-// parseUndoFlags accepts --verbose anywhere; --yes is accepted but a
-// no-op (undo always runs without re-prompting — the original prompt
-// already gated the data being reversed).
-func parseUndoFlags(args []string) bulkFlags {
-	flags := bulkFlags{Yes: true}
-	for _, a := range args {
-		if a == "--verbose" {
+// runVisibilityUndo is the dispatcher entry point.
+func runVisibilityUndo(args []string) {
+	flags := parseUndoArgs(args)
+	run, results := loadReversible(flags.RunID, "", constants.ErrUndoNoRunFound)
+	reverseRunAndExit(run, results, flags, constants.CmdVisibilityUndo)
+}
+
+// parseUndoArgs accepts --verbose and --run <id>. Unknown tokens are
+// ignored (mirrors parseBulkArgs's tolerant style).
+func parseUndoArgs(args []string) undoFlags {
+	flags := undoFlags{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--verbose":
 			flags.Verbose = true
+		case "--run":
+			flags.RunID = mustParseRunID(args, i)
+			i++
 		}
 	}
 
 	return flags
 }
 
-// loadUndoTargets opens the audit DB, picks the latest undoable run,
-// and returns its result rows. Exits with a clean message when no
-// undoable run exists (zero-swallow — never silently no-op).
-func loadUndoTargets() (model.MakeAllVisibilityRunRecord, []model.MakeAllVisibilityResultRecord) {
-	db, err := openDB()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "visibility-undo: audit DB open failed: %v\n", err)
-		os.Exit(constants.ExitVisAuthFailed)
+// mustParseRunID validates the `--run <id>` pairing and exits on bad
+// input (zero-swallow — a typo here would silently undo the wrong run).
+func mustParseRunID(args []string, i int) int64 {
+	if i+1 >= len(args) {
+		fmt.Fprintf(os.Stderr, constants.ErrUndoBadRunFlagFmt, "", fmt.Errorf("missing value"), "no value after --run")
+		os.Exit(constants.ExitVisBadFlag)
 	}
-	run, err := db.SelectLatestUndoableMakeAllVisibilityRun()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(constants.ExitVisAuthFailed)
+	raw := args[i+1]
+	id, err := strconv.ParseInt(raw, 10, 64)
+	if err != nil || id <= 0 {
+		fmt.Fprintf(os.Stderr, constants.ErrUndoBadRunFlagFmt, raw, err, "must be positive integer")
+		os.Exit(constants.ExitVisBadFlag)
 	}
-	if run.ID == 0 {
-		fmt.Fprintln(os.Stderr, constants.ErrUndoNoRunFound)
-		os.Exit(constants.ExitVisConfirmReq)
-	}
+
+	return id
+}
+
+// loadReversible resolves the target run for either undo or redo.
+// When runID > 0 it loads that exact row; otherwise it picks the
+// latest row matching `kind` (empty kind = any undoable run).
+func loadReversible(runID int64, kind, notFoundMsg string) (model.MakeAllVisibilityRunRecord, []model.MakeAllVisibilityResultRecord) {
+	db := openDBOrExit("visibility-undo/redo")
+	run := pickReversibleRun(db, runID, kind, notFoundMsg)
 	results, err := db.SelectUndoableResultsForRun(run.ID)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -78,9 +86,84 @@ func loadUndoTargets() (model.MakeAllVisibilityRunRecord, []model.MakeAllVisibil
 	return run, results
 }
 
-// matchesFromResults synthesizes MatchedRepo entries from the persisted
-// result rows so the existing audit wiring (which expects matches) can
-// be reused without modification.
+// pickReversibleRun dispatches between the by-ID and by-latest paths.
+func pickReversibleRun(db *store.DB, runID int64, kind, notFoundMsg string) model.MakeAllVisibilityRunRecord {
+	if runID > 0 {
+		return mustLoadRunByID(db, runID)
+	}
+
+	return mustLoadLatestRun(db, kind, notFoundMsg)
+}
+
+// mustLoadRunByID resolves --run <id>.
+func mustLoadRunByID(db *store.DB, id int64) model.MakeAllVisibilityRunRecord {
+	run, err := db.SelectMakeAllVisibilityRunByID(id)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(constants.ExitVisAuthFailed)
+	}
+	if run.ID == 0 {
+		fmt.Fprintf(os.Stderr, constants.ErrUndoRunNotFoundFmt, id)
+		os.Exit(constants.ExitVisConfirmReq)
+	}
+
+	return run
+}
+
+// mustLoadLatestRun resolves "latest" — optionally filtered by kind.
+func mustLoadLatestRun(db *store.DB, kind, notFoundMsg string) model.MakeAllVisibilityRunRecord {
+	var (
+		run model.MakeAllVisibilityRunRecord
+		err error
+	)
+	if kind == "" {
+		run, err = db.SelectLatestUndoableMakeAllVisibilityRun()
+	} else {
+		run, err = db.SelectLatestMakeAllVisibilityRunByKind(kind)
+	}
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(constants.ExitVisAuthFailed)
+	}
+	if run.ID == 0 {
+		fmt.Fprintln(os.Stderr, notFoundMsg)
+		os.Exit(constants.ExitVisConfirmReq)
+	}
+
+	return run
+}
+
+// openDBOrExit centralizes the audit-DB open failure path.
+func openDBOrExit(cmdLabel string) *store.DB {
+	db, err := openDB()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s: audit DB open failed: %v\n", cmdLabel, err)
+		os.Exit(constants.ExitVisAuthFailed)
+	}
+
+	return db
+}
+
+// reverseRunAndExit replays each result row's PrevVisibility through
+// the existing read→apply→verify pipeline, logging the operation as
+// a fresh run keyed by `cmdName` (CmdVisibilityUndo or *Redo).
+func reverseRunAndExit(run model.MakeAllVisibilityRunRecord, results []model.MakeAllVisibilityResultRecord, flags undoFlags, cmdName string) {
+	mustEnsureProviderCLI(run.Provider, flags.Verbose)
+	ctx := ownerContext{Provider: run.Provider, Owner: run.Owner, TargetRaw: run.TargetRaw}
+	matches := matchesFromResults(results)
+	audit := beginReverseAudit(ctx, flags, run.ID, matches, cmdName)
+
+	fmt.Fprintf(os.Stdout, "%s: reversing run #%d (%s/%s) — %d repo(s)\n",
+		cmdName, run.ID, run.Provider, run.Owner, len(results))
+	changed, skipped, failed := applyUndoLoop(ctx, results, flags.Verbose, audit)
+	fmt.Fprintf(os.Stdout, constants.MsgBulkSummaryFmt, changed, skipped, failed, len(results))
+	exit := bulkExitCode(changed, failed)
+	audit.finalize(0, changed, skipped, failed, exit)
+	os.Exit(exit)
+}
+
+// matchesFromResults synthesizes MatchedRepo entries so the existing
+// audit wiring (which expects matches) can be reused unchanged.
 func matchesFromResults(rs []model.MakeAllVisibilityResultRecord) []visibility.MatchedRepo {
 	out := make([]visibility.MatchedRepo, 0, len(rs))
 	for _, r := range rs {
@@ -90,19 +173,16 @@ func matchesFromResults(rs []model.MakeAllVisibilityResultRecord) []visibility.M
 	return out
 }
 
-// beginUndoAudit writes a fresh MakeAllVisibilityRun row with
-// CommandKind=VisibilityUndo + one Pending result per reversed repo.
-// PatternList encodes the source run ID for traceability.
-func beginUndoAudit(ctx ownerContext, flags bulkFlags, sourceRunID int64, matches []visibility.MatchedRepo) *runAudit {
-	patternsRaw := fmt.Sprintf("undo:source-run=%d", sourceRunID)
-	cmdName := constants.CmdVisibilityUndo
+// beginReverseAudit writes a fresh MakeAllVisibilityRun row with the
+// supplied cmdName (which `commandKindFor` maps to the right enum).
+func beginReverseAudit(ctx ownerContext, flags undoFlags, sourceRunID int64, matches []visibility.MatchedRepo, cmdName string) *runAudit {
+	patternsRaw := fmt.Sprintf("%s:source-run=%d", cmdName, sourceRunID)
 
-	return beginRunAudit(ctx, "mixed", cmdName, patternsRaw, flags, len(matches), matches)
+	return beginRunAudit(ctx, "mixed", cmdName, patternsRaw, bulkFlags{Yes: true, Verbose: flags.Verbose}, len(matches), matches)
 }
 
 // applyUndoLoop walks the persisted result rows, calling
 // applyOneRepo with target = the row's original PrevVisibility.
-// Mirrors applyBulkLoop's timing + audit contract.
 func applyUndoLoop(ctx ownerContext, rs []model.MakeAllVisibilityResultRecord, verbose bool, audit *runAudit) (int, int, int) {
 	changed, skipped, failed := 0, 0, 0
 	total := len(rs)
