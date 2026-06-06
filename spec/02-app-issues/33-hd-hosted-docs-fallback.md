@@ -57,8 +57,17 @@ local `docs-site/` source → `serveDev`) are unchanged.
 
 - [x] `go vet ./cmd/... ./constants/...` clean.
 - [x] `go build ./...` clean.
+- [x] Unit pin: `constants/constants_helpdashboard_test.go`
+      (`TestHostedDocsFallbackContract`) guards `DocsURL` +
+      `MsgHDHostedFallback` format string.
+- [x] Runtime pin: `cmd/helpdashboard_fallback_test.go`
+      (`TestOpenHostedDocsFallbackPrintsURL`,
+      `TestOpenURLNonFatalOnMissingLauncher`) — verifies the URL is
+      written to stderr BEFORE the browser launch attempt, and that a
+      missing OS launcher (`start`/`open`/`xdg-open`) is non-fatal.
 - [ ] On a machine without `docs-site/` and a release whose
       `docs-site.zip` 404s: `gitmap hd` prints the hosted URL and
-      opens the browser, exit code 0.
+      opens the browser, exit code 0. *(manual; covered behaviorally
+      by the two runtime pins above)*
 - [ ] Happy path (`docs-site/dist/` present): still serves locally
-      on port 5173 (unchanged).
+      on port 5173 (unchanged). *(manual smoke test)*
