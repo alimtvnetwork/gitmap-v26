@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 // TestSplitRepoRecloneArgs covers every spelling of the -y flag and
 // ensures unknown tokens pass through as positionals.
 func TestSplitRepoRecloneArgs(t *testing.T) {
@@ -94,6 +93,11 @@ func TestIsGitRepoDirHelper(t *testing.T) {
 // "manifest behavior is unchanged" promise — this test makes that
 // promise executable.
 func TestTryRunRepoRecloneFallthrough(t *testing.T) {
+	originalDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(originalDir) }()
 	tmp := t.TempDir()
 	if err := os.Chdir(tmp); err != nil {
 		t.Fatal(err)
