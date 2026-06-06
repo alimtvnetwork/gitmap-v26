@@ -81,6 +81,9 @@ type cloneNowFlags struct {
 // redirect to the same content.
 func runCloneNow(args []string) {
 	checkHelp(constants.CmdCloneReclone, args)
+	if tryRunRepoReclone(args) {
+		return
+	}
 	cfg := parseCloneNowFlags(args)
 	setCmdFaithfulVerify(cfg.verifyCmdFaithful)
 	setCmdFaithfulExitOnMismatch(cfg.verifyCmdFaithfulExitOnMismatch)
