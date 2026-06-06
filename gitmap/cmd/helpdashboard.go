@@ -66,7 +66,7 @@ func runHelpDashboard(args []string) {
 	}
 }
 
-// extractDocsSiteZip is implemented in helpdashboard_extract.go.
+
 
 // parseHelpDashboardFlags parses the --port flag.
 func parseHelpDashboardFlags(args []string) int {
