@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 // TestSplitRepoRecloneArgs covers every spelling of the -y flag and
 // ensures unknown tokens pass through as positionals.
 func TestSplitRepoRecloneArgs(t *testing.T) {
@@ -94,15 +93,20 @@ func TestIsGitRepoDirHelper(t *testing.T) {
 // "manifest behavior is unchanged" promise — this test makes that
 // promise executable.
 func TestTryRunRepoRecloneFallthrough(t *testing.T) {
+	originalDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(originalDir) }()
 	tmp := t.TempDir()
 	if err := os.Chdir(tmp); err != nil {
 		t.Fatal(err)
 	}
 	cases := [][]string{
-		{".gitmap/output/gitmap.json"},                  // manifest path, no .git
-		{"--manifest", ".gitmap/output/gitmap.json"},    // flag form
-		{"file1.json", "file2.json"},                    // multi-positional
-		{"/definitely/not/a/real/path/xyz123"},          // missing path
+		{".gitmap/output/gitmap.json"},               // manifest path, no .git
+		{"--manifest", ".gitmap/output/gitmap.json"}, // flag form
+		{"file1.json", "file2.json"},                 // multi-positional
+		{"/definitely/not/a/real/path/xyz123"},       // missing path
 	}
 	for _, args := range cases {
 		if tryRunRepoReclone(args) {
@@ -110,4 +114,3 @@ func TestTryRunRepoRecloneFallthrough(t *testing.T) {
 		}
 	}
 }
-

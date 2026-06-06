@@ -8,7 +8,7 @@ package constants
 // that working tree and re-clones it from `remote.origin.url` into
 // the same parent directory.
 //
-// Spec: spec/04-generic-cli/31-repo-reclone.md (single-repo flow).
+// Spec: spec/04-generic-cli/32-repo-reclone.md (single-repo flow).
 const (
 	FlagRepoRecloneYes     = "y"
 	FlagDescRepoRecloneYes = "Skip the destructive confirmation prompt"
