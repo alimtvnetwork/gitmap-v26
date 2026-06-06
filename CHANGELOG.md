@@ -1,5 +1,12 @@
 # Changelog
 
+## v6.18.0 — (2026-06-06) — Fix `make-all-*` owner extraction from URLs + richer provider-CLI errors
+
+- **Bugfix:** `gitmap make-all-public https://github.com/<owner>` (and `make-all-private` / `MAPUB` / `MAPRI`) previously extracted the **host** (`github.com`) as the owner because `firstPathSegment` started its scan at `parts[2]` — which is the host, not the first path segment. The provider CLI then failed with `gh repo list github.com → exit status 1`. Rewrote `firstPathSegment` in `gitmap/cmd/visibilityresolveowner.go` to strip the scheme (`https://`, `http://`, `ssh://`, `git://`), then drop the host, then return the first non-empty path component. Works for `https://github.com/alice`, `https://github.com/alice/`, `https://github.com/alice/repo`, `git@github.com:alice/repo.git`, and `github.com/alice` bare form.
+- **Trailing slash:** `ResolveOwnerOnly` now strips one-or-more trailing `/` from the input before classification, so `https://github.com/alice/` and `github.com/alice/` resolve identically to the no-slash form.
+- **Better diagnostics:** Provider-CLI failures from `listOwnerRepos` now include the **full argv** (`gh repo list <owner> --limit 1000 --json name`) and the **captured stderr** from the child process in the error message — previously you only got `exit status 1` with no context. Makes auth / 404 / rate-limit failures self-diagnosing.
+- Files: `gitmap/cmd/visibilityresolveowner.go`, `gitmap/cmd/visibilityownerlist.go`, `gitmap/constants/constants.go` (`6.18.0`), `src/constants/index.ts` (`v6.18.0`), `README.md` (pin → v6.18.0), `CHANGELOG.md`.
+
 ## v6.17.0 — (2026-06-06) — Docs site pages for `make-all-public` / `make-all-private`
 
 - **Docs:** Added standalone documentation pages for `make-all-public` (alias `MAPUB`) and `make-all-private` (alias `MAPRI`) to the React docs site. Each page covers overview, usage, flags, pattern syntax (exact / `prefix*` / `*contains*` / `prefix*suffix` / `!negation`), copy-pasteable examples for both long form and uppercase shorthand, exit codes (0/4/5/6/7/9), and cross-links to the sibling command. Routes: `/make-all-public`, `/mapub`, `/make-all-private`, `/mapri`. Sidebar entries added under the visibility section.
