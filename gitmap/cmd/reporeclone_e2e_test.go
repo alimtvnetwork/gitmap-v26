@@ -39,26 +39,50 @@ func TestRunRepoRecloneEndToEnd(t *testing.T) {
 
 	work := filepath.Join(root, "work")
 	mustRun(t, root, "git", "clone", bare, work)
-
-	beforeStat, err := os.Stat(filepath.Join(work, ".git"))
-	if err != nil {
-		t.Fatalf("pre-stat .git: %v", err)
+	sentinel := filepath.Join(work, "local-only.txt")
+	if err := os.WriteFile(sentinel, []byte("remove me"), 0o644); err != nil {
+		t.Fatalf("write sentinel: %v", err)
 	}
-	beforeMod := beforeStat.ModTime()
 
 	// Invoke the in-process target. -y bypasses the prompt; the
 	// helper never reads stdin in that branch.
 	swapStdin(t)
 	runRepoReclone(work, true /*yes*/)
 
-	afterStat, err := os.Stat(filepath.Join(work, ".git"))
-	if err != nil {
+	if _, err := os.Stat(filepath.Join(work, ".git")); err != nil {
 		t.Fatalf("post-stat .git: %v (re-clone did not rebuild .git)", err)
 	}
-	if !afterStat.ModTime().After(beforeMod) {
-		t.Fatalf("expected .git mtime to advance, before=%v after=%v",
-			beforeMod, afterStat.ModTime())
+	_, err := os.Stat(sentinel)
+	if !os.IsNotExist(err) {
+		t.Fatalf("sentinel survived reclone: %v", err)
 	}
+	gotOrigin := capture(t, work, "git", "config", "--get", "remote.origin.url")
+	if !strings.EqualFold(filepath.Clean(gotOrigin), filepath.Clean(bare)) {
+		t.Fatalf("origin: got %q want %q", gotOrigin, bare)
+	}
+}
+
+func assertRepoRecloned(t *testing.T, work, sentinel, bare string) {
+	t.Helper()
+	if _, err := os.Stat(filepath.Join(work, ".git")); err != nil {
+		t.Fatalf("post-stat .git: %v (re-clone did not rebuild .git)", err)
+	}
+	_, err := os.Stat(sentinel)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return
+		}
+		t.Fatalf("stat sentinel: %v", err)
+	}
+	t.Fatal("sentinel survived reclone")
+	gotOrigin := capture(t, work, "git", "config", "--get", "remote.origin.url")
+	if !strings.EqualFold(filepath.Clean(gotOrigin), filepath.Clean(bare)) {
+		t.Fatalf("origin: got %q want %q", gotOrigin, bare)
+	}
+}
+
+func assertRepoOrigin(t *testing.T, work, bare string) {
+	t.Helper()
 	gotOrigin := capture(t, work, "git", "config", "--get", "remote.origin.url")
 	if !strings.EqualFold(filepath.Clean(gotOrigin), filepath.Clean(bare)) {
 		t.Fatalf("origin: got %q want %q", gotOrigin, bare)
