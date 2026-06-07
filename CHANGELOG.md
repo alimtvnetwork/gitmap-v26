@@ -1,5 +1,12 @@
 # Changelog
 
+## v6.24.0 — (2026-06-07) — `desktop-sync` finds GitHub Desktop without PATH config
+
+- **Bugfix (silent failure):** `gitmap desktop-sync` (and `gitmap github-desktop` / `gd`) returned to the shell prompt with no visible action on Windows even when GitHub Desktop was installed. Root cause: every call site used `exec.LookPath("github")`, but the Desktop installer drops its `github.bat` shim under `%LOCALAPPDATA%\GitHubDesktop\bin\` which is **not** on `PATH` by default — so the lookup silently failed and only printed `GitHub Desktop CLI not found` to stderr (often invisible in PowerShell paste-back), making the command look like a no-op.
+- **Fix:** new `desktop.ResolveCLI()` in `gitmap/desktop/resolve.go` probes `PATH` first, then falls back to the platform-specific install locations the installer actually writes to — `%LOCALAPPDATA%\GitHubDesktop\bin\github.bat` plus any newer `app-*\bin\github.bat` siblings on Windows, and `/Applications/GitHub Desktop.app/Contents/Resources/app/static/github` on macOS. All three consumers (`cmd/desktopsync.go`, `cmd/githubdesktop.go`, `desktop/desktop.go`) now call the shared resolver and invoke the returned absolute path directly.
+- **End-to-end test:** `gitmap/desktop/resolve_test.go` builds a temp `%LOCALAPPDATA%\GitHubDesktop\bin\github.bat` shim with `PATH` cleared and asserts `ResolveCLI()` still returns it; a sibling test confirms the resolver returns `""` (not a fabricated path) when Desktop is truly missing, and `TestCollectAppDirs` guards the Squirrel `app-*` filter that underpins newest-version fallback.
+- **Files:** `gitmap/desktop/resolve.go` (new), `gitmap/desktop/resolve_test.go` (new), `gitmap/desktop/desktop.go`, `gitmap/cmd/desktopsync.go`, `gitmap/cmd/githubdesktop.go`, `gitmap/constants/constants.go` (`6.24.0`), `src/constants/index.ts` (`v6.24.0`), `README.md` (pin → v6.24.0), `CHANGELOG.md`.
+
 ## v6.23.0 — (2026-06-07) — Per-repo terminal block shows transport audit fields
 
 - **Bugfix / spec closure:** the standardized per-repo terminal block still rendered only `branch`, `from`, `to`, and `command`, so scan output could not explicitly show the repo's identified `transport`, `httpsUrl`, and `sshUrl` even though `model.ScanRecord` already carried those fields.
