@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.27.0 — (2026-06-07) — Planning artifact: next-task prompt 19 + plan 03 step-2 scoping
+
+- **Planning bump (no Go code changes).** Per the project rule "at the end of the task always bump the minor version", this release stamps the next-task report that scopes Plan 03 Step 2 (DB migration 007 adding `Repo.IdentifiedTransport`).
+- **Files:** `.lovable/prompts/19-next-task.md` (new), `gitmap/constants/constants.go` (`6.27.0`), `src/constants/index.ts` (`v6.27.0`), `README.md` (pin → v6.27.0), `CHANGELOG.md`.
+- **Plan 03 status:** Step 1 ✅ (v6.25.0), Step 3 `cfr`/`cfrp` half ✅ (v6.26.0). **Next: Step 2** — migration 007, `model.Repo.IdentifiedTransport`, `Select*` + `UpsertRepoByPath` extension, lazy backfill from URL prefix.
+
+
+
 ## v6.26.0 — (2026-06-07) — `cfr` / `cfrp` honor the destination folder's existing origin transport
 
 - **Bugfix (closes the partial gap from v6.25.0 audit):** `gitmap clone-fix-repo` (`cfr`) and `clone-fix-repo-pub` (`cfrp`) passed the user's positional URL straight to `executeDirectClone` without consulting the destination folder's `.git/config remote.origin.url`. When the user pasted an HTTPS URL but the destination folder already existed with an SSH origin, the reclone silently downgraded transport to HTTPS and re-triggered the browser-auth prompt on private remotes — the same class as the v6.19→v6.22 chain, but in the URL-driven reclone path the earlier fixes did not cover.
