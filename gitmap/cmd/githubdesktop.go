@@ -58,14 +58,14 @@ func isGitRepo(dir string) bool {
 // registerGHDesktop verifies the GitHub Desktop CLI is on PATH, then invokes
 // it with the target path. Exits non-zero on missing CLI or invocation error.
 func registerGHDesktop(target string) {
-	_, err := exec.LookPath(constants.GitHubDesktopBin)
-	if err != nil {
+	cli := desktop.ResolveCLI()
+	if cli == "" {
 		fmt.Fprintln(os.Stderr, constants.MsgDesktopNotFound)
 		os.Exit(1)
 	}
 
 	fmt.Printf(constants.MsgGHDesktopRegister, target)
-	cmd := exec.Command(constants.GitHubDesktopBin, target)
+	cmd := exec.Command(cli, target)
 	output, runErr := cmd.CombinedOutput()
 	if runErr != nil {
 		fmt.Fprintf(os.Stderr, constants.ErrGHDesktopInvoke, runErr, output)
