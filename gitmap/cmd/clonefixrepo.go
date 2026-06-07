@@ -52,6 +52,14 @@ func runCloneFixRepoPipeline(args []string, makePublic bool) {
 
 	url = applyCloneFixRepoScheme(url, useSSH, useHTTPS)
 
+	// cfr/cfrp deliberately do NOT flatten `-vN` suffixes: the local
+	// folder should mirror the URL the user typed (clone-next is the
+	// command for version-bump flattening). Resolve the folder once
+	// here and thread it through so executeDirectClone doesn't
+	// re-derive and flatten behind our back.
+	if len(folderName) == 0 {
+		folderName = repoNameFromURL(url)
+	}
 	absPath := resolveCloneTargetFolder(url, folderName)
 	url = preferExistingFolderTransport(url, absPath)
 	requireOnline()
