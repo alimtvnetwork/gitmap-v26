@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.28.0 — (2026-06-07) — Planning artifact: next-task prompt 20 (Plan 03 Step 2 re-queued)
+
+- **Planning bump (no Go code changes).** v6.27.0 stamped the Step 2 scoping prompt but did not execute the migration. v6.28.0 re-queues the same work with prompt `20-next-task.md` and refreshes the README pin.
+- **Files:** `.lovable/prompts/20-next-task.md` (new), `gitmap/constants/constants.go` (`6.28.0`), `src/constants/index.ts` (`v6.28.0`), `README.md` (pin → v6.28.0), `CHANGELOG.md`.
+- **Plan 03 status:** Step 1 ✅ (v6.25.0), Step 3 `cfr`/`cfrp` half ✅ (v6.26.0). **Next: Step 2** — migration 007, `model.Repo.IdentifiedTransport`, `Select*` + `UpsertRepoByPath` extension, lazy URL-prefix backfill.
+
+
+
 ## v6.27.0 — (2026-06-07) — Planning artifact: next-task prompt 19 + plan 03 step-2 scoping
 
 - **Planning bump (no Go code changes).** Per the project rule "at the end of the task always bump the minor version", this release stamps the next-task report that scopes Plan 03 Step 2 (DB migration 007 adding `Repo.IdentifiedTransport`).
