@@ -42,7 +42,13 @@ func runHelpDashboard(args []string) {
 			fmt.Printf(constants.MsgDocsSiteDownloaded, n)
 		}
 		fmt.Printf("  Extracting %s...\n", constants.DocsSiteArchive)
-		if extractErr := extractDocsSiteZip(zipPath, binaryDir); extractErr != nil {
+		if mkErr := os.MkdirAll(docsDir, constants.DirPermission); mkErr != nil {
+			fmt.Fprintf(os.Stderr, "  ✗ Failed to create docs-site dir: %v\n", mkErr)
+			openHostedDocsFallback()
+			return
+		}
+		extractTarget := chooseDocsExtractTarget(zipPath, binaryDir, docsDir)
+		if extractErr := extractDocsSiteZip(zipPath, extractTarget); extractErr != nil {
 			fmt.Fprintf(os.Stderr, "  ✗ Failed to extract docs-site.zip: %v\n", extractErr)
 			openHostedDocsFallback()
 			return
