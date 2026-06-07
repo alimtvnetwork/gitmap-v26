@@ -54,16 +54,14 @@ func loadDesktopRecords(path string) []model.ScanRecord {
 
 // syncToDesktop registers each repo with GitHub Desktop.
 func syncToDesktop(records []model.ScanRecord, source string) {
-	_, err := exec.LookPath(constants.GitHubDesktopBin)
-	if err == nil {
-		fmt.Printf(constants.MsgDesktopSyncStart, source)
-		added, skipped, failed := syncAll(records)
-		fmt.Printf(constants.MsgDesktopSyncDone, added, skipped, failed)
-
-		return
+	cli := desktop.ResolveCLI()
+	if cli == "" {
+		fmt.Fprintln(os.Stderr, constants.MsgDesktopNotFound)
+		os.Exit(1)
 	}
-	fmt.Fprintln(os.Stderr, constants.MsgDesktopNotFound)
-	os.Exit(1)
+	fmt.Printf(constants.MsgDesktopSyncStart, source)
+	added, skipped, failed := syncAll(records, cli)
+	fmt.Printf(constants.MsgDesktopSyncDone, added, skipped, failed)
 }
 
 // syncAll iterates records and syncs each to GitHub Desktop.
