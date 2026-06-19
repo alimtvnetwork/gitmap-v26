@@ -27,11 +27,11 @@ func runChromeProfileCopy(args []string) {
 		fmt.Fprint(os.Stderr, constants.ErrChromeProfileUsageCopy)
 		os.Exit(constants.ExitChromeProfileUsage)
 	}
-	srcPath := chromeProfilePath(args[0])
+	srcPath, ok := resolveChromeProfileDir(args[0])
 	dstPath := chromeProfilePath(args[1])
-	if !chromeProfilePathExists(srcPath) {
+	if !ok {
 		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileSrcMissing, args[0], srcPath)
-		printAvailableChromeProfiles()
+		printAvailableChromeProfilesWithDisplay()
 		os.Exit(constants.ExitChromeProfileNotFound)
 	}
 	fmt.Fprint(os.Stderr, constants.MsgChromeProfileSkipChrome)
