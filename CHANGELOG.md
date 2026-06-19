@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.40.0 — (2026-06-19) — `cpc`/`cpe` accept Chrome display names (e.g. `Lovable`)
+
+- **Display-name resolution.** `gitmap chrome-profile-copy` (`cpc`), `chrome-profile-export` (`cpe`), and `chrome-profile-list` (`cpl`) now resolve a user-supplied profile identifier through Chrome's `<UserData>/Local State` → `profile.info_cache[*].name`. You can pass the same name shown in Chrome's profile picker (e.g. `Lovable`) instead of guessing the on-disk directory (e.g. `Profile 7`). Resolution order: absolute path → literal dir → display name (case-insensitive, trimmed).
+- **Better not-found hints.** The "available profiles" stderr block now prints both the directory and the display name (`- Profile 7  (display: "Lovable")`) so mismatches are obvious at a glance. `cpl` output gains the same column.
+- **Files:** `gitmap/cmd/chromeprofile_resolve.go` (new), `gitmap/cmd/chromeprofile.go` (cpc/cpe/cpl wiring, dropped dead `hasPrefixProfile`), `gitmap/constants/constants.go` (`6.40.0`), `src/constants/index.ts` (`v6.40.0`), `README.md` (pin → v6.40.0), `CHANGELOG.md`.
+
 ## v6.39.0 — (2026-06-19) — minor version bump + README pin refresh
 
 - **Version bump only.** No behavior changes. Refreshes the pinned version across `gitmap/constants/constants.go`, `src/constants/index.ts`, and the README install/asset matrix to v6.39.0.
