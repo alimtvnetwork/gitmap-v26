@@ -139,7 +139,8 @@ func TestCopyChromeProfileReportsDestinationMkdir(t *testing.T) {
 func TestChromeProfileLockOpenErrorIsSkipped(t *testing.T) {
 	lockName := constants.ChromeProfileLockFileName
 	lockPath := filepath.Join(t.TempDir(), lockName)
-	if err := chromeProfileCopyFile(lockPath, filepath.Join(t.TempDir(), lockName)); err != nil {
+	copied, err := chromeProfileCopyFile(lockPath, filepath.Join(t.TempDir(), lockName))
+	if err != nil || copied {
 		t.Fatalf("LOCK file open error should be skipped: %v", err)
 	}
 }
