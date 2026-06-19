@@ -71,6 +71,7 @@ const (
 	ChromeProfileCopyOpCopy   = "copy profile"
 	ChromeProfileCopyUnknown  = "(unknown)"
 	ChromeProfileLockFileName = "LOCK"
+	ChromeProfileLockReason   = "runtime-only Chrome lock file; Chrome recreates it"
 )
 
 // HelpChromeProfileDelete extends the help block (kept beside its peers).
