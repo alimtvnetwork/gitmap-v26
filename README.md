@@ -2409,6 +2409,7 @@ gitmap revert v2.48.0
 | `import` | `im` | Import repos from file |
 | `profile` | `pf` | Manage database profiles |
 | `bookmark` | `bk` | Save and run bookmarked commands |
+| `rm` | `remove`, `del` | Untrack repos from the database without deleting files |
 | `db-reset` | — | Reset the local SQLite database |
 
 ```bash
@@ -2416,9 +2417,10 @@ gitmap export && gitmap import gitmap-export.json
 gitmap profile create work && gitmap profile switch work
 gitmap bookmark save daily scan ~/projects
 gitmap bookmark run daily
+gitmap del old-repo
 ```
 
-→ [export](gitmap/helptext/export.md) · [import](gitmap/helptext/import.md) · [profile](gitmap/helptext/profile.md) · [bookmark](gitmap/helptext/bookmark.md) · [db-reset](gitmap/helptext/db-reset.md)
+→ [export](gitmap/helptext/export.md) · [import](gitmap/helptext/import.md) · [profile](gitmap/helptext/profile.md) · [bookmark](gitmap/helptext/bookmark.md) · [rm](gitmap/helptext/rm.md) · [db-reset](gitmap/helptext/db-reset.md)
 
 ---
 
