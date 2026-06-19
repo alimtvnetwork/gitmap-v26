@@ -12,7 +12,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"time"
@@ -27,24 +26,24 @@ func runChromeProfileCopy(args []string) {
 		fmt.Fprint(os.Stderr, constants.ErrChromeProfileUsageCopy)
 		os.Exit(constants.ExitChromeProfileUsage)
 	}
-	srcPath, ok := resolveChromeProfileDir(args[0])
-	dstPath := chromeProfilePath(args[1])
+	srcProfile, ok := resolveChromeProfile(args[0])
+	dstProfile := chromeProfileDestination(args[1])
 	if !ok {
-		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileSrcMissing, args[0], srcPath)
+		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileSrcMissing, args[0], srcProfile.Path)
 		printAvailableChromeProfilesWithDisplay()
 		os.Exit(constants.ExitChromeProfileNotFound)
 	}
 	fmt.Fprint(os.Stderr, constants.MsgChromeProfileSkipChrome)
-	fmt.Printf(constants.MsgChromeProfileCopyStart, srcPath, dstPath)
+	fmt.Printf(constants.MsgChromeProfileCopyStart, chromeProfileSummary(srcProfile), chromeProfileSummary(dstProfile), srcProfile.Path, dstProfile.Path)
 	start := time.Now()
-	files, err := copyChromeProfile(srcPath, dstPath)
+	files, err := copyChromeProfile(srcProfile.Path, dstProfile.Path)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileCopyFailed, err)
+		printChromeProfileCopyError(srcProfile, dstProfile, err)
 		os.Exit(constants.ExitChromeProfileCopyFailed)
 	}
 	fmt.Printf(constants.MsgChromeProfileCopyDone, files, time.Since(start).Round(time.Millisecond))
-	rec := emitChromeSnapshots(dstPath, args[1])
-	persistChromeProfile(args[1], dstPath, rec)
+	rec := emitChromeSnapshots(dstProfile.Path, args[1])
+	persistChromeProfile(args[1], dstProfile.Path, rec)
 }
 
 // emitChromeSnapshots writes the JSON + CSV companions for a profile
@@ -179,8 +178,6 @@ func defaultChromeExportPath(name string) string {
 	return filepath.Join(constants.GitMapDir, "chrome", name+constants.ExtJSON)
 }
 
-
-
 // readChromeExport loads a JSON export file from disk.
 func readChromeExport(path string) (*chromeExport, error) {
 	raw, err := os.ReadFile(path) //nolint:gosec // user-supplied path
@@ -192,74 +189,4 @@ func readChromeExport(path string) (*chromeExport, error) {
 		return nil, fmt.Errorf("parse %s: %w", path, err)
 	}
 	return &exp, nil
-}
-
-// copyChromeProfile copies the curated subset of entries from src to
-// dst. Missing entries are skipped silently — Chrome regenerates them.
-func copyChromeProfile(src, dst string) (int, error) {
-	if err := os.MkdirAll(dst, constants.DirPermission); err != nil {
-		return 0, fmt.Errorf("mkdir %s: %w", dst, err)
-	}
-	total := 0
-	for _, name := range constants.ChromeProfileCopyEntries {
-		n, err := copyEntry(filepath.Join(src, name), filepath.Join(dst, name))
-		if err != nil {
-			return total, err
-		}
-		total += n
-	}
-	return total, nil
-}
-
-// copyEntry copies a single file or directory tree. Returns file count.
-func copyEntry(src, dst string) (int, error) {
-	info, err := os.Stat(src)
-	if err != nil {
-		return 0, nil
-	}
-	if !info.IsDir() {
-		return 1, chromeProfileCopyFile(src, dst)
-	}
-	return copyDir(src, dst)
-}
-
-// chromeProfileCopyFile copies a single file from src to dst preserving mode.
-func chromeProfileCopyFile(src, dst string) error {
-	in, err := os.Open(src) //nolint:gosec // curated entry list
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-	if err := os.MkdirAll(filepath.Dir(dst), constants.DirPermission); err != nil {
-		return err
-	}
-	out, err := os.Create(dst) //nolint:gosec // curated entry list
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-	if _, err := io.Copy(out, in); err != nil {
-		return err
-	}
-	return nil
-}
-
-// copyDir recursively copies a directory tree.
-func copyDir(src, dst string) (int, error) {
-	if err := os.MkdirAll(dst, constants.DirPermission); err != nil {
-		return 0, err
-	}
-	entries, err := os.ReadDir(src)
-	if err != nil {
-		return 0, err
-	}
-	total := 0
-	for _, e := range entries {
-		n, err := copyEntry(filepath.Join(src, e.Name()), filepath.Join(dst, e.Name()))
-		if err != nil {
-			return total, err
-		}
-		total += n
-	}
-	return total, nil
 }
