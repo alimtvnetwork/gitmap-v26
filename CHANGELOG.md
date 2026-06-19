@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.42.0 — (2026-06-19) — Build fix: rename `matchGlob` helper in `taskfilter.go`
+
+- Renamed the gitignore-only `matchGlob(path, pattern) bool` helper in
+  `gitmap/cmd/taskfilter.go` to `matchGitignoreGlob` to resolve a
+  package-level collision with `rm.go`'s `matchGlob([]model.ScanRecord, string)`
+  introduced in v6.41.0. Updated `task_unit_test.go` to call the renamed
+  helper. No behavior change — pure compile fix.
+
 ## v6.41.0 — (2026-06-19) — `gitmap rm` deletes folders, supports globs + `-y`
 
 - **On-disk deletion.** `gitmap rm` / `remove` / `del` now removes the repo folder from disk in addition to untracking it in the database. By default each match is confirmed with a `[y/N]` prompt that shows the slug and absolute path.
