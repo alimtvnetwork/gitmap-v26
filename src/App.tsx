@@ -83,6 +83,7 @@ import MakePublicPage from "./pages/MakePublic";
 import MakeAllPublicPage from "./pages/MakeAllPublic";
 import MakeAllPrivatePage from "./pages/MakeAllPrivate";
 import CommitInPage from "./pages/CommitIn";
+import ChromeProfileSpecPage from "./pages/ChromeProfileSpec";
 
 const queryClient = new QueryClient();
 
@@ -175,6 +176,11 @@ const App = () => (
           <Route path="/make-all-private" element={<MakeAllPrivatePage />} />
           <Route path="/mapri" element={<MakeAllPrivatePage />} />
           <Route path="/commit-in" element={<CommitInPage />} />
+          <Route path="/chrome-profile" element={<ChromeProfileSpecPage />} />
+          <Route path="/cpc" element={<ChromeProfileSpecPage />} />
+          <Route path="/cpe" element={<ChromeProfileSpecPage />} />
+          <Route path="/cpi" element={<ChromeProfileSpecPage />} />
+          <Route path="/cpl" element={<ChromeProfileSpecPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

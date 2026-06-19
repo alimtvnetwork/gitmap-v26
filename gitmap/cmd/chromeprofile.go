@@ -142,6 +142,7 @@ func runChromeProfileList(args []string) {
 	entries, err := os.ReadDir(root)
 	if err != nil || len(entries) == 0 {
 		fmt.Printf(constants.MsgChromeProfileListEmpty, root)
+		listChromeProfilesFromDB()
 		return
 	}
 	fmt.Printf(constants.MsgChromeProfileListHdr, root)
@@ -154,6 +155,7 @@ func runChromeProfileList(args []string) {
 			fmt.Printf("  - %s\n", name)
 		}
 	}
+	listChromeProfilesFromDB()
 }
 
 // defaultChromeExportPath builds the default JSON output location
