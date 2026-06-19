@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.39.0 — (2026-06-19) — minor version bump + README pin refresh
+
+- **Version bump only.** No behavior changes. Refreshes the pinned version across `gitmap/constants/constants.go`, `src/constants/index.ts`, and the README install/asset matrix to v6.39.0.
+- **Files:** `gitmap/constants/constants.go` (`6.39.0`), `src/constants/index.ts` (`v6.39.0`), `README.md` (pin → v6.39.0), `CHANGELOG.md`.
+
 ## v6.38.0 — (2026-06-19) — `gitmap rm` gains `del` alias + full help coverage
 
 - **Alias expansion.** `gitmap rm` now also dispatches through `gitmap del`, matching the existing full-word `gitmap remove` alias. All three spellings run the same path-first, slug-fallback database untracking flow and still leave on-disk files untouched.
