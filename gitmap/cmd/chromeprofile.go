@@ -199,7 +199,7 @@ func readChromeExport(path string) (*chromeExport, error) {
 // dst. Missing entries are skipped silently — Chrome regenerates them.
 func copyChromeProfile(src, dst string) (int, error) {
 	if err := os.MkdirAll(dst, constants.DirPermission); err != nil {
-		return 0, fmt.Errorf("mkdir %s: %w", dst, err)
+		return 0, newChromeProfileCopyError(src, dst, constants.ChromeProfileCopyOpMkdir, err)
 	}
 	total := 0
 	for _, name := range constants.ChromeProfileCopyEntries {
@@ -210,6 +210,23 @@ func copyChromeProfile(src, dst string) (int, error) {
 		total += n
 	}
 	return total, nil
+}
+
+type chromeProfileCopyError struct {
+	Source string
+	Target string
+	Op     string
+	Err    error
+}
+
+func (e *chromeProfileCopyError) Error() string {
+	return fmt.Sprintf("%s %s -> %s: %v", e.Op, e.Source, e.Target, e.Err)
+}
+
+func (e *chromeProfileCopyError) Unwrap() error { return e.Err }
+
+func newChromeProfileCopyError(src, dst, op string, err error) error {
+	return &chromeProfileCopyError{Source: src, Target: dst, Op: op, Err: err}
 }
 
 // copyEntry copies a single file or directory tree. Returns file count.
