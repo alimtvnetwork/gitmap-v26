@@ -62,6 +62,8 @@ func topLevelCmds() map[string]string {
 		"CmdListVersions":          CmdListVersions,
 		"CmdListVersionsAlias":     CmdListVersionsAlias,
 		"CmdRevert":                CmdRevert,
+		"CmdRm":                    CmdRm,
+		"CmdRmAlias":               CmdRmAlias,
 		"CmdListReleases":          CmdListReleases,
 		"CmdListReleasesAlias":     CmdListReleasesAlias,
 		"CmdReleases":              CmdReleases,
