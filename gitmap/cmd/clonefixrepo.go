@@ -52,13 +52,18 @@ func runCloneFixRepoPipeline(args []string, makePublic bool) {
 
 	url = applyCloneFixRepoScheme(url, useSSH, useHTTPS)
 
-	// cfr/cfrp deliberately do NOT flatten `-vN` suffixes: the local
-	// folder should mirror the URL the user typed (clone-next is the
-	// command for version-bump flattening). Resolve the folder once
-	// here and thread it through so executeDirectClone doesn't
-	// re-derive and flatten behind our back.
+	// cfr/cfrp DO flatten `-vN` suffixes: the local folder mirrors
+	// the repo base name (e.g. macro-ahk-v50 → macro-ahk) so that
+	// fix-repo can rewrite version tokens across siblings. If the
+	// user passes an explicit folder argument, that wins verbatim.
 	if len(folderName) == 0 {
-		folderName = repoNameFromURL(url)
+		repoName := repoNameFromURL(url)
+		parsed := clonenext.ParseRepoName(repoName)
+		if parsed.HasVersion {
+			folderName = parsed.BaseName
+		} else {
+			folderName = repoName
+		}
 	}
 	absPath := resolveCloneTargetFolder(url, folderName)
 	url = preferExistingFolderTransport(url, absPath)
