@@ -15,7 +15,10 @@ Sign-in tokens, cookies, history and caches are deliberately excluded.
 
 `<src-profile>` and `<dst-profile>` are profile **names** (`Default`,
 `Profile 1`, `Work`, ...), not absolute paths. Both are resolved
-relative to Chrome's User Data root for the current OS.
+relative to Chrome's User Data root for the current OS. The source can
+also be the display name shown in Chrome's profile picker (for example,
+`Lovable`), and the copy banner prints both the display name and the
+resolved directory when they differ.
 
 ## What it copies
 
@@ -29,6 +32,8 @@ relative to Chrome's User Data root for the current OS.
 ## Prerequisites
 
 - **Close Chrome first** — open sessions may corrupt the destination.
+- Runtime-only Chrome `LOCK` files are skipped if Chrome or an extension
+  still holds them, so an extension lock does not abort the whole copy.
 - The source profile must exist under the User Data root. When it
   doesn't, the not-found error lists every real profile so you can
   pick the correct spelling (v6.34.0+).
@@ -38,7 +43,9 @@ relative to Chrome's User Data root for the current OS.
 ### Clone "Default" into a fresh "Backup" profile
 
     $ gitmap cpc Default Backup
-    chrome-profile-copy: C:\Users\me\AppData\Local\Google\Chrome\User Data\Default → C:\Users\me\AppData\Local\Google\Chrome\User Data\Backup
+    chrome-profile-copy: Default → Backup
+      source: C:\Users\me\AppData\Local\Google\Chrome\User Data\Default
+      destination: C:\Users\me\AppData\Local\Google\Chrome\User Data\Backup
     chrome-profile-copy: done (143 files, 412ms)
     Artifacts:
       json  C:\dev\.gitmap\chrome\Backup.json
@@ -53,6 +60,17 @@ relative to Chrome's User Data root for the current OS.
       Default
       Profile 1
       Profile 2
+
+### Locked extension file handling
+
+    $ gitmap cpc Lovable lv2
+    chrome-profile-copy: Lovable (dir: Profile 15) → lv2
+      source: C:\Users\me\AppData\Local\Google\Chrome\User Data\Profile 15
+      destination: C:\Users\me\AppData\Local\Google\Chrome\User Data\lv2
+    chrome-profile-copy: WARN skipped volatile Chrome lock file
+      source: ...\Local Extension Settings\...\LOCK
+      destination: ...\lv2\Local Extension Settings\...\LOCK
+      reason: The process cannot access the file because another process has locked a portion of the file.
 
 ## Exit codes
 
