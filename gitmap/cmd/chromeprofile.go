@@ -179,10 +179,7 @@ func defaultChromeExportPath(name string) string {
 	return filepath.Join(constants.GitMapDir, "chrome", name+constants.ExtJSON)
 }
 
-// hasPrefixProfile reports whether name looks like "Profile N".
-func hasPrefixProfile(name string) bool {
-	return len(name) > 8 && name[:8] == "Profile "
-}
+
 
 // readChromeExport loads a JSON export file from disk.
 func readChromeExport(path string) (*chromeExport, error) {
