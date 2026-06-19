@@ -95,10 +95,10 @@ func runChromeProfileExport(args []string) {
 	if len(args) >= 2 {
 		outPath = args[1]
 	}
-	srcPath := chromeProfilePath(name)
-	if !chromeProfilePathExists(srcPath) {
+	srcPath, ok := resolveChromeProfileDir(name)
+	if !ok {
 		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileSrcMissing, name, srcPath)
-		printAvailableChromeProfiles()
+		printAvailableChromeProfilesWithDisplay()
 		os.Exit(constants.ExitChromeProfileNotFound)
 	}
 	jsonBytes, err := writeChromeExport(srcPath, name, outPath)
