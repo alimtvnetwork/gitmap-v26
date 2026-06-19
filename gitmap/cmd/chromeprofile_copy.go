@@ -105,9 +105,17 @@ func writeChromeProfileCopyFile(in *os.File, src, dst string) (bool, error) {
 	}
 	defer out.Close()
 	if _, err := io.Copy(out, in); err != nil {
-		return false, newChromeProfileCopyError(src, dst, constants.ChromeProfileCopyOpWrite, err)
+		return handleChromeFileCopyError(src, dst, err)
 	}
 	return true, nil
+}
+
+func handleChromeFileCopyError(src, dst string, err error) (bool, error) {
+	if isChromeVolatileLockFile(src) {
+		warnChromeProfileLockSkip(src, dst, err)
+		return false, nil
+	}
+	return false, newChromeProfileCopyError(src, dst, constants.ChromeProfileCopyOpWrite, err)
 }
 
 // copyDir recursively copies a directory tree.
