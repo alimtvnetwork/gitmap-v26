@@ -79,5 +79,21 @@ func toolingDispatchEntries() []dispatchEntry {
 			[]string{constants.CmdHistoryPin, constants.CmdHistoryPinAlias},
 			func() { runHistoryPin(argsTail()) },
 		},
+		{
+			[]string{constants.CmdChromeProfileCopy, constants.CmdChromeProfileCopyAlias},
+			func() { runChromeProfileCopy(argsTail()) },
+		},
+		{
+			[]string{constants.CmdChromeProfileExport, constants.CmdChromeProfileExportAlias},
+			func() { runChromeProfileExport(argsTail()) },
+		},
+		{
+			[]string{constants.CmdChromeProfileImport, constants.CmdChromeProfileImportAlias},
+			func() { runChromeProfileImport(argsTail()) },
+		},
+		{
+			[]string{constants.CmdChromeProfileList, constants.CmdChromeProfileListAlias},
+			func() { runChromeProfileList(argsTail()) },
+		},
 	}
 }
