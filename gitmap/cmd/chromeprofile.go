@@ -272,11 +272,11 @@ func chromeProfileCopyFile(src, dst string) error {
 // copyDir recursively copies a directory tree.
 func copyDir(src, dst string) (int, error) {
 	if err := os.MkdirAll(dst, constants.DirPermission); err != nil {
-		return 0, err
+		return 0, newChromeProfileCopyError(src, dst, constants.ChromeProfileCopyOpMkdir, err)
 	}
 	entries, err := os.ReadDir(src)
 	if err != nil {
-		return 0, err
+		return 0, newChromeProfileCopyError(src, dst, constants.ChromeProfileCopyOpList, err)
 	}
 	total := 0
 	for _, e := range entries {
@@ -287,4 +287,27 @@ func copyDir(src, dst string) (int, error) {
 		total += n
 	}
 	return total, nil
+}
+
+func isChromeVolatileLockFile(path string) bool {
+	return filepath.Base(path) == constants.ChromeProfileLockFileName
+}
+
+func warnChromeProfileLockSkip(src, dst string, err error) {
+	fmt.Fprintf(os.Stderr, constants.WarnChromeProfileSkipLock, src, dst, err)
+}
+
+func printChromeProfileCopyError(src, dst chromeProfileResolution, err error) {
+	copyErr := unwrapChromeProfileCopyError(err)
+	fmt.Fprintf(os.Stderr, constants.ErrChromeProfileCopyFailed,
+		chromeProfileSummary(src), chromeProfileSummary(dst), src.Path, dst.Path,
+		copyErr.Source, copyErr.Op, copyErr.Err)
+}
+
+func unwrapChromeProfileCopyError(err error) chromeProfileCopyError {
+	var copyErr *chromeProfileCopyError
+	if errors.As(err, &copyErr) {
+		return *copyErr
+	}
+	return chromeProfileCopyError{Source: constants.ChromeProfileCopyUnknown, Op: constants.ChromeProfileCopyOpCopy, Err: err}
 }
