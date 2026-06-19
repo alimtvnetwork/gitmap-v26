@@ -31,6 +31,7 @@ func runChromeProfileCopy(args []string) {
 	dstPath := chromeProfilePath(args[1])
 	if !chromeProfilePathExists(srcPath) {
 		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileSrcMissing, args[0], srcPath)
+		printAvailableChromeProfiles()
 		os.Exit(constants.ExitChromeProfileNotFound)
 	}
 	fmt.Fprint(os.Stderr, constants.MsgChromeProfileSkipChrome)
@@ -97,6 +98,7 @@ func runChromeProfileExport(args []string) {
 	srcPath := chromeProfilePath(name)
 	if !chromeProfilePathExists(srcPath) {
 		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileSrcMissing, name, srcPath)
+		printAvailableChromeProfiles()
 		os.Exit(constants.ExitChromeProfileNotFound)
 	}
 	jsonBytes, err := writeChromeExport(srcPath, name, outPath)
