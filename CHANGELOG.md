@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.35.0 — (2026-06-19) — chrome-profile commands gain help text + root help discoverability
+
+- **`gitmap help chrome` now resolves.** Added a dedicated `Chrome Profile (copy / export / import / list / delete)` group under the **PROJECTS & DATA** super-category in `gitmap help`, wired via new `HelpGroupChromeProf` constant and `printGroupChromeProfile()` in `gitmap/cmd/rootusage.go`. The same group is registered in `allHelpRows()` (`gitmap/cmd/rootusagefilter.go`) so `gitmap help --filter chrome` and the fuzzy "did you mean" matcher surface every cpc/cpe/cpi/cpl/cpd line instead of returning `No matches`.
+- **Per-command `--help` works.** New embedded markdown files in `gitmap/helptext/`: `chrome-profile-copy.md`, `chrome-profile-export.md`, `chrome-profile-import.md`, `chrome-profile-list.md`, `chrome-profile-delete.md`. Each lists usage, alias, what is copied/excluded, prerequisites (close Chrome first), 2 examples with realistic output, exit codes table, and cross-links. `gitmap cpc --help`, `gitmap cpe -h`, etc. no longer error with `No help available`.
+- **Files:** `gitmap/constants/constants_helpgroups.go`, `gitmap/cmd/rootusage.go`, `gitmap/cmd/rootusagefilter.go`, `gitmap/helptext/chrome-profile-*.md` (5 new), `gitmap/constants/constants.go` (`6.35.0`), `src/constants/index.ts` (`v6.35.0`), `README.md` (pin → v6.35.0), `CHANGELOG.md`.
+
 ## v6.34.0 — (2026-06-19) — chrome-profile not-found errors now list every available profile
 
 - **Discoverability fix for `cpc` / `cpe`.** When the user passes a profile name that doesn't exist under Chrome's User Data root, the not-found error is followed by `available profiles under <root>:` and one indented line per real profile (`Default`, `Profile 1`, `Profile 2`, …). Eliminates the "ERROR profile X not found" dead end that forced users to manually `ls` the User Data dir.
