@@ -180,8 +180,6 @@ func defaultChromeExportPath(name string) string {
 	return filepath.Join(constants.GitMapDir, "chrome", name+constants.ExtJSON)
 }
 
-
-
 // readChromeExport loads a JSON export file from disk.
 func readChromeExport(path string) (*chromeExport, error) {
 	raw, err := os.ReadFile(path) //nolint:gosec // user-supplied path
