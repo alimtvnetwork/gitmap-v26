@@ -109,18 +109,18 @@ func matchesPattern(relPath string, isDir bool, pattern string) bool {
 	if isDirPattern && isDir {
 		cleanPattern := strings.TrimSuffix(pattern, "/")
 
-		return matchGlob(relPath, cleanPattern)
+		return matchGitignoreGlob(relPath, cleanPattern)
 	}
 
 	if isDirPattern {
 		return false
 	}
 
-	return matchGlob(relPath, pattern)
+	return matchGitignoreGlob(relPath, pattern)
 }
 
-// matchGlob performs glob matching against path components.
-func matchGlob(relPath, pattern string) bool {
+// matchGitignoreGlob performs glob matching against path components.
+func matchGitignoreGlob(relPath, pattern string) bool {
 	matched, err := filepath.Match(pattern, filepath.Base(relPath))
 	if err != nil {
 		return false
