@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/alimtvnetwork/gitmap-v26/gitmap/constants"
 )
+
 
 // cloneReplaceResult describes how the replace flow finished.
 type cloneReplaceResult struct {
