@@ -50,6 +50,7 @@ func runClone(args []string) {
 		os.Exit(1)
 	}
 	initCloneVerbose(cf.Verbose)
+	SetCloneDryRun(cf.DryRun)
 	setCmdFaithfulVerify(cf.VerifyCmdFaithful)
 	setCmdFaithfulExitOnMismatch(cf.VerifyCmdFaithfulExitOnMismatch)
 	setCmdPrintArgv(cf.PrintCloneArgv)
