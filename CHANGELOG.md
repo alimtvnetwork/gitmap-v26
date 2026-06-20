@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.50.1 — (2026-06-20) — Build fix: close `WarnChromeProfileRegister` const block
+
+- **Build fix.** `gitmap/constants/constants_chromeprofile.go` was missing the closing `)` on the `MsgChromeProfileRegistered` / `WarnChromeProfileRegister` / `HelpChromeProfileDelete` const block, causing `go build ./...` to fail with cascading `unexpected keyword const/var` syntax errors at lines 87/91/107/112/113. Block now terminates correctly; no behavior change.
+
 ## v6.50.0 — (2026-06-20) — `cfrp` no longer scans/prompts to privatize prior versions
 
 - **Behavior change.** After the `make-public --yes` step, `cfrp` previously walked up to 15 sibling `-vN` repos, listed every public one, and prompted "Privatize all N prior version(s)? [y/N]". This surprised users who only asked to clone-fix-publish the current version. The scan + prompt is removed; `cfrp` now stops after `make-public`. Run `gitmap mapri <repo>` explicitly when you want bulk privatize.
