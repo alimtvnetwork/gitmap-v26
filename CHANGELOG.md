@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.50.0 — (2026-06-20) — `cfrp` no longer scans/prompts to privatize prior versions
+
+- **Behavior change.** After the `make-public --yes` step, `cfrp` previously walked up to 15 sibling `-vN` repos, listed every public one, and prompted "Privatize all N prior version(s)? [y/N]". This surprised users who only asked to clone-fix-publish the current version. The scan + prompt is removed; `cfrp` now stops after `make-public`. Run `gitmap mapri <repo>` explicitly when you want bulk privatize.
+- `cfr` was never affected (no make-public step), but the rule is the same: no implicit cross-version visibility flips.
+
 ## v6.49.0 — (2026-06-20) — Unified colorful clone runner: `--dry-run`, spinner, timing, retry-hint failure panel
 
 - **New flag.** `--dry-run` / `-n` on `clone`, `cfr`, and `cfrp` prints the exact `git clone <url> <dest>` command and the absolute target path without invoking git. cfr/cfrp also print the chained pipeline (`fix-repo --all` → optional `make-public --yes`) so the user can preview the full sequence.
