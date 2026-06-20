@@ -82,12 +82,8 @@ const (
 const (
 	MsgChromeProfileRegistered = "\033[1;92m✓ registered\033[0m  \033[1m%s\033[0m in Chrome's profile picker (Local State)\n"
 	WarnChromeProfileRegister  = "  \033[1;93m⚠\033[0m chrome-profile-copy: could not register %q in Chrome's Local State: %v\n  \033[2;37m(profile files were copied — restart Chrome and add the profile manually if it does not appear)\033[0m\n"
+	HelpChromeProfileDelete    = "  chrome-profile-delete (cpd) <name> [--yes] Remove a profile + its stored artifacts from the gitmap DB"
 )
-
-
-
-// HelpChromeProfileDelete extends the help block (kept beside its peers).
-const HelpChromeProfileDelete = "  chrome-profile-delete (cpd) <name> [--yes] Remove a profile + its stored artifacts from the gitmap DB"
 
 // Chrome User Data subpaths copied by cpc. Excluded by design:
 // Cookies, Login Data, History, Cache, GPUCache, sync tokens.
