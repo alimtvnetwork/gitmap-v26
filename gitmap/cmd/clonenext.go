@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -242,14 +241,13 @@ func extractRepoName(remoteURL string) string {
 	return name
 }
 
-// runGitClone executes git clone and returns success status.
+// runGitClone executes git clone via the unified colorful runner so
+// clone-next shares the same header, spinner, timing, failure panel,
+// and --dry-run semantics as `clone` / `cfr` / `cfrp`.
 func runGitClone(url, dest string) bool {
-	cmd := exec.Command(constants.GitBin, constants.GitClone, url, dest)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	return cmd.Run() == nil
+	return runCloneCommandPretty(url, dest) == nil
 }
+
 
 // registerCloneNextDesktop registers the cloned repo with GitHub Desktop.
 func registerCloneNextDesktop(name, absPath string) {

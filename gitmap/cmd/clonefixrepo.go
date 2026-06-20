@@ -44,7 +44,8 @@ func runCloneFixRepoPub(args []string) {
 // runCloneFixRepoPipeline is the shared core. `makePublic` controls
 // whether the optional 3rd step (visibility flip) runs.
 func runCloneFixRepoPipeline(args []string, makePublic bool) {
-	url, folderName, noVSCodeSync, requireVersion, useSSH, useHTTPS, autoYes := parseCloneFixRepoArgs(args)
+	url, folderName, noVSCodeSync, requireVersion, useSSH, useHTTPS, autoYes, dryRun := parseCloneFixRepoArgs(args)
+	SetCloneDryRun(dryRun)
 	if len(url) == 0 {
 		fmt.Fprint(os.Stderr, constants.ErrCloneFixRepoUsage)
 		os.Exit(constants.ExitCloneFixRepoBadFlag)
@@ -70,6 +71,16 @@ func runCloneFixRepoPipeline(args []string, makePublic bool) {
 	url = preferExistingFolderTransport(url, absPath)
 	requireOnline()
 	executeDirectClone(url, folderName, true, false, "", noVSCodeSync)
+
+	// Dry-run short circuit: nothing was cloned, so the chained
+	// chdir + fix-repo + make-public steps have no target to act on.
+	if dryRun {
+		fmt.Printf("  "+constants.MsgCloneDryRunNoop+"\n  would chain: fix-repo --all%s @ %s\n",
+			pubSuffix(makePublic), absPath)
+		return
+	}
+
+
 
 	if err := os.Chdir(absPath); err != nil {
 		fmt.Fprintf(os.Stderr, constants.ErrCloneFixRepoChdirFmt, absPath, err)
@@ -157,13 +168,14 @@ func resolveCloneFixRepoName(absPath string) string {
 // --no-vscode-sync, --require-version, --ssh/-ssh/--sh,
 // --https/-https/--ht. Single-dash forms are accepted to match Go's
 // stdlib `flag` package behaviour the user expects from `-ssh`.
-func parseCloneFixRepoArgs(args []string) (string, string, bool, bool, bool, bool, bool) {
+func parseCloneFixRepoArgs(args []string) (string, string, bool, bool, bool, bool, bool, bool) {
 	positional := make([]string, 0, len(args))
 	noVSCodeSync := false
 	requireVersion := false
 	useSSH := false
 	useHTTPS := false
 	autoYes := false
+	dryRun := false
 	syncFlag := constants.FlagNoVSCodeSync
 	reqFlag := constants.FlagRequireVersion
 	for _, a := range args {
@@ -184,6 +196,9 @@ func parseCloneFixRepoArgs(args []string) (string, string, bool, bool, bool, boo
 		case "y", "yes":
 			autoYes = true
 			continue
+		case constants.FlagCloneDryRun, constants.FlagCloneDryRunShort:
+			dryRun = true
+			continue
 		}
 		if len(a) > 0 && a[0] != '-' {
 			positional = append(positional, a)
@@ -198,8 +213,9 @@ func parseCloneFixRepoArgs(args []string) (string, string, bool, bool, bool, boo
 		folder = positional[1]
 	}
 
-	return url, folder, noVSCodeSync, requireVersion, useSSH, useHTTPS, autoYes
+	return url, folder, noVSCodeSync, requireVersion, useSSH, useHTTPS, autoYes, dryRun
 }
+
 
 // resolveCloneTargetFolder mirrors the folder-naming logic in
 // executeDirectClone so we know which directory to cd into after
