@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.50.2 — (2026-06-20) — Build fix: inline `pubSuffix` in `cfr` dry-run path
+
+- **Build fix.** `gitmap/cmd/clonefixrepo.go:79` referenced an undefined `pubSuffix(makePublic)` helper, breaking `go build ./...`. Replaced with an inline local `suffix` string (`" → make-public --yes"` when `makePublic` is true, empty otherwise). No behavior change.
+
 ## v6.50.1 — (2026-06-20) — Build fix: close `WarnChromeProfileRegister` const block
 
 - **Build fix.** `gitmap/constants/constants_chromeprofile.go` was missing the closing `)` on the `MsgChromeProfileRegistered` / `WarnChromeProfileRegister` / `HelpChromeProfileDelete` const block, causing `go build ./...` to fail with cascading `unexpected keyword const/var` syntax errors at lines 87/91/107/112/113. Block now terminates correctly; no behavior change.
