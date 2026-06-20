@@ -146,8 +146,17 @@ func isChromeVolatileLockFile(path string) bool {
 	return filepath.Base(path) == constants.ChromeProfileLockFileName
 }
 
+// chromeProfileLockSkipCount is reset at the start of each copy run and
+// incremented for every volatile LOCK file the copier skips. The caller
+// prints a single colorful summary line at the end instead of one banner
+// per file (see runChromeProfileCopy).
+var chromeProfileLockSkipCount int
+
 func warnChromeProfileLockSkip(src, dst string, err error) {
-	fmt.Fprintf(os.Stderr, constants.WarnChromeProfileSkipLock, src, dst, err)
+	_ = dst
+	_ = err
+	chromeProfileLockSkipCount++
+	fmt.Fprintf(os.Stderr, constants.WarnChromeProfileSkipLock, src)
 }
 
 func printChromeProfileCopyError(src, dst chromeProfileResolution, err error) {
