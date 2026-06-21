@@ -69,8 +69,12 @@ func runCloneFixRepoPipeline(args []string, makePublic bool) {
 	}
 	absPath := resolveCloneTargetFolder(url, folderName)
 	url = preferExistingFolderTransport(url, absPath)
+	url = coerceURLToStoredTransport(url)
 	requireOnline()
 	executeDirectClone(url, folderName, true, false, "", noVSCodeSync)
+	if !dryRun {
+		persistRecloneTransport(url)
+	}
 
 	// Dry-run short circuit: nothing was cloned, so the chained
 	// chdir + fix-repo + make-public steps have no target to act on.
