@@ -46,10 +46,21 @@ Behavior:
 }
 
 function Invoke-Step {
-    param([string]$Label, [string]$Script, [string[]]$Args)
+    param([string]$Label, [string]$Script, [string[]]$ScriptArgs, [string]$GitmapSub, [string[]]$GitmapArgs)
     Write-Host ""
-    Write-Host ("==> [{0}] {1} {2}" -f $Label, $Script, ($Args -join ' '))
-    & (Join-Path $Script:HereDir $Script) @Args
+    $localScript = Join-Path $Script:HereDir $Script
+    if (Test-Path -LiteralPath $localScript) {
+        Write-Host ("==> [{0}] {1} {2}" -f $Label, $Script, ($ScriptArgs -join ' '))
+        & $localScript @ScriptArgs
+        return $LASTEXITCODE
+    }
+    $gitmap = Get-Command gitmap -ErrorAction SilentlyContinue
+    if ($null -eq $gitmap) {
+        Write-Host ("==> [{0}] SKIP — neither {1} nor 'gitmap' binary found on PATH" -f $Label, $Script) -ForegroundColor Yellow
+        return 127
+    }
+    Write-Host ("==> [{0}] gitmap {1} {2}" -f $Label, $GitmapSub, ($GitmapArgs -join ' '))
+    & gitmap $GitmapSub @GitmapArgs
     return $LASTEXITCODE
 }
 
@@ -63,13 +74,17 @@ function Write-Summary {
 
 if ($Help) { Show-InitHelp; exit 0 }
 
-$visArgs = @('-Visible','pub','-Yes')
-if ($DryRun) { $visArgs += '-DryRun' }
-$visRc = Invoke-Step -Label 'visibility' -Script 'visibility-change.ps1' -Args $visArgs
+$visScriptArgs = @('-Visible','pub','-Yes')
+$visGitmapArgs = @('--yes')
+if ($DryRun) { $visScriptArgs += '-DryRun'; $visGitmapArgs += '--dry-run' }
+$visRc = Invoke-Step -Label 'visibility' -Script 'visibility-change.ps1' `
+    -ScriptArgs $visScriptArgs -GitmapSub 'make-public' -GitmapArgs $visGitmapArgs
 
-$fixArgs = @('-All')
-if ($DryRun) { $fixArgs += '-DryRun' }
-$fixRc = Invoke-Step -Label 'fix-repo' -Script 'fix-repo.ps1' -Args $fixArgs
+$fixScriptArgs = @('-All')
+$fixGitmapArgs = @('--all')
+if ($DryRun) { $fixScriptArgs += '-DryRun'; $fixGitmapArgs += '--dry-run' }
+$fixRc = Invoke-Step -Label 'fix-repo' -Script 'fix-repo.ps1' `
+    -ScriptArgs $fixScriptArgs -GitmapSub 'fix-repo' -GitmapArgs $fixGitmapArgs
 
 Write-Summary -VisRc $visRc -FixRc $fixRc
 
