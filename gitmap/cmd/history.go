@@ -125,7 +125,7 @@ func printHistoryHeader(detail string) {
 // duration, dim relative-time on the right.
 func printHistoryRow(r model.CommandHistoryRecord, detail string) {
 	cmd := colorize(constants.ColorCyan, padRight(r.Command, 16))
-	flags := colorize(constants.ColorDim, padRight(truncate(r.Flags, 22), 22))
+	flags := colorize(constants.ColorDim, padRight(truncateHist(r.Flags, 22), 22))
 	status := colorizedStatus(r.ExitCode)
 	dur := colorize(constants.ColorYellow, padRight(strconv.FormatInt(r.DurationMs, 10)+"ms", 10))
 	last := colorize(constants.ColorDim, relativeHistoryTime(r))
@@ -134,9 +134,9 @@ func printHistoryRow(r model.CommandHistoryRecord, detail string) {
 	case constants.DetailBasic:
 		fmt.Printf("%s %s %s\n", cmd, status, last)
 	case constants.DetailDetailed:
-		args := colorize(constants.ColorWhite, padRight(truncate(r.Args, 18), 18))
+		args := colorize(constants.ColorWhite, padRight(truncateHist(r.Args, 18), 18))
 		repos := padRight(strconv.Itoa(r.RepoCount), 6)
-		summary := padRight(truncate(r.Summary, 30), 30)
+		summary := padRight(truncateHist(r.Summary, 30), 30)
 		fmt.Printf("%s %s %s %s %s %s %s %s\n",
 			cmd, args, flags, status, dur, repos, summary, last)
 	default:
@@ -282,7 +282,7 @@ func padRight(s string, w int) string {
 	return s + strings.Repeat(" ", w-len(s))
 }
 
-func truncate(s string, w int) string {
+func truncateHist(s string, w int) string {
 	if len(s) <= w {
 		return s
 	}
