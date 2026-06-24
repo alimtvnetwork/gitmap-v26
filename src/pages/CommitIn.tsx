@@ -145,6 +145,60 @@ gitmap-v26 cin       <source> -5                     [flags]`} />
       </section>
 
       <section>
+        <h2 className="text-xl font-semibold mb-3">Resume &amp; idempotency</h2>
+        <p className="text-sm text-muted-foreground mb-3">
+          <code>commit-in</code> never replays a source commit twice. Every successfully
+          replayed source SHA is written to the <code>ShaMap</code> table; on every
+          subsequent run the walker looks each source SHA up and SKIPs with reason{" "}
+          <code>DuplicateSourceSha</code> when a row already exists. That makes broken /
+          partial runs naturally resumable — just re-issue the same command and the
+          chain picks up where it left off.
+        </p>
+        <p className="text-sm text-muted-foreground mb-3">
+          For cross-machine continuity (or when the SQLite DB is lost), gitmap mirrors the
+          per-input "last completed source SHA" into a sidecar JSON file at{" "}
+          <code>.gitmap/commit-in/state.json</code>. Re-seed the DB from it with{" "}
+          <code>gitmap cin &lt;source&gt; all</code> — the walker pre-loads every source
+          SHA into <code>ShaMap</code> before the first replay, so the resume probe is a
+          single SQLite hit per commit.
+        </p>
+        <CodeBlock
+          language="json"
+          title=".gitmap/commit-in/state.json"
+          code={`{
+  "SchemaVersion": 1,
+  "Source": "/abs/path/to/canonical",
+  "Inputs": {
+    "myrepo-v1": {
+      "LastCompletedSourceSha": "9f3a…",
+      "LastCompletedAt": "2026-06-24T10:12:33Z",
+      "CommitsReplayed": 312
+    },
+    "myrepo-v2": {
+      "LastCompletedSourceSha": "ab12…",
+      "LastCompletedAt": "2026-06-24T10:14:01Z",
+      "CommitsReplayed": 87
+    },
+    "myrepo-v3": {
+      "LastCompletedSourceSha": "",
+      "LastCompletedAt": "",
+      "CommitsReplayed": 0
+    }
+  }
+}`}
+        />
+        <p className="text-xs text-muted-foreground mt-3">
+          <strong>Recovery flow.</strong> If <code>v2</code> aborted mid-walk, re-running{" "}
+          <code>gitmap cin ./canonical myrepo-v1,myrepo-v2,myrepo-v3</code> will: (1) seed
+          every source SHA from each input into <code>ShaMap</code>, (2) skip all of{" "}
+          <code>v1</code> and the first 87 commits of <code>v2</code> as{" "}
+          <code>DuplicateSourceSha</code>, (3) resume replay from the next un-mapped SHA,
+          (4) continue into <code>v3</code> without re-asking.
+        </p>
+      </section>
+
+
+      <section>
         <h2 className="text-xl font-semibold mb-3">Exit Codes</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm border border-border rounded-lg">

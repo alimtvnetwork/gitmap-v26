@@ -92,7 +92,7 @@ func toolingDispatchEntries() []dispatchEntry {
 			func() { runChromeProfileImport(argsTail()) },
 		},
 		{
-			[]string{constants.CmdChromeProfileList, constants.CmdChromeProfileListAlias},
+			[]string{constants.CmdChromeProfileList, constants.CmdChromeProfileListAlias, constants.CmdChromeProfileListAlias2},
 			func() { runChromeProfileList(argsTail()) },
 		},
 		{
