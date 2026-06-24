@@ -1,6 +1,13 @@
 # Changelog
 
+## v6.52.0 — (2026-06-24) — `chrome-profiles` alias + commit-in resume/idempotency docs
+
+- **New alias.** `gitmap chrome-profiles` now resolves to `chrome-profile-list` (alongside the existing `cpl`). Wired in `gitmap/cmd/roottooling.go` and `constants.CmdChromeProfileListAlias2`.
+- **Docs UI.** `CommitIn.tsx` gains a "Resume & idempotency" section explaining `ShaMap` dedupe, `DuplicateSourceSha` skip semantics, and the sidecar `.gitmap/commit-in/state.json` resume contract for cross-run continuation across versioned input siblings.
+- **VERSION sync.** `src/constants/index.ts` resynced to `v6.52.0` (was stale at `v6.50.2`).
+
 ## v6.50.2 — (2026-06-20) — Build fix: inline `pubSuffix` in `cfr` dry-run path
+
 
 - **Build fix.** `gitmap/cmd/clonefixrepo.go:79` referenced an undefined `pubSuffix(makePublic)` helper, breaking `go build ./...`. Replaced with an inline local `suffix` string (`" → make-public --yes"` when `makePublic` is true, empty otherwise). No behavior change.
 
