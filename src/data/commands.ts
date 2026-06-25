@@ -178,7 +178,7 @@ export const commands: CommandDef[] = [
     name: "find-next", alias: "fn", description: "Read-only: list every repo whose latest VersionProbe row has IsAvailable=1, sorted newest first",
     usage: "gitmap find-next [--scan-folder <id>] [--include-intermediate] [--json]",
     flags: [
-      { flag: "--scan-folder <id>", description: "Restrict to one ScanFolder (look up via 'gitmap-v26 sf list')" },
+      { flag: "--scan-folder <id>", description: "Restrict to one ScanFolder (look up via 'gitmap sf list')" },
       { flag: "--include-intermediate", description: "Show every verified version from the latest --depth walk, not just the newest (planned v3.36.0)" },
       { flag: "--json", description: "Emit []FindNextRow as indented JSON" },
     ],
@@ -613,7 +613,7 @@ export const commands: CommandDef[] = [
   {
     category: "release",
     name: "replace", alias: "rpl", description: "Repo-wide find/replace across every text file. Two modes: literal text swap, or version-suffix bump driven by the git remote URL.",
-    usage: 'gitmap-v26 replace "<old>" "<new>"   |   gitmap replace -N | --audit | all',
+    usage: 'gitmap replace "<old>" "<new>"   |   gitmap replace -N | --audit | all',
     flags: [
       { flag: "-N (e.g. -2, -3, -5)", description: "Version mode: bump v(current-N)..v(current-1) → vCurrent" },
       { flag: "all", description: "Version mode: bump every prior version v1..v(current-1) → vCurrent" },
@@ -625,15 +625,15 @@ export const commands: CommandDef[] = [
       { flag: "--ext-case <mode>", description: "sensitive | insensitive (default insensitive). Sensitive matches filenames byte-exact." },
     ],
     examples: [
-      { command: 'gitmap-v26 replace "old-name" "new-name"', description: "Literal repo-wide replace with confirmation prompt" },
+      { command: 'gitmap replace "old-name" "new-name"', description: "Literal repo-wide replace with confirmation prompt" },
       { command: "gitmap replace -3", description: "Bump v(K-3)..v(K-1) → vK using current repo's remote suffix" },
       { command: "gitmap replace all", description: "Bump every prior version v1..v(K-1) → vK" },
       { command: "gitmap replace --audit", description: "Report every file:line that would change; write nothing" },
-      { command: 'gitmap-v26 rpl "old" "new" --ext .go,.md -y', description: "Restrict to .go/.md and skip prompt" },
+      { command: 'gitmap rpl "old" "new" --ext .go,.md -y', description: "Restrict to .go/.md and skip prompt" },
     ],
     seeAlso: [
       { name: "fix-repo", description: "Stricter, git-tracked-only version-suffix rewriter with binary exit codes" },
-      { name: "release-self", description: "Bump gitmap-v26's own version" },
+      { name: "release-self", description: "Bump gitmap's own version" },
       { name: "clone-next", description: "Clone the next versioned repo iteration" },
     ],
   },
@@ -1585,10 +1585,10 @@ export const commands: CommandDef[] = [
       { flag: "--verbose", description: "Print each file path as it is modified" },
     ],
     examples: [
-      { command: 'gitmap-v26 gomod "github.com/new/name"', description: "Rename module path in all files" },
-      { command: 'gitmap-v26 gomod "x/y" --ext "*.go,*.md"', description: "Only replace in .go and .md files" },
-      { command: 'gitmap-v26 gomod "github.com/new/name" --dry-run', description: "Preview what would change" },
-      { command: 'gitmap-v26 gomod "github.com/new/name" --no-merge --verbose', description: "Replace on feature branch with logging" },
+      { command: 'gitmap gomod "github.com/new/name"', description: "Rename module path in all files" },
+      { command: 'gitmap gomod "x/y" --ext "*.go,*.md"', description: "Only replace in .go and .md files" },
+      { command: 'gitmap gomod "github.com/new/name" --dry-run', description: "Preview what would change" },
+      { command: 'gitmap gomod "github.com/new/name" --no-merge --verbose', description: "Replace on feature branch with logging" },
     ],
     seeAlso: [
       { name: "Spec: gomod", description: "Go module rename documentation", url: "/gomod" },
@@ -1665,12 +1665,12 @@ export const commands: CommandDef[] = [
       { flag: "--dry-run", description: "Preview changes without applying" },
     ],
     examples: [
-      { command: 'gitmap-v26 env set GOPATH "/home/user/go"', description: "Set a persistent variable" },
+      { command: 'gitmap env set GOPATH "/home/user/go"', description: "Set a persistent variable" },
       { command: "gitmap ev path add /usr/local/go/bin", description: "Add directory to PATH" },
       { command: "gitmap env list", description: "List managed variables" },
       { command: "gitmap env path list", description: "List managed PATH entries" },
       { command: "gitmap env delete GOPATH --dry-run", description: "Preview variable removal" },
-      { command: 'gitmap-v26 env set JAVA_HOME "/usr/lib/jvm/java-17" --shell zsh', description: "Write to .zshrc instead of auto-detected profile" },
+      { command: 'gitmap env set JAVA_HOME "/usr/lib/jvm/java-17" --shell zsh', description: "Write to .zshrc instead of auto-detected profile" },
       { command: "gitmap ev path add /opt/bin --shell bash", description: "Add PATH entry targeting .bashrc explicitly" },
     ],
     seeAlso: [
