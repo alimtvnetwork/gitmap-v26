@@ -187,6 +187,15 @@ const (
 	CmdMakeAllPrivate = "make-all-private"
 	CmdMAPUB          = "MAPUB"
 	CmdMAPRI          = "MAPRI"
+	// Except-latest variants — same semantics as the base commands
+	// but exclude the highest `-vN` sibling from each base group, so
+	// the latest version stays on its prior visibility while every
+	// earlier version is flipped. Short uppercase aliases mirror the
+	// MAPUB / MAPRI muscle-memory shortcuts.
+	CmdMakeAllPublicExceptLatest  = "make-all-public-except-latest"
+	CmdMakeAllPrivateExceptLatest = "make-all-private-except-latest"
+	CmdMAPUBXL                    = "MAPUBXL"
+	CmdMAPRIXL                    = "MAPRIXL"
 	// CmdVisibilityUndo reverses the most recent successful bulk
 	// `make-all-public` / `make-all-private` (or prior undo) by
 	// reading the persisted MakeAllVisibilityResult rows and
