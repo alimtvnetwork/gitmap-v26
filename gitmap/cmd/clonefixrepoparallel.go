@@ -194,3 +194,31 @@ func atoiSafe(s string) int {
 	}
 	return n
 }
+
+// buildCFRPassthroughFlags reconstructs the non-positional flag set
+// for re-exec workers. Mirrors the flags recognised by
+// parseCloneFixRepoArgs so each worker sees the same semantics. The
+// --parallel flag is intentionally NOT forwarded — workers run a
+// single URL and must not recurse into another fan-out.
+func buildCFRPassthroughFlags(noVSCodeSync, requireVersion, useSSH, useHTTPS, autoYes, dryRun bool) []string {
+	out := make([]string, 0, 6)
+	if noVSCodeSync {
+		out = append(out, "--"+constants.FlagNoVSCodeSync)
+	}
+	if requireVersion {
+		out = append(out, "--"+constants.FlagRequireVersion)
+	}
+	if useSSH {
+		out = append(out, "--ssh")
+	}
+	if useHTTPS {
+		out = append(out, "--https")
+	}
+	if autoYes {
+		out = append(out, "--yes")
+	}
+	if dryRun {
+		out = append(out, "--"+constants.FlagCloneDryRun)
+	}
+	return out
+}
