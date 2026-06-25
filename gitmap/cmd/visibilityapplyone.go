@@ -10,13 +10,14 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
 	"github.com/alimtvnetwork/gitmap-v26/gitmap/constants"
 )
 
-// applyOutcome is one of: "ok" | "skip" | "fail". prev/next carry the
+// applyStatus is one of: "ok" | "skip" | "fail". prev/next carry the
 // visibility tokens observed pre/post-apply so the audit layer can
 // persist them on the result row.
 type applyStatus struct {
@@ -26,28 +27,35 @@ type applyStatus struct {
 	next    string
 }
 
-// applyOneRepo runs read → (skip|apply → verify) for a single repo.
-// Prints the per-line result token to stdout so the caller's
-// MsgBulkApplyItemFmt prefix flows into a one-line-per-repo log.
+// applyOneRepo runs read → (skip|apply → verify) for a single repo,
+// writing per-line tokens to os.Stdout (backwards-compatible path
+// used by the sequential undo/redo flows).
 func applyOneRepo(owner ownerContext, repoName, target string, verbose bool) applyStatus {
+	return applyOneRepoTo(os.Stdout, owner, repoName, target, verbose)
+}
+
+// applyOneRepoTo is the writer-aware variant used by the parallel
+// bulk loop so per-repo output can be captured into a buffer and
+// flushed atomically once the worker finishes.
+func applyOneRepoTo(w io.Writer, owner ownerContext, repoName, target string, verbose bool) applyStatus {
 	slug := owner.Owner + "/" + repoName
 	repoCtx := visibilityContext{Provider: owner.Provider, Slug: slug}
 
 	current, readErr := readVisibilityNoExit(repoCtx, verbose)
 	if readErr != nil {
-		fmt.Fprintf(os.Stdout, constants.MsgBulkApplyFailFmt, readErr)
+		fmt.Fprintf(w, constants.MsgBulkApplyFailFmt, readErr)
 
 		return applyStatus{outcome: "fail", err: readErr}
 	}
 
 	if current == target {
-		fmt.Fprintf(os.Stdout, constants.MsgBulkApplySkipFmt, current)
+		fmt.Fprintf(w, constants.MsgBulkApplySkipFmt, current)
 
 		return applyStatus{outcome: "skip", prev: current, next: current}
 	}
 
 	if applyErr := applyVisibilityNoExit(repoCtx, target, verbose); applyErr != nil {
-		fmt.Fprintf(os.Stdout, constants.MsgBulkApplyFailFmt, applyErr)
+		fmt.Fprintf(w, constants.MsgBulkApplyFailFmt, applyErr)
 
 		return applyStatus{outcome: "fail", err: applyErr, prev: current}
 	}
@@ -55,12 +63,12 @@ func applyOneRepo(owner ownerContext, repoName, target string, verbose bool) app
 	verified, verifyErr := readVisibilityNoExit(repoCtx, verbose)
 	if verifyErr != nil || verified != target {
 		err := fmt.Errorf("verify failed: got=%q want=%q (%v)", verified, target, verifyErr)
-		fmt.Fprintf(os.Stdout, constants.MsgBulkApplyFailFmt, err)
+		fmt.Fprintf(w, constants.MsgBulkApplyFailFmt, err)
 
 		return applyStatus{outcome: "fail", err: err, prev: current, next: verified}
 	}
 
-	fmt.Fprintf(os.Stdout, constants.MsgBulkApplyOKFmt, current, verified)
+	fmt.Fprintf(w, constants.MsgBulkApplyOKFmt, current, verified)
 
 	return applyStatus{outcome: "ok", prev: current, next: verified}
 }
