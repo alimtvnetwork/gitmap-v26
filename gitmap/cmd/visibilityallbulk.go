@@ -1,23 +1,28 @@
 // Package cmd — visibilityallbulk.go: top-level handler for the four
 // bulk wildcard visibility commands (make-all-public / make-all-private
-// / MAPUB / MAPRI). Owns dispatch, flag parsing, owner resolution,
-// repo enumeration, pattern matching, the optional interactive prompt
-// (-Y skips it), the per-repo apply loop, and exit-code aggregation.
+// / MAPUB / MAPRI) plus their except-latest counterparts. Owns dispatch,
+// flag parsing (-Y / --verbose / --parallel / --cache-ttl / --except-latest),
+// owner resolution, repo enumeration (TTL-cached), pattern matching,
+// optional except-latest filtering, the optional interactive prompt
+// (-Y skips it), the parallel per-repo apply loop, and exit-code
+// aggregation.
 //
 // Heavy lifting is delegated:
-//   - ResolveOwnerOnly        → visibilityresolveowner.go
-//   - listOwnerRepos          → visibilityownerlist.go
+//   - ResolveOwnerOnly           → visibilityresolveowner.go
+//   - listOwnerReposCached       → visibilityownerlistcache.go
 //   - visibility.ParsePatternList / MatchOwnerRepos → gitmap/visibility
-//   - renderMatchedTable / promptConfirmOrExclude   → visibilitybulkprompt.go
-//   - mustEnsureProviderCLI / read+apply+verify     → visibilityapply.go
+//   - filterExceptLatest         → visibilityexceptlatest.go
+//   - renderMatchedTable / promptConfirmOrExclude → visibilitybulkprompt.go
+//   - applyBulkLoopParallel      → visibilityparallel.go
 //
-// Spec: spec/01-app/116-bulk-visibility-mapub-mapri.md §plan steps 13-14.
+// Spec: spec/01-app/116-bulk-visibility-mapub-mapri.md §plan + §parallel.
 package cmd
 
 import (
 	"fmt"
 	"os"
-	"time"
+	"strconv"
+	"strings"
 
 	"github.com/alimtvnetwork/gitmap-v26/gitmap/constants"
 	"github.com/alimtvnetwork/gitmap-v26/gitmap/visibility"
@@ -25,23 +30,36 @@ import (
 
 // bulkFlags holds the parsed CLI flags for a bulk visibility run.
 type bulkFlags struct {
-	Yes     bool
-	Verbose bool
+	Yes           bool
+	Verbose       bool
+	ExceptLatest  bool
+	Parallel      int
+	CacheTTLSecs  int
+	CacheTTLSet   bool
 }
 
 // runMakeAllPublic / runMakeAllPrivate are the dispatcher entry points.
 func runMakeAllPublic(args []string) {
-	runMakeAllVisibility(constants.VisibilityPublic, constants.CmdMakeAllPublic, args)
+	runMakeAllVisibility(constants.VisibilityPublic, constants.CmdMakeAllPublic, args, false)
 }
 
 func runMakeAllPrivate(args []string) {
-	runMakeAllVisibility(constants.VisibilityPrivate, constants.CmdMakeAllPrivate, args)
+	runMakeAllVisibility(constants.VisibilityPrivate, constants.CmdMakeAllPrivate, args, false)
 }
 
-// runMakeAllVisibility orchestrates the full bulk run. Exits with the
-// most specific code per spec: ExitVisOK on full success, ExitVisAuthFailed
-// when every repo failed, ExitVisBulkPartial on mixed outcomes.
-func runMakeAllVisibility(target, cmdName string, args []string) {
+// Except-latest entry points pre-set the filter and reuse the rest
+// of the pipeline so behavior stays in lock-step with the base
+// commands.
+func runMakeAllPublicExceptLatest(args []string) {
+	runMakeAllVisibility(constants.VisibilityPublic, constants.CmdMakeAllPublicExceptLatest, args, true)
+}
+
+func runMakeAllPrivateExceptLatest(args []string) {
+	runMakeAllVisibility(constants.VisibilityPrivate, constants.CmdMakeAllPrivateExceptLatest, args, true)
+}
+
+// runMakeAllVisibility orchestrates the full bulk run.
+func runMakeAllVisibility(target, cmdName string, args []string, exceptLatestDefault bool) {
 	checkHelp(cmdName, args)
 	if len(args) < 2 {
 		fmt.Fprintf(os.Stderr, constants.ErrMakeAllMissingArgFmt, cmdName)
@@ -49,6 +67,9 @@ func runMakeAllVisibility(target, cmdName string, args []string) {
 	}
 
 	ownerArg, patternsRaw, flags := parseBulkArgs(args)
+	if exceptLatestDefault {
+		flags.ExceptLatest = true
+	}
 	ctx := resolveOwnerOrExit(ownerArg)
 	mustEnsureProviderCLI(ctx.Provider, flags.Verbose)
 	mustEnsureProviderAuth(ctx.Provider, flags.Verbose)
@@ -59,8 +80,16 @@ func runMakeAllVisibility(target, cmdName string, args []string) {
 		os.Exit(constants.ExitVisBadFlag)
 	}
 
-	matches, ownerTotal := matchOrExitEmpty(ctx, patterns, flags.Verbose)
-	audit := beginRunAudit(ctx, target, cmdName, patternsRaw, flags, ownerTotal, matches)
+	matches, ownerTotal := matchOrExitEmpty(ctx, patterns, flags)
+	if flags.ExceptLatest {
+		fmt.Fprint(os.Stdout, constants.MsgBulkExceptLatest)
+		matches = filterExceptLatest(matches, os.Stdout)
+		if len(matches) == 0 {
+			fmt.Fprint(os.Stderr, constants.MsgBulkNoMatches)
+			os.Exit(constants.ExitVisOK)
+		}
+	}
+	audit := beginRunAudit(ctx, target, cmdName, patternsRaw, bulkAuditFlags(flags), ownerTotal, matches)
 
 	final := confirmOrAbort(matches, flags.Yes)
 	if len(final) == 0 {
@@ -72,23 +101,54 @@ func runMakeAllVisibility(target, cmdName string, args []string) {
 	excludedCount := audit.markExcluded(matches, final)
 
 	fmt.Fprintf(os.Stdout, constants.MsgBulkApplyHeaderFmt, target, len(final), ctx.Owner)
-	changed, skipped, failed := applyBulkLoop(ctx, target, final, flags.Verbose, audit)
+	changed, skipped, failed := applyBulkLoopParallel(ctx, target, final, flags, audit)
 	fmt.Fprintf(os.Stdout, constants.MsgBulkSummaryFmt, changed, skipped, failed, len(final))
 	exit := bulkExitCode(changed, failed)
 	audit.finalize(excludedCount, changed, skipped, failed, exit)
 	os.Exit(exit)
 }
 
-// parseBulkArgs splits owner / pattern-list / flags. Accepts -Y, -y,
-// --yes, --verbose anywhere after the first two positional args.
+// bulkAuditFlags downcasts our extended bulkFlags into the legacy
+// audit-layer struct (only Yes/Verbose are persisted).
+func bulkAuditFlags(f bulkFlags) bulkAuditFlagShape {
+	return bulkAuditFlagShape{Yes: f.Yes, Verbose: f.Verbose}
+}
+
+// bulkAuditFlagShape mirrors the original bulkFlags fields the audit
+// layer reads. Kept distinct from bulkFlags so future audit fields
+// don't bleed into the CLI parser.
+type bulkAuditFlagShape = struct {
+	Yes     bool
+	Verbose bool
+}
+
+// parseBulkArgs splits owner / pattern-list / flags. Accepts the
+// legacy -Y/-y/--yes/--verbose plus the new --parallel=N, --cache-ttl=N,
+// and --except-latest/-XL flags anywhere after the first two positional
+// args. Unknown flags are ignored (forwards-compatible with future spec
+// additions).
 func parseBulkArgs(args []string) (string, string, bulkFlags) {
-	flags := bulkFlags{}
+	flags := bulkFlags{Parallel: constants.DefaultBulkParallelism}
 	for _, a := range args[2:] {
-		switch a {
-		case "-Y", "-y", "--yes":
+		switch {
+		case a == "-Y" || a == "-y" || a == "--yes":
 			flags.Yes = true
-		case "--verbose":
+		case a == "--verbose":
 			flags.Verbose = true
+		case a == constants.FlagBulkExceptLatest || a == constants.FlagBulkExceptLatestShort:
+			flags.ExceptLatest = true
+		case strings.HasPrefix(a, constants.FlagBulkParallel+"="):
+			if n, err := strconv.Atoi(strings.TrimPrefix(a, constants.FlagBulkParallel+"=")); err == nil && n > 0 {
+				if n > constants.MaxBulkParallelism {
+					n = constants.MaxBulkParallelism
+				}
+				flags.Parallel = n
+			}
+		case strings.HasPrefix(a, constants.FlagBulkCacheTTL+"="):
+			if n, err := strconv.Atoi(strings.TrimPrefix(a, constants.FlagBulkCacheTTL+"=")); err == nil && n >= 0 {
+				flags.CacheTTLSecs = n
+				flags.CacheTTLSet = true
+			}
 		}
 	}
 
@@ -106,11 +166,12 @@ func resolveOwnerOrExit(arg string) ownerContext {
 	return ctx
 }
 
-// matchOrExitEmpty lists owner repos, matches patterns, exits 0 with
-// a friendly message when nothing matched. Returns the matched subset
-// AND the owner-wide total so the audit layer can persist OwnerRepoTotal.
-func matchOrExitEmpty(ctx ownerContext, patterns []visibility.Pattern, verbose bool) ([]visibility.MatchedRepo, int) {
-	names, err := listOwnerRepos(ctx.Provider, ctx.Owner, verbose)
+// matchOrExitEmpty lists owner repos (via TTL cache), matches patterns,
+// exits 0 with a friendly message when nothing matched. Returns the
+// matched subset AND the owner-wide total so the audit layer can
+// persist OwnerRepoTotal.
+func matchOrExitEmpty(ctx ownerContext, patterns []visibility.Pattern, flags bulkFlags) ([]visibility.MatchedRepo, int) {
+	names, err := listOwnerReposCached(ctx.Provider, ctx.Owner, flags)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "make-all-*: %v\n", err)
 		os.Exit(constants.ExitVisAuthFailed)
@@ -137,30 +198,6 @@ func confirmOrAbort(matches []visibility.MatchedRepo, yes bool) []visibility.Mat
 	}
 
 	return final
-}
-
-// applyBulkLoop walks the matched set, applying target visibility +
-// streaming results to the audit layer (timed per repo). Continues
-// past per-repo failures and returns (changed, skipped, failed).
-func applyBulkLoop(ctx ownerContext, target string, matches []visibility.MatchedRepo, verbose bool, audit *runAudit) (int, int, int) {
-	changed, skipped, failed := 0, 0, 0
-	total := len(matches)
-	for i, m := range matches {
-		fmt.Fprintf(os.Stdout, constants.MsgBulkApplyItemFmt, i+1, total, m.RepoName)
-		start := time.Now()
-		status := applyOneRepo(ctx, m.RepoName, target, verbose)
-		audit.updateResult(m.RepoName, status, status.prev, status.next, start)
-		switch status.outcome {
-		case "skip":
-			skipped++
-		case "ok":
-			changed++
-		default:
-			failed++
-		}
-	}
-
-	return changed, skipped, failed
 }
 
 // bulkExitCode collapses the tallies into the spec's exit-code matrix.
