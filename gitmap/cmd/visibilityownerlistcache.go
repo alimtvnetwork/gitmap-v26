@@ -51,7 +51,7 @@ func resolveOwnerRepoListTTL(flags bulkFlags) time.Duration {
 		return time.Duration(flags.CacheTTLSecs) * time.Second
 	}
 	if db, err := openDB(); err == nil {
-		if raw, ok := db.GetSetting(constants.SettingOwnerRepoListCacheTTL); ok {
+		if raw := db.GetSetting(constants.SettingOwnerRepoListCacheTTL); raw != "" {
 			if n, err := strconv.Atoi(raw); err == nil && n >= 0 {
 				return time.Duration(n) * time.Second
 			}
