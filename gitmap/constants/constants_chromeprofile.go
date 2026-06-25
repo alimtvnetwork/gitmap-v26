@@ -17,6 +17,31 @@ const (
 	CmdChromeProfileListAlias2  = "chrome-profiles"
 	CmdChromeProfileDelete      = "chrome-profile-delete"
 	CmdChromeProfileDeleteAlias = "cpd"
+	CmdChromeProfileMerge       = "chrome-profile-merge"
+	CmdChromeProfileMergeAlias  = "cpm"
+)
+
+// Chrome profile merge knobs.
+const (
+	ChromeMergeWhatAll        = "all"
+	ChromeMergeWhatSettings   = "settings"
+	ChromeMergeWhatBookmarks  = "bookmarks"
+	ChromeMergeWhatExtensions = "extensions"
+	ChromePreferencesFile     = "Preferences"
+	ChromeSecurePrefsFile     = "Secure Preferences"
+	ChromeBookmarksFile       = "Bookmarks"
+)
+
+// Chrome merge user-facing messages.
+const (
+	MsgChromeMergeStart    = "\n\033[1;96m▸ chrome-profile-merge\033[0m  \033[1m%s\033[0m → \033[1m%s\033[0m  \033[2;37m(what=%s)\033[0m\n  \033[2;37msource     \033[0m %s\n  \033[2;37mdestination\033[0m %s\n"
+	MsgChromeMergeStepHdr  = "\n\033[1;94m• %s\033[0m\n"
+	MsgChromeMergeSummary  = "\n\033[1;92m✓ merge complete\033[0m  added=\033[1m%d\033[0m skipped=\033[1m%d\033[0m overwrote=\033[1m%d\033[0m\n"
+	MsgChromeMergePrompt   = "  conflict: %s\n    [k]eep destination, [o]verwrite with source, [a]ll-keep, [A]ll-overwrite, [q]uit: "
+	MsgChromeMergeDryRun   = "  \033[2;37m(dry-run; no changes written)\033[0m\n"
+	ErrChromeMergeUsage    = "chrome-profile-merge: ERROR <src> and <dst> are required\n  usage: gitmap chrome-profile-merge <src> <dst> [--what all|settings|bookmarks|extensions] [--yes|--force] [--dry-run]\n"
+	ErrChromeMergeUnknown  = "chrome-profile-merge: ERROR --what=%q unknown (use: all|settings|bookmarks|extensions)\n"
+	HelpChromeProfileMerge = "  chrome-profile-merge (cpm) <src> <dst> [--what all|settings|bookmarks|extensions] [--yes|--force] Merge selected pieces of one profile into another"
 )
 
 // Chrome profile help-line entries surfaced by `gitmap help`.

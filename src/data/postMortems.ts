@@ -35,7 +35,7 @@ export const postMortems: PostMortemEntry[] = [
   },
   {
     id: "05",
-    title: "`gitmap-v26 ls` Returns Empty After Scan",
+    title: "`gitmap ls` Returns Empty After Scan",
     summary: "Database path resolution double-nested the data/ folder. Corrected store package path logic.",
     category: "database",
   },
