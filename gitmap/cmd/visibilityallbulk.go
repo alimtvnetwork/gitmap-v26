@@ -108,19 +108,6 @@ func runMakeAllVisibility(target, cmdName string, args []string, exceptLatestDef
 	os.Exit(exit)
 }
 
-// bulkAuditFlags downcasts our extended bulkFlags into the legacy
-// audit-layer struct (only Yes/Verbose are persisted).
-func bulkAuditFlags(f bulkFlags) bulkAuditFlagShape {
-	return bulkAuditFlagShape{Yes: f.Yes, Verbose: f.Verbose}
-}
-
-// bulkAuditFlagShape mirrors the original bulkFlags fields the audit
-// layer reads. Kept distinct from bulkFlags so future audit fields
-// don't bleed into the CLI parser.
-type bulkAuditFlagShape = struct {
-	Yes     bool
-	Verbose bool
-}
 
 // parseBulkArgs splits owner / pattern-list / flags. Accepts the
 // legacy -Y/-y/--yes/--verbose plus the new --parallel=N, --cache-ttl=N,
