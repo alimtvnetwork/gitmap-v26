@@ -69,12 +69,8 @@ func scanForRepos(root string) []string {
 	return out
 }
 
-// isGitRepo returns true if dir contains a .git directory or file.
-func isGitRepo(dir string) bool {
-	_, err := os.Stat(filepath.Join(dir, ".git"))
+// (isGitRepo lives in githubdesktop.go and is reused here.)
 
-	return err == nil
-}
 
 // lastCommitTime returns the last commit time for repo at dir.
 func lastCommitTime(dir string) (time.Time, bool) {
