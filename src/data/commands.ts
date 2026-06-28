@@ -433,6 +433,53 @@ export const commands: CommandDef[] = [
   },
   {
     category: "release",
+    name: "release-undo", alias: "ru", description: "Undo the most recent (or a specific) release — deletes the local tag, the matching remote tag, and the .gitmap/release/<version>.json sidecar. Safe to run repeatedly; missing pieces are skipped with a warning.",
+    usage: "gitmap release-undo [version] [--keep-remote] [--keep-sidecar] [-y]",
+    flags: [
+      { flag: "[version]", description: "Specific release to undo (e.g. v6.65.0). Defaults to the latest release if omitted." },
+      { flag: "--keep-remote", description: "Skip deleting the matching remote tag (origin)" },
+      { flag: "--keep-sidecar", description: "Keep .gitmap/release/<version>.json on disk" },
+      { flag: "-y, --yes", description: "Skip the confirmation prompt" },
+    ],
+    examples: [
+      { command: "gitmap release-undo", description: "Undo the most recent release (prompts before deleting)" },
+      { command: "gitmap ru v6.65.0 -y", description: "Undo a specific release with no prompt" },
+      { command: "gitmap ru --keep-remote", description: "Drop the local tag + sidecar but leave the remote tag intact" },
+      { command: "gitmap ru v6.64.0 --keep-sidecar", description: "Remove tags but preserve the JSON release record" },
+    ],
+    seeAlso: [
+      { name: "release", description: "Create a release (the operation this undoes)", url: "/release" },
+      { name: "changelog", description: "View release notes" },
+      { name: "list-versions", description: "List available tags" },
+    ],
+  },
+  {
+    category: "release",
+    name: "commit-in", alias: "cin", description: "Replay commits from one or more source repos/URLs into a destination repo with full author, date, and tag fidelity. Resumable via .gitmap/commit-in/state.json — re-running picks up where a crash left off.",
+    usage: "gitmap commit-in <destination> <source1,source2,...> [--profile <name>] [--save-profile <name>] [--set-default] [--resume]",
+    flags: [
+      { flag: "<destination>", description: "Target folder (auto-created and `git init`-ed if missing)" },
+      { flag: "<sources>", description: "Comma-separated list of local paths or git URLs to replay" },
+      { flag: "--profile <name>", description: "Load saved profile from .gitmap/commit-in/profiles/<name>.json" },
+      { flag: "--save-profile <name>", description: "Persist the current invocation as a reusable profile" },
+      { flag: "--set-default", description: "Mark the saved profile as the default" },
+      { flag: "--resume", description: "Continue from the last checkpoint in state.json" },
+      { flag: "--dry-run", description: "Plan the replay without writing commits" },
+    ],
+    examples: [
+      { command: "gitmap commit-in ./my-project https://github.com/me/my-project-archive.git", description: "Pull history from a single remote into a local folder" },
+      { command: "gitmap cin ./brand-new ./src-a,./src-b --save-profile MyMerge --set-default", description: "Merge two sources and save the recipe as a profile" },
+      { command: "gitmap cin ./gitmap --profile Default", description: "Reuse the default saved profile" },
+      { command: "gitmap cin ./dest ./src --resume", description: "Resume an interrupted replay from the last checkpoint" },
+    ],
+    seeAlso: [
+      { name: "Spec: commit-in", description: "Full commit-in walkthrough with examples", url: "/commit-in" },
+      { name: "release", description: "Tag and publish after replay" },
+    ],
+  },
+  {
+
+    category: "release",
     name: "release-self", alias: "rs / rself", description: "Release gitmap itself from any directory (uses embedded repo path)",
     usage: "gitmap release-self [version] [--bump major|minor|patch] [--draft] [--dry-run]",
     flags: [
