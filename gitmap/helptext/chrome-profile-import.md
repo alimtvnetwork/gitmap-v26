@@ -42,3 +42,9 @@ file basename (e.g. `Default.json` → `Default`).
 - [chrome-profile-export](chrome-profile-export.md)
 - [chrome-profile-copy](chrome-profile-copy.md)
 - [chrome-profile-list](chrome-profile-list.md)
+
+## Examples
+
+```bash
+gitmap chrome-profile-import
+```
