@@ -112,6 +112,35 @@ const ChangelogPage = () => {
         </p>
       </div>
 
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <span className="text-xs font-mono text-muted-foreground mr-1">Filter:</span>
+        {TAG_ORDER.map((tag) => {
+          const active = activeTags.has(tag);
+          return (
+            <button
+              key={tag}
+              onClick={() => toggleTag(tag)}
+              className={`text-xs font-mono px-2 py-0.5 rounded border transition-colors ${
+                active
+                  ? "border-primary/60 bg-primary/10 text-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground hover:border-border/80"
+              }`}
+              aria-pressed={active}
+            >
+              {TAG_LABELS[tag]}
+            </button>
+          );
+        })}
+        {activeTags.size > 0 && (
+          <button
+            onClick={() => setActiveTags(new Set())}
+            className="text-xs font-mono text-muted-foreground hover:text-foreground underline-offset-2 hover:underline ml-1"
+          >
+            clear
+          </button>
+        )}
+      </div>
+
       <div className="mb-8">
         <TerminalDemo title="gitmap — version history" lines={terminalLines} autoPlay />
       </div>
@@ -121,7 +150,7 @@ const ChangelogPage = () => {
         <div className="absolute left-[15px] top-0 bottom-0 w-px bg-border" />
 
         <div className="space-y-2">
-          {changelog.map((entry, i) => {
+          {filteredChangelog.map((entry, i) => {
             const isOpen = expandedVersions.has(entry.version);
             const isLatest = i === 0;
 
