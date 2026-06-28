@@ -1,5 +1,6 @@
 // Package cmd — `gitmap dedupe`: detect identical repos cloned under
-// different folders by hashing each repo's HEAD tree SHA. v6.68.0.
+// different folders by hashing each repo's HEAD tree SHA. v6.71.0
+// adds parallel scanning and --format=json|csv export.
 package cmd
 
 import (
@@ -11,32 +12,39 @@ import (
 	"strings"
 )
 
+type headTreeEntry struct {
+	path string
+	sha  string
+}
+
 // runDedupe executes `gitmap dedupe`.
 func runDedupe(args []string) {
 	checkHelp("dedupe", args)
 	fs := flag.NewFlagSet("dedupe", flag.ContinueOnError)
 	root := fs.String("root", ".", "scan root directory")
+	format := fs.String("format", "table", "output format: table|json|csv")
 	if err := fs.Parse(args); err != nil {
 		os.Exit(2)
 	}
-	repos := scanForRepos(*root)
-	groups := groupByHeadTree(repos)
-	dupes := filterDuplicateGroups(groups)
-	printDedupeReport(dupes)
-}
-
-// groupByHeadTree maps `HEAD^{tree}` SHA -> list of repo paths.
-func groupByHeadTree(repos []string) map[string][]string {
-	out := map[string][]string{}
-	for _, r := range repos {
+	fmtKind, err := parseHygieneFormat(*format)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(2)
+	}
+	repos := scanForReposParallel(*root)
+	entries := mapReposParallel(repos, func(r string) (headTreeEntry, bool) {
 		sha, ok := headTreeSHA(r)
 		if !ok {
-			continue
+			return headTreeEntry{}, false
 		}
-		out[sha] = append(out[sha], r)
+		return headTreeEntry{path: r, sha: sha}, true
+	})
+	groups := map[string][]string{}
+	for _, e := range entries {
+		groups[e.sha] = append(groups[e.sha], e.path)
 	}
-
-	return out
+	dupes := filterDuplicateGroups(groups)
+	emitDedupe(dupes, fmtKind)
 }
 
 // headTreeSHA returns the tree SHA pointed to by HEAD for repo at dir.
@@ -60,6 +68,37 @@ func filterDuplicateGroups(groups map[string][]string) map[string][]string {
 	}
 
 	return out
+}
+
+// emitDedupe dispatches to the requested output format.
+func emitDedupe(dupes map[string][]string, f hygieneFormat) {
+	keys := make([]string, 0, len(dupes))
+	for k := range dupes {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	switch f {
+	case hygieneFormatJSON:
+		type group struct {
+			Tree  string   `json:"tree"`
+			Paths []string `json:"paths"`
+		}
+		out := make([]group, 0, len(keys))
+		for _, k := range keys {
+			out = append(out, group{Tree: k, Paths: dupes[k]})
+		}
+		emitJSON(out)
+	case hygieneFormatCSV:
+		rows := [][]string{}
+		for _, k := range keys {
+			for _, p := range dupes[k] {
+				rows = append(rows, []string{k, p})
+			}
+		}
+		emitCSV([]string{"tree_sha", "path"}, rows)
+	default:
+		printDedupeReport(dupes)
+	}
 }
 
 // printDedupeReport renders the duplicate-group table.
