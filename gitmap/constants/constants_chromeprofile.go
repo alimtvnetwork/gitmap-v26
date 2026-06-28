@@ -130,6 +130,7 @@ var ChromeProcessLinuxNames = []string{"chrome", "google-chrome", "google-chrome
 // Local State registration messages.
 const (
 	MsgChromeProfileRegistered = "\033[1;92m✓ registered\033[0m  \033[1m%s\033[0m in Chrome's profile picker (Local State)\n"
+	MsgChromeProfileRegOnly    = "\n\033[1;96m▸ chrome-profile-copy --register-only\033[0m  \033[1m%s\033[0m\n  \033[2;37m(skipping file copy; refreshing Chrome Local State entry only)\033[0m\n"
 	WarnChromeProfileRegister  = "  \033[1;93m⚠\033[0m chrome-profile-copy: could not register %q in Chrome's Local State: %v\n  \033[2;37m(profile files were copied — restart Chrome and add the profile manually if it does not appear)\033[0m\n"
 	WarnChromeProfileBakRm     = "  \033[1;93m⚠\033[0m chrome-profile-copy: could not remove Local State backup %s: %v\n"
 	HelpChromeProfileDelete    = "  chrome-profile-delete (cpd) <name> [--yes] Remove a profile + its stored artifacts from the gitmap DB"
