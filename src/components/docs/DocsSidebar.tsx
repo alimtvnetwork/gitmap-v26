@@ -123,6 +123,7 @@ const navItems = [
   { title: "Register (as)", url: "/as", icon: Tag },
   { title: "Release Alias", url: "/release-alias", icon: Rocket },
   { title: "Release Alias Pull", url: "/release-alias-pull", icon: Rocket },
+  { title: "Release Undo (ru)", url: "/commands#release-undo", icon: Rocket },
   { title: "Spec Index", url: "/spec", icon: BookOpen },
   { title: "Post-Mortems", url: "/post-mortems", icon: AlertTriangle },
   { title: "Design System", url: "/design-system", icon: Palette },
