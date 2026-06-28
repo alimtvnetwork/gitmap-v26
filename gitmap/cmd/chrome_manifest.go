@@ -72,11 +72,13 @@ func encodeChromeManifest(entries []ChromeManifestEntry) string {
 }
 
 // decodeChromeManifest parses `<sha>  <name>` lines back into entries.
+// Lines starting with `#` are treated as metadata headers (e.g. `# source: <path>`)
+// and ignored here; see readChromeManifestSource for header lookup.
 func decodeChromeManifest(raw string) []ChromeManifestEntry {
 	var out []ChromeManifestEntry
 	for _, ln := range strings.Split(raw, "\n") {
 		ln = strings.TrimSpace(ln)
-		if ln == "" {
+		if ln == "" || strings.HasPrefix(ln, "#") {
 			continue
 		}
 		parts := strings.SplitN(ln, "  ", 2)
@@ -90,17 +92,46 @@ func decodeChromeManifest(raw string) []ChromeManifestEntry {
 }
 
 // writeChromeManifest computes + writes the sidecar manifest next to tarballPath.
+// sourcePath is the on-disk profile root that was captured; it is stamped as a
+// `# source: <path>` header so restores can target the matching profile path in
+// multi-profile layouts. Pass "" to omit the header.
 func writeChromeManifest(tarballPath string) (string, error) {
+	return writeChromeManifestWithSource(tarballPath, "")
+}
+
+func writeChromeManifestWithSource(tarballPath, sourcePath string) (string, error) {
 	entries, err := buildChromeManifest(tarballPath)
 	if err != nil {
 		return "", err
 	}
 	manifestPath := tarballPath + chromeManifestSuffix
-	if err := os.WriteFile(manifestPath, []byte(encodeChromeManifest(entries)), 0o644); err != nil {
+	var b strings.Builder
+	if sourcePath != "" {
+		fmt.Fprintf(&b, "# source: %s\n", filepath.ToSlash(sourcePath))
+	}
+	b.WriteString(encodeChromeManifest(entries))
+	if err := os.WriteFile(manifestPath, []byte(b.String()), 0o644); err != nil {
 		return "", err
 	}
 	return manifestPath, nil
 }
+
+// readChromeManifestSource returns the `# source: <path>` header from the
+// sidecar manifest if present, or "" when missing/unreadable.
+func readChromeManifestSource(tarballPath string) string {
+	raw, err := os.ReadFile(tarballPath + chromeManifestSuffix) //nolint:gosec
+	if err != nil {
+		return ""
+	}
+	for _, ln := range strings.Split(string(raw), "\n") {
+		ln = strings.TrimSpace(ln)
+		if strings.HasPrefix(ln, "# source:") {
+			return strings.TrimSpace(strings.TrimPrefix(ln, "# source:"))
+		}
+	}
+	return ""
+}
+
 
 // verifyChromeManifest re-hashes the tarball and diffs it against the
 // sidecar manifest. Returns (matched, mismatched-names, error). When the
