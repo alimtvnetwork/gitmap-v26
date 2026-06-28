@@ -108,5 +108,9 @@ func toolingDispatchEntries() []dispatchEntry {
 			[]string{constants.CmdChromeProfileMerge, constants.CmdChromeProfileMergeAlias},
 			func() { runChromeProfileMerge(argsTail()) },
 		},
+		{
+			[]string{constants.CmdChrome},
+			func() { runChrome(argsTail()) },
+		},
 	}
 }
