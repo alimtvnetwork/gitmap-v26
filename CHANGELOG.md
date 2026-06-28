@@ -1,5 +1,19 @@
 # Changelog
 
+## v6.67.0 — 2026-06-28 — Docs ⌘K palette, runnable example UI, changelog filters, CI parity + mutation + coverage gates
+
+### Added
+- **Global ⌘K command palette** (#8) — new `src/components/docs/CommandPalette.tsx` mounted in `src/App.tsx`. Fuzzy-searches every entry in `src/data/commands.ts` by name, alias, description, and example string. Toggles via ⌘K / Ctrl+K and routes to `/commands?cmd=<name>`.
+- **`ExampleCodeBlock`** (#9) — `src/components/docs/ExampleCodeBlock.tsx` adds a uniform copy-to-clipboard button and a "Run in terminal" hint to every fenced example so users always see the same affordances.
+- **Version-aware changelog filters** (#10) — `src/lib/changelogTags.ts` heuristically tags every changelog item as `breaking`, `added`, `changed`, `flag`, `fix`, or `perf`. `src/pages/Changelog.tsx` exposes a chip row; selecting a chip filters down to matching items (multi-select union). Footer counter updates to `N of M releases shown`.
+- **UI-parity CI** (#11) — `.github/workflows/ui-parity.yml` + `scripts/ui-parity.mjs` Playwright harness captures every key docs route in light + dark and fails the build when one theme effectively didn't apply (pixel-diff floor). Snapshots uploaded as `ui-parity-snapshots` artifact.
+- **Mutation tests** (#12) — `.github/workflows/mutation-tests.yml` runs `go-mutesting` against `gitmap/visibility/...` and `gitmap/cmd/commitin/checkpoint/...` (the two areas where silent desync hurts most) and enforces a 0.50 score floor.
+- **Coverage floor** (#13) — `.github/workflows/coverage-floor.yml` + `.github/scripts/coverage-floor.sh` + `.github/coverage.floor` enforce a 70% per-package default with per-package overrides (visibility 75, checkpoint 80, jsonenv 90, logging 80, transport 80). Ratchet upward over time.
+
+### Changed
+- **`src/App.tsx`** — mounts `<CommandPalette />` inside the `BrowserRouter` so the shortcut is available on every docs route.
+- **Version pinned to v6.67.0** across `README.md` (12 install-script + asset URLs), `gitmap/constants/constants.go`, and `src/constants/index.ts`.
+
 ## v6.66.0 — 2026-06-28 — Doctor, self-update, structured logs, range undo, checkpointed cfrp, pure-Go SQLite scaffold
 
 ### Added
