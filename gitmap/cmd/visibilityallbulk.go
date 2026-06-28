@@ -11,7 +11,7 @@
 //   - ResolveOwnerOnly           → visibilityresolveowner.go
 //   - listOwnerReposCached       → visibilityownerlistcache.go
 //   - visibility.ParsePatternList / MatchOwnerRepos → gitmap/visibility
-//   - filterExceptLatest         → visibilityexceptlatest.go
+//   - splitExceptLatest          → visibilityexceptlatest.go
 //   - renderMatchedTable / promptConfirmOrExclude → visibilitybulkprompt.go
 //   - applyBulkLoopParallel      → visibilityparallel.go
 //
