@@ -1856,4 +1856,89 @@ export const commands: CommandDef[] = [
       { name: "mv", description: "Move LEFT into RIGHT and delete LEFT" },
     ],
   },
+  // ═══════════════════════════════════════════
+  // Chrome Profiles (v6.43.0+)
+  // ═══════════════════════════════════════════
+  {
+    category: "chrome",
+    name: "chrome-profile-copy", alias: "cpc", description: "Copy a Chrome profile directory to a new profile, scrub identity fields so the copy appears in the profile picker, and register it in Chrome's Local State. Handles locked LOCK files and shows human-readable display names.",
+    usage: "gitmap cpc <source> <dest> [-y] [-r|--register-only]",
+    flags: [
+      { flag: "-y, --yes", description: "Skip confirmation prompts" },
+      { flag: "-r, --register-only", description: "Skip the file copy and only update Local State registry" },
+    ],
+    examples: [
+      { command: "gitmap cpc \"Profile 1\" \"Work\"", description: "Copy by directory or display name" },
+      { command: "gitmap cpc \"Profile 1\" \"Work\" -r", description: "Register an already-copied profile only" },
+    ],
+  },
+  {
+    category: "chrome",
+    name: "chrome-profile-merge", alias: "cpm", description: "Merge settings, bookmarks, and extensions from one Chrome profile into another. Supports --dry-run with a diff renderer showing + add / ~ overwrite / = keep entries.",
+    usage: "gitmap cpm <source> <dest> [--dry-run] [-y]",
+    examples: [
+      { command: "gitmap cpm \"Profile 1\" \"Profile 2\" --dry-run", description: "Preview the merge without writing" },
+      { command: "gitmap cpm \"Profile 1\" \"Profile 2\" -y", description: "Apply the merge" },
+    ],
+  },
+  {
+    category: "chrome",
+    name: "chrome-profiles", alias: "cpl", description: "List every Chrome profile with directory name, display name, and last-active timestamp resolved from Chrome's Local State JSON.",
+    usage: "gitmap chrome-profiles [--json]",
+    examples: [{ command: "gitmap chrome-profiles" }],
+  },
+  // ═══════════════════════════════════════════
+  // Bulk Visibility (v6.53.0+, v6.56.0+)
+  // ═══════════════════════════════════════════
+  {
+    category: "visibility-bulk",
+    name: "make-last-public", alias: "MLPUB", description: "Flip the latest versioned repo (matched via fuzzy base+version index) to public on GitHub or GitLab. Uses the OwnerRepoNameIndex SQLite cache for fast resolution.",
+    usage: "gitmap make-last-public <owner-or-url> <base>",
+    examples: [{ command: "gitmap MLPUB myowner macro-ahk", description: "Make the newest macro-ahk-vN repo public" }],
+  },
+  {
+    category: "visibility-bulk",
+    name: "make-last-private", alias: "MLPRI", description: "Flip the latest versioned repo (matched via fuzzy base+version index) to private on GitHub or GitLab. Mirror of make-last-public.",
+    usage: "gitmap make-last-private <owner-or-url> <base>",
+    examples: [{ command: "gitmap MLPRI myowner macro-ahk" }],
+  },
+  // ═══════════════════════════════════════════
+  // Maintenance & Backups (v6.57.0+)
+  // ═══════════════════════════════════════════
+  {
+    category: "maintenance",
+    name: "backup", description: "Manage bounded backups under .gitmap/backup/. `ls` lists existing snapshots; `prune` deletes old ones (keeps the newest N or those younger than a cutoff).",
+    usage: "gitmap backup ls | gitmap backup prune [--keep N] [--older-than 30d]",
+    examples: [
+      { command: "gitmap backup ls" },
+      { command: "gitmap backup prune --keep 10", description: "Keep only the 10 newest snapshots" },
+      { command: "gitmap backup prune --older-than 30d", description: "Delete snapshots older than 30 days" },
+    ],
+  },
+  {
+    category: "maintenance",
+    name: "ssh status", description: "Report SSH key health: which key matches the current remote, presence in the agent, last-used timestamp, and warnings for keys missing from ssh-agent.",
+    usage: "gitmap ssh status [--json]",
+    examples: [{ command: "gitmap ssh status" }],
+  },
+  {
+    category: "maintenance",
+    name: "changelog-regen", description: "Regenerate CHANGELOG.md from the JSON release manifests under .gitmap/release/. Useful after manual edits or after restoring release metadata from backup.",
+    usage: "gitmap changelog-regen [--dry-run]",
+    examples: [{ command: "gitmap changelog-regen --dry-run" }],
+  },
+  {
+    category: "data",
+    name: "rm", alias: "remove / del", description: "Delete tracked repos from the gitmap database, with on-disk folder deletion support, glob patterns (e.g. `macro*`), batch operation, and -y for no prompting.",
+    usage: "gitmap rm <pattern>... [--disk] [-y|--yes]",
+    flags: [
+      { flag: "--disk", description: "Also delete the on-disk folder" },
+      { flag: "-y, --yes", description: "Skip confirmation prompts" },
+    ],
+    examples: [
+      { command: "gitmap rm macro-ahk-v1", description: "Remove a single tracked repo" },
+      { command: "gitmap rm \"macro*\" -y", description: "Glob batch delete without prompting" },
+      { command: "gitmap del old-repo --disk -y", description: "Remove from DB and delete folder" },
+    ],
+  },
 ];
