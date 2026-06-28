@@ -28,15 +28,6 @@ const DocsLayout = ({ children }: DocsLayoutProps) => {
               />
             </DocsTooltip>
             <span className="shrink-0 text-sm font-mono text-foreground">gitmap docs</span>
-            <DocsTooltip label={`Current gitmap version (${VERSION})`}>
-              <span
-                tabIndex={0}
-                aria-label={`gitmap version ${VERSION}`}
-                className="docs-focus-ring shrink-0 cursor-default rounded-sm border border-border bg-card px-2 py-0.5 text-[11px] font-mono text-muted-foreground shadow-sm"
-              >
-                {VERSION}
-              </span>
-            </DocsTooltip>
             <div
               role="radiogroup"
               aria-label="Color theme"
