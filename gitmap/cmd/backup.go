@@ -269,18 +269,19 @@ func printBackupTable(root string, snaps []backupSnapshot) {
 
 // humanBytes formats n as a short human-readable size.
 func humanBytes(n int64) string {
-	const k = 1024
-	if n < k {
+	const k = 1024.0
+	if n < int64(k) {
 		return fmt.Sprintf("%d B", n)
 	}
-	units := []string{"KB", "MB", "GB", "TB"}
+	units := []string{"KB", "MB", "GB", "TB", "PB"}
 	f := float64(n) / k
 	for _, u := range units {
 		if f < k {
-			return strings.TrimSuffix(fmt.Sprintf("%.1f %s", f, u), ".0 "+u) + " " + u
+			return fmt.Sprintf("%.1f %s", f, u)
 		}
 		f /= k
 	}
 
-	return fmt.Sprintf("%.1f PB", f)
+	return fmt.Sprintf("%.1f EB", f)
 }
+
