@@ -149,15 +149,26 @@ func mergeMapInto(src, dst map[string]any, prefix string, pol *mergePolicy) merg
 		key := joinKey(prefix, k)
 		existing, present := dst[k]
 		if !present {
-			dst[k] = v
+			if pol.dryRun {
+				fmt.Printf(constants.MsgChromeMergeDryAdd, key)
+			} else {
+				dst[k] = v
+			}
 			s.added++
 			continue
 		}
 		decision := resolveMergeConflict(key, existing, v, pol)
 		if decision == mergeOverwrite {
-			dst[k] = v
+			if pol.dryRun {
+				fmt.Printf(constants.MsgChromeMergeDryOver, key)
+			} else {
+				dst[k] = v
+			}
 			s.overwrote++
 		} else {
+			if pol.dryRun && !jsonEqual(existing, v) {
+				fmt.Printf(constants.MsgChromeMergeDryKeep, key)
+			}
 			s.skipped++
 		}
 	}
