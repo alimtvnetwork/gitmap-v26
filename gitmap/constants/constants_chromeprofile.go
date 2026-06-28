@@ -39,6 +39,9 @@ const (
 	MsgChromeMergeSummary  = "\n\033[1;92m✓ merge complete\033[0m  added=\033[1m%d\033[0m skipped=\033[1m%d\033[0m overwrote=\033[1m%d\033[0m\n"
 	MsgChromeMergePrompt   = "  conflict: %s\n    [k]eep destination, [o]verwrite with source, [a]ll-keep, [A]ll-overwrite, [q]uit: "
 	MsgChromeMergeDryRun   = "  \033[2;37m(dry-run; no changes written)\033[0m\n"
+	MsgChromeMergeDryAdd   = "  \033[1;92m+ add\033[0m       %s\n"
+	MsgChromeMergeDryOver  = "  \033[1;93m~ overwrite\033[0m %s\n"
+	MsgChromeMergeDryKeep  = "  \033[2;37m= keep\033[0m      %s\n"
 	ErrChromeMergeUsage    = "chrome-profile-merge: ERROR <src> and <dst> are required\n  usage: gitmap chrome-profile-merge <src> <dst> [--what all|settings|bookmarks|extensions] [--yes|--force] [--dry-run]\n"
 	ErrChromeMergeUnknown  = "chrome-profile-merge: ERROR --what=%q unknown (use: all|settings|bookmarks|extensions)\n"
 	HelpChromeProfileMerge = "  chrome-profile-merge (cpm) <src> <dst> [--what all|settings|bookmarks|extensions] [--yes|--force] Merge selected pieces of one profile into another"
@@ -127,6 +130,7 @@ var ChromeProcessLinuxNames = []string{"chrome", "google-chrome", "google-chrome
 // Local State registration messages.
 const (
 	MsgChromeProfileRegistered = "\033[1;92m✓ registered\033[0m  \033[1m%s\033[0m in Chrome's profile picker (Local State)\n"
+	MsgChromeProfileRegOnly    = "\n\033[1;96m▸ chrome-profile-copy --register-only\033[0m  \033[1m%s\033[0m\n  \033[2;37m(skipping file copy; refreshing Chrome Local State entry only)\033[0m\n"
 	WarnChromeProfileRegister  = "  \033[1;93m⚠\033[0m chrome-profile-copy: could not register %q in Chrome's Local State: %v\n  \033[2;37m(profile files were copied — restart Chrome and add the profile manually if it does not appear)\033[0m\n"
 	WarnChromeProfileBakRm     = "  \033[1;93m⚠\033[0m chrome-profile-copy: could not remove Local State backup %s: %v\n"
 	HelpChromeProfileDelete    = "  chrome-profile-delete (cpd) <name> [--yes] Remove a profile + its stored artifacts from the gitmap DB"
