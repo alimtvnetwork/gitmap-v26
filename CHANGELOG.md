@@ -1,5 +1,20 @@
 # Changelog
 
+## v6.68.0 — 2026-06-28 — Repo hygiene: stale, orphans, dedupe, size
+
+### Added
+- **`gitmap stale` (`st`)** — `gitmap/cmd/stale.go`. Lists local repos with no commits in the last N days (default 90). With `--archive` moves them into `.gitmap/archive/<UTC-ts>/`; `--dry-run` previews the moves.
+- **`gitmap orphans`** — `gitmap/cmd/orphans.go`. Scans every local clone's `origin` URL via HTTP HEAD and flags any returning 404/410. Bulk-deletes with `-y` confirmation or `--dry-run` for preview.
+- **`gitmap dedupe`** — `gitmap/cmd/dedupe.go`. Hashes each repo's `HEAD^{tree}` and reports groups of 2+ identical clones living in different folders.
+- **`gitmap size`** — `gitmap/cmd/size.go`. Per-repo `.git` size table sorted desc, `--top=N` cap, and `--prune` runs `git gc --aggressive --prune=now` (with `--dry-run`) on the worst offenders.
+- Helptext entries `stale.md`, `orphans.md`, `dedupe.md`, `size.md` (all with `## Examples` blocks for the golden examples test).
+- Constants added to `gitmap/constants/constants_cli.go` and parity entries added to `gitmap/constants/cmd_constants_test.go`. Dispatcher wired in `gitmap/cmd/roottooling.go`.
+
+### Changed
+- **Version pinned to v6.68.0** across `README.md`, `gitmap/constants/constants.go`, and `src/constants/index.ts`.
+
+
+
 ## v6.67.0 — 2026-06-28 — Docs ⌘K palette, runnable example UI, changelog filters, CI parity + mutation + coverage gates
 
 ### Added
