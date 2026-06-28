@@ -129,5 +129,3 @@ func confirmYesNo(prompt string) bool {
 	return resp == "y" || resp == "yes"
 }
 
-// helper to silence unused import when filepath isn't referenced.
-var _ = filepath.Join
