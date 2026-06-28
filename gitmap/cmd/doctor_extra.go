@@ -3,17 +3,24 @@
 package cmd
 
 import (
-	"net"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
 )
 
-const (
-	doctorGitHubAPIURL    = "https://api.github.com"
-	doctorHTTPTimeoutSecs = 5
-)
+const doctorHTTPTimeoutSecs = 5
+
+// doctorGitHubEndpoints is the list of hosts gh-api probes.
+// Adding a URL here automatically extends the report.
+var doctorGitHubEndpoints = []struct{ Name, URL string }{
+	{"api.github.com", "https://api.github.com"},
+	{"github.com", "https://github.com"},
+	{"codeload.github.com", "https://codeload.github.com"},
+	{"uploads.github.com", "https://uploads.github.com"},
+	{"objects.githubusercontent.com", "https://objects.githubusercontent.com"},
+}
 
 // probeConfigPaths verifies the .gitmap/ working directory is reachable and writable.
 func probeConfigPaths() DoctorCheck {
@@ -60,30 +67,55 @@ func probeGitHubToken() DoctorCheck {
 func probeGitHubAPI() DoctorCheck {
 	return DoctorCheck{
 		Name:    "gh-api",
-		FixHint: "Check internet / proxy / firewall; api.github.com must be reachable",
+		FixHint: "Check internet / proxy / firewall; GitHub hosts must be reachable",
 		Run: func() (bool, string) {
 			client := &http.Client{Timeout: doctorHTTPTimeoutSecs * time.Second}
-			req, err := http.NewRequest(http.MethodGet, doctorGitHubAPIURL, nil)
-			if err != nil {
-				return false, err.Error()
-			}
-			if tok := firstEnv("GITHUB_TOKEN", "GH_TOKEN"); tok != "" {
-				req.Header.Set("Authorization", "Bearer "+tok)
-			}
-			resp, err := client.Do(req)
-			if err != nil {
-				if _, dnsErr := net.LookupHost("api.github.com"); dnsErr != nil {
-					return false, "DNS lookup failed: " + dnsErr.Error()
+			tok := firstEnv("GITHUB_TOKEN", "GH_TOKEN")
+			var oks, fails []string
+			for _, ep := range doctorGitHubEndpoints {
+				if ok, msg := probeGitHubEndpoint(client, ep.URL, tok); ok {
+					oks = append(oks, ep.Name+" "+msg)
+				} else {
+					fails = append(fails, ep.Name+" "+msg)
 				}
-				return false, err.Error()
 			}
-			defer resp.Body.Close()
-			if resp.StatusCode >= 500 {
-				return false, "api.github.com returned " + resp.Status
+			summary := fmt.Sprintf("%d/%d reachable", len(oks), len(doctorGitHubEndpoints))
+			if len(fails) > 0 {
+				return false, summary + "; failures: " + joinSemi(fails)
 			}
-			return true, "api.github.com reachable (" + resp.Status + ")"
+			return true, summary + "; " + joinSemi(oks)
 		},
 	}
+}
+
+func probeGitHubEndpoint(client *http.Client, url, token string) (bool, string) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return false, err.Error()
+	}
+	if token != "" {
+		req.Header.Set("Authorization", "Bearer "+token)
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, err.Error()
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode >= 500 {
+		return false, resp.Status
+	}
+	return true, "(" + resp.Status + ")"
+}
+
+func joinSemi(parts []string) string {
+	out := ""
+	for i, p := range parts {
+		if i > 0 {
+			out += "; "
+		}
+		out += p
+	}
+	return out
 }
 
 func firstEnv(keys ...string) string {
