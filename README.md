@@ -2422,6 +2422,26 @@ gitmap del old-repo
 
 → [export](gitmap/helptext/export.md) · [import](gitmap/helptext/import.md) · [profile](gitmap/helptext/profile.md) · [bookmark](gitmap/helptext/bookmark.md) · [rm](gitmap/helptext/rm.md) · [db-reset](gitmap/helptext/db-reset.md)
 
+#### Chrome bookmarks export (`--root` / `--folder`, md / html / json)
+
+```bash
+# Whole tree → Markdown file
+gitmap chrome export-bookmarks Lovable --out bm.md
+
+# Only the bookmarks bar → HTML
+gitmap chrome export-bookmarks Lovable --root bookmark_bar --format html --out bar.html
+
+# Nested subtree → JSON
+gitmap chrome export-bookmarks "Profile 1" --root bookmark_bar --folder "Work/Docs" --format json --out work-docs.json
+
+# Other / synced roots
+gitmap chrome export-bookmarks Default --root other  --format md
+gitmap chrome export-bookmarks Default --root synced --format html --out synced.html
+```
+
+`--root` ∈ `bookmark_bar | other | synced` (case-insensitive). `--folder` is slash-delimited and case-insensitive. See [chrome](gitmap/helptext/chrome.md) for `--match` / `--title` filters.
+
+
 ---
 
 <div align="center">
