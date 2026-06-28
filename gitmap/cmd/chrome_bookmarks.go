@@ -252,3 +252,30 @@ func fallback(a, b string) string {
 	}
 	return b
 }
+
+func availableRootNames(roots []bookmarkItem) []string {
+	out := make([]string, 0, len(roots))
+	for _, r := range roots {
+		out = append(out, r.Folder)
+	}
+	if len(out) == 0 {
+		return []string{"(none)"}
+	}
+	return out
+}
+
+func topLevelFolderNames(roots []bookmarkItem) []string {
+	out := []string{}
+	for _, r := range roots {
+		for _, c := range r.Children {
+			if c.URL == "" {
+				out = append(out, fallback(c.Title, c.Folder))
+			}
+		}
+	}
+	if len(out) == 0 {
+		return []string{"(none)"}
+	}
+	return out
+}
+
