@@ -27,15 +27,17 @@ func runChromeBackup(args []string) {
 		fmt.Fprintf(os.Stderr, "chrome backup: ERROR mkdir: %v\n", err)
 		os.Exit(1)
 	}
-	n, err := writeChromeBackup(chromeUserDataDir(), out)
+	srcRoot := chromeUserDataDir()
+	n, err := writeChromeBackup(srcRoot, out)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "chrome backup: ERROR %v\n", err)
 		os.Exit(1)
 	}
-	manifestPath, mErr := writeChromeManifest(out)
+	manifestPath, mErr := writeChromeManifestWithSource(out, srcRoot)
 	if mErr != nil {
 		fmt.Fprintf(os.Stderr, "chrome backup: WARN manifest write failed: %v\n", mErr)
 	}
+
 	fmt.Printf("\033[1;92m✓ chrome backup\033[0m  %d files → \033[1;96m%s\033[0m\n", n, out)
 	if manifestPath != "" {
 		fmt.Printf("  manifest: \033[2;37m%s\033[0m\n", manifestPath)
@@ -49,13 +51,15 @@ func runChromeRestore(args []string) {
 		os.Exit(2)
 	}
 	src := args[0]
-	dst := chromeUserDataDir()
+	dst := ""
+	intoSet := false
 	force, yes, dryRun, skipVerify := false, false, false, false
 	for i := 1; i < len(args); i++ {
 		switch args[i] {
 		case "--into":
 			if i+1 < len(args) {
 				dst = args[i+1]
+				intoSet = true
 				i++
 			}
 		case "--force", "-f":
@@ -68,6 +72,15 @@ func runChromeRestore(args []string) {
 			skipVerify = true
 		}
 	}
+	if !intoSet {
+		if recorded := readChromeManifestSource(src); recorded != "" {
+			dst = recorded
+			fmt.Printf("\033[2;37m• restoring to recorded source profile: %s\033[0m\n", dst)
+		} else {
+			dst = chromeUserDataDir()
+		}
+	}
+
 	if !skipVerify {
 		ok, miss, err := verifyChromeManifest(src)
 		switch {
