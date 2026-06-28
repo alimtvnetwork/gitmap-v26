@@ -15,6 +15,16 @@ const (
 	doctorHTTPTimeoutSecs = 5
 )
 
+// doctorGitHubEndpoints is the list of hosts gh-api probes.
+// Adding a URL here automatically extends the report.
+var doctorGitHubEndpoints = []struct{ Name, URL string }{
+	{"api.github.com", "https://api.github.com"},
+	{"github.com", "https://github.com"},
+	{"codeload.github.com", "https://codeload.github.com"},
+	{"uploads.github.com", "https://uploads.github.com"},
+	{"objects.githubusercontent.com", "https://objects.githubusercontent.com"},
+}
+
 // probeConfigPaths verifies the .gitmap/ working directory is reachable and writable.
 func probeConfigPaths() DoctorCheck {
 	return DoctorCheck{
