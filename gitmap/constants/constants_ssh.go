@@ -31,6 +31,9 @@ const (
 	MsgSSHStatusProbeOK      = "    \033[32m✓\033[0m %s — authenticated as %s\n"
 	MsgSSHStatusProbeFail    = "    \033[31m✗\033[0m %s — %s\n"
 	MsgSSHStatusFooter       = "\n  next: `gitmap ssh ls` for stored keys, `gitmap ssh cp <name>` to copy a public key.\n\n"
+)
+
+
 
 
 // SSH copy messages.
