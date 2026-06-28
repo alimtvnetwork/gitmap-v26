@@ -39,3 +39,9 @@ database. Does NOT touch the live Chrome User Data directory.
 
 - [chrome-profile-list](chrome-profile-list.md)
 - [chrome-profile-export](chrome-profile-export.md)
+
+## Examples
+
+```bash
+gitmap chrome-profile-delete
+```

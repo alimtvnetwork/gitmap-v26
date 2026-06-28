@@ -15,3 +15,9 @@ resolution order and exit codes.
 - `gitmap make-last-public` — canonical long form.
 - `gitmap MLPRI` — shorthand for `make-last-private`.
 - `gitmap MAPUB` — bulk wildcard variant.
+
+## Examples
+
+```bash
+gitmap MLPUB
+```

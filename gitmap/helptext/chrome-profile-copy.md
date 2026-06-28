@@ -88,3 +88,9 @@ resolved directory when they differ.
 - [chrome-profile-list](chrome-profile-list.md) — list known profiles
 - [chrome-profile-delete](chrome-profile-delete.md) — drop a tracked profile
 - Spec: `spec/04-generic-cli/40-chrome-profile-copy.md`
+
+## Examples
+
+```bash
+gitmap chrome-profile-copy
+```

@@ -54,3 +54,9 @@ If `out.json` is omitted, both artifacts are written to
 - [chrome-profile-import](chrome-profile-import.md)
 - [chrome-profile-copy](chrome-profile-copy.md)
 - [chrome-profile-list](chrome-profile-list.md)
+
+## Examples
+
+```bash
+gitmap chrome-profile-export
+```

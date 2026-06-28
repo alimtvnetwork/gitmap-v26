@@ -113,3 +113,9 @@ gitmap help --json --filter fix-repo
 ```
 
 The JSON schema is published at `spec/08-json-schemas/help-json.schema.json` (v5.43.0+).
+
+## Examples
+
+```bash
+gitmap fix-repo
+```

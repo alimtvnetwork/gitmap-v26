@@ -74,3 +74,9 @@ get:
 - [chrome-profile-copy](chrome-profile-copy.md) — mirror copy (offline)
 - [chrome-profile-export](chrome-profile-export.md) — snapshot to JSON+CSV
 - [chrome-profile-list](chrome-profile-list.md)
+
+## Examples
+
+```bash
+gitmap chrome-profile-merge
+```

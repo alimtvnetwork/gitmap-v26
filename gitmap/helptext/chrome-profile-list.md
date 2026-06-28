@@ -33,3 +33,9 @@ joins the result with the `ChromeProfile` table.
 - [chrome-profile-copy](chrome-profile-copy.md)
 - [chrome-profile-export](chrome-profile-export.md)
 - [chrome-profile-delete](chrome-profile-delete.md)
+
+## Examples
+
+```bash
+gitmap chrome-profile-list
+```
