@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.58.0 — 2026-06-28
+
+### Added
+- **`cpc --register-only` (`-r`)** — refresh the destination profile's Chrome `Local State` entry without recopying files. Useful when the picker entry was lost but the on-disk profile is intact.
+- **`cpm --dry-run` diff renderer** — every setting/bookmark/extension conflict now prints a `+ add` / `~ overwrite` / `= keep` line so users see the exact plan before committing.
+
 ## v6.57.0 — 2026-06-28
 
 Tracking-list progress on the "20 improvements" follow-ups. Each
