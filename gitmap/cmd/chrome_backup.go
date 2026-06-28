@@ -1,0 +1,157 @@
+// Package cmd — chrome_backup.go: snapshot all Chrome profiles into a
+// tar.gz under .gitmap/chrome/backup/, and restore from one.
+package cmd
+
+import (
+	"archive/tar"
+	"compress/gzip"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
+)
+
+func runChromeBackup(args []string) {
+	out := chromeBackupDefaultPath()
+	for i := 0; i < len(args); i++ {
+		if args[i] == "-o" || args[i] == "--out" {
+			if i+1 < len(args) {
+				out = args[i+1]
+				i++
+			}
+		}
+	}
+	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+		fmt.Fprintf(os.Stderr, "chrome backup: ERROR mkdir: %v\n", err)
+		os.Exit(1)
+	}
+	n, err := writeChromeBackup(chromeUserDataDir(), out)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "chrome backup: ERROR %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("\033[1;92m✓ chrome backup\033[0m  %d files → \033[1;96m%s\033[0m\n", n, out)
+	fmt.Printf("  restore: \033[1;96mgitmap chrome restore %s\033[0m\n", out)
+}
+
+func runChromeRestore(args []string) {
+	if len(args) == 0 {
+		fmt.Fprintln(os.Stderr, "chrome restore: ERROR missing <tarball>")
+		os.Exit(2)
+	}
+	src := args[0]
+	dst := chromeUserDataDir()
+	for i := 1; i < len(args); i++ {
+		if args[i] == "--into" && i+1 < len(args) {
+			dst = args[i+1]
+			i++
+		}
+	}
+	if err := os.MkdirAll(dst, 0o755); err != nil {
+		fmt.Fprintf(os.Stderr, "chrome restore: ERROR mkdir: %v\n", err)
+		os.Exit(1)
+	}
+	n, err := readChromeBackup(src, dst)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "chrome restore: ERROR %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("\033[1;92m✓ chrome restore\033[0m  %d files → \033[1;96m%s\033[0m\n", n, dst)
+}
+
+func chromeBackupDefaultPath() string {
+	ts := time.Now().UTC().Format("20060102-150405")
+	return filepath.Join(".gitmap", "chrome", "backup", "chrome-"+ts+".tar.gz")
+}
+
+func writeChromeBackup(srcRoot, outPath string) (int, error) {
+	f, err := os.Create(outPath) //nolint:gosec
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+	gz := gzip.NewWriter(f)
+	defer gz.Close()
+	tw := tar.NewWriter(gz)
+	defer tw.Close()
+	count := 0
+	err = filepath.Walk(srcRoot, func(p string, info os.FileInfo, walkErr error) error {
+		if walkErr != nil {
+			return nil // skip unreadable
+		}
+		rel, _ := filepath.Rel(srcRoot, p)
+		if rel == "." {
+			return nil
+		}
+		if strings.HasSuffix(p, "LOCK") || strings.HasSuffix(p, "lockfile") {
+			return nil
+		}
+		hdr, err := tar.FileInfoHeader(info, "")
+		if err != nil {
+			return nil
+		}
+		hdr.Name = filepath.ToSlash(rel)
+		if err := tw.WriteHeader(hdr); err != nil {
+			return err
+		}
+		if !info.Mode().IsRegular() {
+			return nil
+		}
+		in, err := os.Open(p) //nolint:gosec
+		if err != nil {
+			return nil
+		}
+		_, _ = io.Copy(tw, in)
+		in.Close()
+		count++
+		return nil
+	})
+	return count, err
+}
+
+func readChromeBackup(src, dstRoot string) (int, error) {
+	f, err := os.Open(src) //nolint:gosec
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+	gz, err := gzip.NewReader(f)
+	if err != nil {
+		return 0, err
+	}
+	defer gz.Close()
+	tr := tar.NewReader(gz)
+	count := 0
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return count, err
+		}
+		clean := filepath.Clean(hdr.Name)
+		if strings.HasPrefix(clean, "..") || filepath.IsAbs(clean) {
+			continue // path-traversal guard
+		}
+		target := filepath.Join(dstRoot, clean)
+		if hdr.FileInfo().IsDir() {
+			_ = os.MkdirAll(target, 0o755)
+			continue
+		}
+		_ = os.MkdirAll(filepath.Dir(target), 0o755)
+		out, err := os.Create(target) //nolint:gosec
+		if err != nil {
+			continue
+		}
+		if _, err := io.Copy(out, tr); err != nil { //nolint:gosec
+			out.Close()
+			return count, err
+		}
+		out.Close()
+		count++
+	}
+	return count, nil
+}
