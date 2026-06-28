@@ -11,6 +11,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -23,18 +24,31 @@ import (
 // runChromeProfileCopy implements `gitmap chrome-profile-copy`.
 func runChromeProfileCopy(args []string) {
 	checkHelp(constants.CmdChromeProfileCopy, args)
-	if len(args) < 2 {
+	fs := flag.NewFlagSet(constants.CmdChromeProfileCopy, flag.ExitOnError)
+	registerOnly := fs.Bool("register-only", false, "skip copy; only (re)register the destination in Chrome's Local State")
+	fs.BoolVar(registerOnly, "r", false, "alias for --register-only")
+	_ = fs.Parse(args)
+	pos := fs.Args()
+	if len(pos) < 2 {
 		fmt.Fprint(os.Stderr, constants.ErrChromeProfileUsageCopy)
 		os.Exit(constants.ExitChromeProfileUsage)
 	}
-	srcProfile, ok := resolveChromeProfile(args[0])
-	dstProfile := chromeProfileDestination(args[1])
+	srcProfile, ok := resolveChromeProfile(pos[0])
+	dstProfile := chromeProfileDestination(pos[1])
 	if !ok {
-		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileSrcMissing, args[0], srcProfile.Path)
+		fmt.Fprintf(os.Stderr, constants.ErrChromeProfileSrcMissing, pos[0], srcProfile.Path)
 		printAvailableChromeProfilesWithDisplay()
 		os.Exit(constants.ExitChromeProfileNotFound)
 	}
-	guardChromeClosedOrExit(args[0], args[1])
+	if *registerOnly {
+		fmt.Printf(constants.MsgChromeProfileRegOnly, pos[1])
+		registerCopiedChromeProfile(srcProfile.Dir, dstProfile.Dir, pos[1])
+		rec := emitChromeSnapshots(dstProfile.Path, pos[1])
+		persistChromeProfile(pos[1], dstProfile.Path, rec)
+		fmt.Printf(constants.MsgChromeProfileNextSteps, pos[1], pos[0], pos[1])
+		return
+	}
+	guardChromeClosedOrExit(pos[0], pos[1])
 	fmt.Printf(constants.MsgChromeProfileCopyStart, chromeProfileSummary(srcProfile), chromeProfileSummary(dstProfile), srcProfile.Path, dstProfile.Path)
 	start := time.Now()
 	chromeProfileLockSkipCount = 0
@@ -47,10 +61,10 @@ func runChromeProfileCopy(args []string) {
 		fmt.Fprintf(os.Stderr, constants.MsgChromeProfileLockSummary, chromeProfileLockSkipCount)
 	}
 	fmt.Printf(constants.MsgChromeProfileCopyDone, files, time.Since(start).Round(time.Millisecond))
-	registerCopiedChromeProfile(srcProfile.Dir, dstProfile.Dir, args[1])
-	rec := emitChromeSnapshots(dstProfile.Path, args[1])
-	persistChromeProfile(args[1], dstProfile.Path, rec)
-	fmt.Printf(constants.MsgChromeProfileNextSteps, args[1], args[0], args[1])
+	registerCopiedChromeProfile(srcProfile.Dir, dstProfile.Dir, pos[1])
+	rec := emitChromeSnapshots(dstProfile.Path, pos[1])
+	persistChromeProfile(pos[1], dstProfile.Path, rec)
+	fmt.Printf(constants.MsgChromeProfileNextSteps, pos[1], pos[0], pos[1])
 }
 
 // registerCopiedChromeProfile makes the destination directory visible
