@@ -177,5 +177,4 @@ func withStdout(t *testing.T, fn func(), inspect func([]byte)) {
 	fn()
 	_ = w.Close()
 	inspect(<-done)
-	_ = strings.TrimSpace("")
 }
