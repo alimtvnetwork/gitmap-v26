@@ -1,5 +1,6 @@
 // Package cmd — `gitmap size`: per-repo .git size report with --prune
-// to run `git gc --aggressive` on the worst offenders. v6.68.0.
+// to run `git gc --aggressive` on the worst offenders. v6.71.0 adds
+// parallel `.git` sizing and --format=json|csv export.
 package cmd
 
 import (
@@ -24,21 +25,50 @@ func runSize(args []string) {
 	topN := fs.Int("top", 0, "show only top N largest (0 = all)")
 	prune := fs.Bool("prune", false, "run `git gc --aggressive` on each listed repo")
 	dryRun := fs.Bool("dry-run", false, "with --prune: list gc invocations without running them")
+	format := fs.String("format", "table", "output format: table|json|csv")
 	if err := fs.Parse(args); err != nil {
 		os.Exit(2)
 	}
-	repos := scanForRepos(*root)
-	sizes := make([]repoSize, 0, len(repos))
-	for _, r := range repos {
-		sizes = append(sizes, repoSize{path: r, size: dirSize(filepath.Join(r, ".git"))})
+	fmtKind, err := parseHygieneFormat(*format)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(2)
 	}
+	repos := scanForReposParallel(*root)
+	sizes := mapReposParallel(repos, func(r string) (repoSize, bool) {
+		return repoSize{path: r, size: dirSize(filepath.Join(r, ".git"))}, true
+	})
 	sort.Slice(sizes, func(i, j int) bool { return sizes[i].size > sizes[j].size })
 	if *topN > 0 && len(sizes) > *topN {
 		sizes = sizes[:*topN]
 	}
-	printSizeReport(sizes)
+	emitSize(sizes, fmtKind)
 	if *prune {
 		runAggressiveGC(sizes, *dryRun)
+	}
+}
+
+// emitSize dispatches to the requested output format.
+func emitSize(sizes []repoSize, f hygieneFormat) {
+	switch f {
+	case hygieneFormatJSON:
+		type row struct {
+			Path  string `json:"path"`
+			Bytes int64  `json:"bytes"`
+		}
+		out := make([]row, 0, len(sizes))
+		for _, s := range sizes {
+			out = append(out, row{Path: s.path, Bytes: s.size})
+		}
+		emitJSON(out)
+	case hygieneFormatCSV:
+		rows := make([][]string, 0, len(sizes))
+		for _, s := range sizes {
+			rows = append(rows, []string{s.path, fmt.Sprintf("%d", s.size)})
+		}
+		emitCSV([]string{"path", "bytes"}, rows)
+	default:
+		printSizeReport(sizes)
 	}
 }
 
