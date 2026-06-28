@@ -115,9 +115,10 @@ const (
 	ErrVisBulkRepoParseFmt = "visibility: cannot parse repo identity from %q\n"
 )
 
-// CFRPPriorMaxLookback caps the prior-version probe at v(N-15)..v(N-1)
-// — far enough for realistic release histories without abusing the API.
-const CFRPPriorMaxLookback = 15
+// CFRPPriorMaxLookback caps the prior-version probe at v(N-5)..v(N-1).
+// v6.63.0: narrowed from 15 → 5 per user request (privatize the last
+// 5 prior versions automatically when cfrp succeeds).
+const CFRPPriorMaxLookback = 5
 
 // Spec 116 — bulk wildcard visibility (make-all-public / make-all-private
 // / MAPUB / MAPRI). Owner-only resolver + repo-list pagination cap +

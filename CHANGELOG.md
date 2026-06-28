@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.63.0 — 2026-06-28
+
+### Restored
+- **`cfrp` prior-version privatize** — re-enabled the post-publish scan that walks back v(N-1)..v(N-5) on the same provider/owner and privatizes any siblings still public. Honors `-y` for auto-confirm; otherwise prompts. Lookback narrowed from 15 → 5 per request.
+
 ## v6.62.0 — 2026-06-28
 
 ### Verified
