@@ -1,4 +1,4 @@
-// Package cmd — `gitmap stale` (st): list local repos with no commits
+// Package cmd — `gitmap stale` (sta): list local repos with no commits
 // in N days, with optional --archive to move them to .gitmap/archive/.
 // v6.68.0.
 package cmd

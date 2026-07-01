@@ -1,4 +1,4 @@
-// Package cmd — workflow_open_pr.go: `gitmap pr` lists open PRs and
+// Package cmd — workflow_open_pr.go: `gitmap pull-requests` lists open PRs and
 // `gitmap blame-stats` aggregates per-author line counts. The `open`
 // command itself lives in open.go.
 package cmd
@@ -10,6 +10,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/alimtvnetwork/gitmap-v26/gitmap/constants"
 )
 
 func currentRepoOwnerRepo() (string, string, error) {
@@ -29,13 +31,15 @@ func currentRepoOwnerRepo() (string, string, error) {
 }
 
 func runPR(args []string) {
+	checkHelp(constants.CmdPR, args)
+
 	owner := ""
 	if len(args) > 0 {
 		owner = args[0]
 	} else {
 		o, _, err := currentRepoOwnerRepo()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "pr: ERROR specify <owner> or run inside a github repo")
+			fmt.Fprintln(os.Stderr, "pull-requests: ERROR specify <owner> or run inside a github repo")
 			os.Exit(2)
 		}
 		owner = o
@@ -48,7 +52,7 @@ func runPR(args []string) {
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "pr: ERROR %v\n", err)
+		fmt.Fprintf(os.Stderr, "pull-requests: ERROR %v\n", err)
 		os.Exit(1)
 	}
 	defer resp.Body.Close()
