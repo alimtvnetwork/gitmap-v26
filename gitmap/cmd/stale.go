@@ -1,4 +1,4 @@
-// Package cmd — `gitmap stale` (st): list local repos with no commits
+// Package cmd — `gitmap stale` (sta): list local repos with no commits
 // in N days, with optional --archive to move them to .gitmap/archive/.
 // v6.68.0.
 package cmd
@@ -57,9 +57,9 @@ func emitStale(stale []staleRepo, days int, f hygieneFormat) {
 	switch f {
 	case hygieneFormatJSON:
 		type row struct {
-			Path     string `json:"path"`
-			LastUTC  string `json:"last_commit_utc"`
-			AgeDays  int    `json:"age_days"`
+			Path    string `json:"path"`
+			LastUTC string `json:"last_commit_utc"`
+			AgeDays int    `json:"age_days"`
 		}
 		rows := make([]row, 0, len(stale))
 		now := time.Now()
@@ -105,7 +105,6 @@ func scanForRepos(root string) []string {
 }
 
 // (isGitRepo lives in githubdesktop.go and is reused here.)
-
 
 // lastCommitTime returns the last commit time for repo at dir.
 func lastCommitTime(dir string) (time.Time, bool) {

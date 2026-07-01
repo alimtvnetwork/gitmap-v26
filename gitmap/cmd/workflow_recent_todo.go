@@ -13,6 +13,8 @@ import (
 )
 
 func runRecent(args []string) {
+	checkHelp("recent", args)
+
 	path := recentLogPath()
 	f, err := os.Open(path) //nolint:gosec
 	if err != nil {
